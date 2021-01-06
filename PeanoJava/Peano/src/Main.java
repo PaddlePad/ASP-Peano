@@ -20,16 +20,18 @@ public class Main {
 		
 		int len = (int) Math.pow(3, grad);
 		int noFields = len * len;
-
+		int currDim = 1;
+		int fieldCounter = 0;
+		
 		boolean up = true;
 		boolean right = true;
-
+		
 		Point2D[] field = new Point2D[noFields];
-		for (int i = 0; i < field.length; i++) {
-
-			if (i == 0)
-				field[i++] = new Point2D(1, 1);
-
+		field[0] = new Point2D(1, 1);
+		for (int i = 1; i < field.length; i++) {
+			
+			int bounds = (int) Math.pow(3, currDim);
+			
 			if (up) {
 				draw(field, i++, Direction.UP);
 				draw(field, i++, Direction.UP);
@@ -54,19 +56,27 @@ public class Main {
 					continue;
 
 				// Cases
-				if(field[i - 1].getY() < len)
-				{
-					if (field[i - 1].getX() % 3 == 0) 
+				if(field[i - 1].getY() % bounds == 0)
+				{			
+					if(field[i - 1].getX() % bounds == 0) {
 						right = false;
-					else
-						right = true;
-					
-					draw(field, i, Direction.UP);
+						draw(field, i, Direction.UP);
+					}
+					else {
+						up = false;
+						draw(field, i, Direction.RIGHT);
+					}
 				}
 				else
 				{
-					up = false;
-					draw(field, i, Direction.RIGHT);
+					if(field[i - 1].getX() % bounds == 0) {
+						right = false;
+						draw(field, i, Direction.UP);
+					}
+					else {
+						right = true;
+						draw(field, i, Direction.UP);
+					}
 				}
 			} 
 			else 
@@ -94,21 +104,23 @@ public class Main {
 					continue;
 
 				// Cases
-				if (field[i - 1].getY() > 1) {
-					
-					if (field[i - 1].getX() % 3 == 0)
-						right = false;
-					else
-						right = true;
-
-					draw(field, i, Direction.DOWN);
-				}
-				else 
-				{
+				if (field[i - 1].getY() % bounds == 1) {
 					up = true;
 					draw(field, i, Direction.RIGHT);
 				}
+				else 
+				{
+					right = !right;
+					draw(field, i, Direction.DOWN);
+				}
 			}
+			
+			fieldCounter += 9;
+			
+			int test = (int) Math.pow(3, 2 * currDim);
+			if(fieldCounter >= test)
+				if(++currDim > grad)
+					currDim = fieldCounter = 1;
 		}
 
 //		for (int j = 0; j < field.length; j++) {
