@@ -1,13 +1,24 @@
 % Diese Zeile bitte -nicht- aendern.
 \documentclass[course=asp]{aspdoc}
 
+%newly added packages
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{enumitem}
+
+\usepackage{amsmath}	%eins von beidem?
+\usepackage{mathtools}
+
+\usepackage{index}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TODO: Ersetzen Sie in den folgenden Zeilen die entsprechenden -Texte-
 %% mit den richtigen Werten.
-\newcommand{\theGroup}{IhreGruppennummer} % Beispiel: 42
-\newcommand{\theNumber}{IhreProjektnummer} % Beispiel: A123
-\author{Vorname1 Nachname1 \and Vorname2 Nachname2 \and Vorname3 Nachname3}
-\date{AktuellesSemester} % Beispiel: Wintersemester 2019/20
+\newcommand{\theGroup}{132} % Beispiel: 42
+\newcommand{\theNumber}{A214} % Beispiel: A123
+\author{Mohammed Attia \and Patrick Zimmermann \and Thomas Torggler}
+\date{Wintersemester 2020/21} % Beispiel: Wintersemester 2019/20
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Diese Zeile bitte -nicht- aendern.
@@ -18,21 +29,43 @@
 
 \section{Einleitung}
 
+Raumfüllende Kurven bilden die Brücke zwischen Kunst und mathematischer Geometrie. In der Mathematik werden sie gemeinhin benutzt um ein n-dimensionales Problem in ein  eindimensionales zu konvertieren. Eine solche Kurve beschreibt essentiell einen linearen Pfad durch n-dimensionale Räume. Giuseppe Peano war der Erste, der eine solche Kurve 1890 definierte.
+Um einen n-Dimensionalen Raum in die Dimension n-1 zu konvertieren, lässt sich eine stetig surrjektive Funktion f(x) erstellen, so das gilt: \forall x \in R^n-1 \quad \exits y \in R^n. Für einen Beweis siehe (Quelle?). Hier wollen wir uns auf die sogenannten Peano-Kurven beschränken. Für eine solche Kurve definieren wir ein Intervall I = [0,1], sowie \[ f: I \rightarrow I^2 \]. Dann ist die Peano-Kurve: \lim\limits_{x \to \infty}f(x), mit x \in I. Sie { entspricht dem Grenzwert einer Folge von Funktionen f(x) und } lässt sich mit der Bedingung, dass sich die Kurve nicht überschneiden darf, folgendermaßen konstruieren:
+
+Man unterteile eine Fläche in 9 Quadrate. Jedes dieser Quadrate soll nun durch eine Kurve besucht werden. Dadurch durchläuft die Kurve die Quadrate in Form eines „S“.
+In einem Iterationsschritt lässt sich eines der 9 Quadrate in weitere 9 Quadrate Unterteilen, die wiederum auf selbe Art verbunden werden, wie in Abb.2 gezeigt.
+
+\begin{figure}[hb]
+\centering
+\includegraphics{PeanoBsp.png}
+\caption{Peano-Kurve, \cite{aufgabenstellung}}\label{Abb:Peano}				%TEST
+\end{figure}
+
+
+%bilder von n=1 bis n=3, wahrscheinlich seite voll?
+
+Wir beschreiben nun unsere Ansatz einen iterativen Algorithmus zu finden, um die eben beschriebene Peano-Kurve darzustellen. %Ergebnis hier einfügen!!
+
+\newpage
 
 \section{Lösungsansatz}
-
+Da die von uns behandelte Peano-Kurve stets die selben Anfangs- und Endkoordinaten besizt, f(0) = (0,0) und f(1) = (1,1), 
 
 % TODO: Je nach Aufgabenstellung einen der Begriffe wählen
-\section{Korrektheit/Genauigkeit}
+\section{Korrektheit} % oder Genauigkeit 
 
+Die Genauigkeit unseres Algorithmus ist abhängig von einem n \in N, dass die Anzahl an Iterationen bestimmt, wie in den Abb.1 bis Abb.3 beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Ansonsten ist die Kurve wie ebenfalls schon oben beschrieben definiert, weshalb nur die Korrektheit unseres Algorithmus entscheidend ist.
+Grundsätzlich lässt sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen indem man ihre graphischen Darstellungen vergleicht. Da das Theoretisch aber nicht möglich ist, folgt auch eine Implementierung in Assambler und C.
+Wir wollen dennoch unseren Ansatz auf Korrektheit prüfen.
+Nachdem die Kurve immer wieder die gleichen Bestandteile verwendet, müssen diese richtig berechnet werden. Im speziellen sind das die Kurven mit n = 1 und n = 2. (Induktionsbeweis?) 
 
 \section{Performanzanalyse}
 
 
 \section{Zusammenfassung und Ausblick}
 
-% TODO: Fuegen Sie Ihre Quellen der Datei Ausarbeitung.bib hinzu
-% Referenzieren Sie diese dann mit \cite{}.
+% TODO: Fuegen Sie Ihre Quellen der Datei Ausarbeitung.bib hinzu			!!!!
+% Referenzieren Sie diese dann mit \cite{}.									!!!!
 % Beispiel: CR2 ist ein Register der x86-Architektur~\cite{intel2017man}.
 \bibliographystyle{plain}
 \bibliography{Ausarbeitung}{}
