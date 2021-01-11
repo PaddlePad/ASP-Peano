@@ -19,7 +19,7 @@ public class Paint extends JFrame {
 		this.field = field;
 		this.grad = grad;
 
-		setTitle("Hi");
+		setTitle("Fuck Yeah!");
 		setSize(1000, 1000);
 		setBackground(Color.gray);
 		setVisible(true);

@@ -1,23 +1,27 @@
 import java.util.Scanner;
 
-public class Main {
+public class Main
+{
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		Main main = new Main();
-		
+
 		Scanner scanner = new Scanner(System.in);
+		
 		System.out.println("Grad eingeben:");
 		String gradStr = scanner.nextLine();
-
+		
 		int grad = Integer.parseInt(gradStr);
-		
+
 		Point2D[] field = main.peano(grad);
-		
+
 		Paint g = new Paint(field, grad);
 	}
+	
+	private Point2D[] peano(int grad)
+	{
 
-	private Point2D[] peano(int grad) {
-		
 		int len = (int) Math.pow(3, grad);
 		int noFields = len * len;
 		int currDim = 1;
@@ -25,14 +29,15 @@ public class Main {
 		
 		boolean up = true;
 		boolean right = true;
-		
+
 		Point2D[] field = new Point2D[noFields];
 		field[0] = new Point2D(1, 1);
-		for (int i = 1; i < field.length; i++) {
-			
+		for (int i = 1; i < field.length; i++)
+		{
 			int bounds = (int) Math.pow(3, currDim);
 			
-			if (up) {
+			if (up)
+			{
 				draw(field, i++, Direction.UP);
 				draw(field, i++, Direction.UP);
 
@@ -56,30 +61,48 @@ public class Main {
 					continue;
 
 				// Cases
-				if(field[i - 1].getY() % bounds == 0)
-				{			
-					if(field[i - 1].getX() % bounds == 0) {
-						right = false;
-						draw(field, i, Direction.UP);
-					}
-					else {
+				if(currDim > 2 && field[i-1].getY() % Math.pow(3, currDim-1) == 0)
+				{
+					if(field[i-1].getX() % bounds != 0)
+					{
 						up = false;
-						draw(field, i, Direction.RIGHT);
+						right = false;
+						draw(field, i, Direction.LEFT);
 					}
 				}
 				else
+				if (field[i - 1].getY() % bounds == 0)
 				{
-					if(field[i - 1].getX() % bounds == 0) {
+					if (field[i - 1].getX() % bounds == 0)
+					{
+						right = !right; //false;
+						draw(field, i, Direction.UP);
+					} else
+					{
+						up = false;
+						draw(field, i, Direction.RIGHT);
+					}
+				} 
+				else
+				{
+					if (field[i - 1].getX() % bounds == 0 || field[i-1].getX() % Math.pow(3, currDim-1) == 0)
+					{
 						right = false;
 						draw(field, i, Direction.UP);
-					}
-					else {
-						right = true;
+					} else
+					{
+						if(currDim > 2 && field[i-1].getX() % Math.pow(3, currDim-1) == 1)
+						{	
+							right = false;	
+						}
+						else
+						{
+							right = true;
+						}
 						draw(field, i, Direction.UP);
 					}
 				}
-			} 
-			else 
+			} else
 			{
 				draw(field, i++, Direction.DOWN);
 				draw(field, i++, Direction.DOWN);
@@ -104,36 +127,41 @@ public class Main {
 					continue;
 
 				// Cases
-				if (field[i - 1].getY() % bounds == 1) {
+				if(currDim > 2 && field[i-1].getY() % Math.pow(3, currDim-1) == 1)
+				{
+					if(field[i-1].getX() % bounds != 0)
+					{
+						up = true;
+						draw(field, i, Direction.LEFT);
+						Paint p = new Paint(field, grad);
+						System.out.println("links unten into unten aber oben");	//Nullpointer
+					}
+				}
+				else
+				if (field[i - 1].getY() % bounds == 1)
+				{
 					up = true;
 					draw(field, i, Direction.RIGHT);
-				}
-				else 
+				} else
 				{
 					right = !right;
 					draw(field, i, Direction.DOWN);
 				}
 			}
-			
+
 			fieldCounter += 9;
-			
+
 			int test = (int) Math.pow(3, 2 * currDim);
-			if(fieldCounter >= test)
-				if(++currDim > grad)
+			if (fieldCounter >= test)
+				if (++currDim > grad)
 					currDim = fieldCounter = 1;
 		}
 
-//		for (int j = 0; j < field.length; j++) {
-//			if (field[j] == null)
-//				break;
-//
-//			field[j].print();
-//		}
-		
 		return field;
 	}
-
-	private void draw(Point2D[] field, int pos, Direction direction) {
+	
+	public static void draw(Point2D[] field, int pos, Direction direction)
+	{
 		if (direction == Direction.UP)
 			field[pos] = new Point2D(field[pos - 1].getX(), field[pos - 1].getY() + 1);
 		else if (direction == Direction.RIGHT)
@@ -145,6 +173,7 @@ public class Main {
 	}
 }
 
-enum Direction {
+enum Direction
+{
 	UP, DOWN, LEFT, RIGHT
 }

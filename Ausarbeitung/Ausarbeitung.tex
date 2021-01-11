@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \usepackage{enumitem}
+\usepackage{amssymb}
 
 \usepackage{amsmath}	%eins von beidem?
 \usepackage{mathtools}
@@ -30,7 +31,7 @@
 \section{Einleitung}
 
 Raumfüllende Kurven bilden die Brücke zwischen Kunst und mathematischer Geometrie. In der Mathematik werden sie gemeinhin benutzt um ein n-dimensionales Problem in ein  eindimensionales zu konvertieren. Eine solche Kurve beschreibt essentiell einen linearen Pfad durch n-dimensionale Räume. Giuseppe Peano war der Erste, der eine solche Kurve 1890 definierte.
-Um einen n-Dimensionalen Raum in die Dimension n-1 zu konvertieren, lässt sich eine stetig surrjektive Funktion f(x) erstellen, so das gilt: \forall x \in R^n-1 \quad \exits y \in R^n. Für einen Beweis siehe (Quelle?). Hier wollen wir uns auf die sogenannten Peano-Kurven beschränken. Für eine solche Kurve definieren wir ein Intervall I = [0,1], sowie \[ f: I \rightarrow I^2 \]. Dann ist die Peano-Kurve: \lim\limits_{x \to \infty}f(x), mit x \in I. Sie { entspricht dem Grenzwert einer Folge von Funktionen f(x) und } lässt sich mit der Bedingung, dass sich die Kurve nicht überschneiden darf, folgendermaßen konstruieren:
+Um einen n-Dimensionalen Raum in die Dimension n-1 zu konvertieren, lässt sich eine stetig surrjektive Funktion $f(x)$ erstellen, so das gilt: $\forall x \in \mathbb{R}^n-1 \quad \exits y \in \mathbb{R}^n$. Für einen Beweis siehe (Quelle?). Hier wollen wir uns auf die sogenannten Peano-Kurven beschränken. Für eine solche Kurve definieren wir ein Intervall I = [0,1], sowie  $f: I \rightarrow I^2 $. Dann ist die Peano-Kurve: $\lim\limits_{x \to \infty}f(x)$, mit $x \in I$. Sie { entspricht dem Grenzwert einer Folge von Funktionen f(x) und } lässt sich mit der Bedingung, dass sich die Kurve nicht überschneiden darf, folgendermaßen konstruieren:
 
 Man unterteile eine Fläche in 9 Quadrate. Jedes dieser Quadrate soll nun durch eine Kurve besucht werden. Dadurch durchläuft die Kurve die Quadrate in Form eines „S“.
 In einem Iterationsschritt lässt sich eines der 9 Quadrate in weitere 9 Quadrate Unterteilen, die wiederum auf selbe Art verbunden werden, wie in Abb.2 gezeigt.
@@ -65,7 +66,7 @@ Nachdem die Kurve immer wieder die gleichen Bestandteile verwendet, müssen dies
 \section{Zusammenfassung und Ausblick}
 
 % TODO: Fuegen Sie Ihre Quellen der Datei Ausarbeitung.bib hinzu			!!!!
-% Referenzieren Sie diese dann mit \cite{}.									!!!!
+% Referenzieren Sie diese dann mit \cite{}.									
 % Beispiel: CR2 ist ein Register der x86-Architektur~\cite{intel2017man}.
 \bibliographystyle{plain}
 \bibliography{Ausarbeitung}{}
