@@ -1,0 +1,136 @@
+Algorithm  Peano
+Procedure  PEANO ( degree, x, y) 
+    Pre[] <- {0,0,1,2,2,1} //0 : up , 1 : right , 2 : down , 3 : left
+    curr[] <- {0,0,1,2,2,1} 
+    currGrad <- 2
+    if (degree <= 0) then return null
+	endif
+	if(degree != 1)
+		
+		then do
+			
+				calcNext(currGrad)
+				currGrad <- currGrad + 1
+		while(currGrad <= degree)
+    endif
+
+    x <- 1
+    y <- 1
+    i <- 1
+    Array[0] <- (x,y)
+    j <- 0
+    Loop
+			switch (curr[j])
+			{
+				case 0:
+					y <- y+1 
+					break 
+				case 2:
+					y <- y-1 
+					break 
+				case 3:
+					x <- x-1 
+					break 
+				case 1:
+					x <- x+1 
+					break 
+				default:
+					break 
+			}
+            Array[i] <- (x,y)
+            i <- i+1
+            j <- j+1
+            if (j>=curr.length) then break
+            endif
+    END Loop
+//TODO (return value)
+END PROCEDURE
+
+Procedure calcNext(int currGrad)
+	
+	
+		pre <- curr
+		mir <- mirror(curr) 
+		rev <- reverse(curr) 
+		revMir <- reverse(mirror(curr)) 
+
+		//curr <- new Direction[(int) Math.pow(9, currGrad) - 1]  // für 8 Dir pro base Kurve
+
+		i <- 0
+		int len  <-  pre.length 
+		Arraycopy(pre, 0, curr, i, len) 
+		i  <-  i + len 
+		curr[i] <- 0 
+		i <- i+1 
+
+		Arraycopy(revMir, 0, curr, i, len) 
+		i  <-  i + len 
+		curr[i] <- 0 
+		i <- i+1 
+
+		Arraycopy(pre, 0, curr, i, len) 
+		i  <-  i + len 
+		curr[i] <- 1 
+		i <- i+1 
+
+		Arraycopy(mir, 0, curr, i, len) 
+		i  <-  i + len 
+		curr[i] <- 2  
+		i <- i+1 
+
+		Arraycopy(rev, 0, curr, i, len) 
+		i  <-  i + len 
+		curr[i] <- 2 
+		i <- i+1 
+
+		Arraycopy(mir, 0, curr, i, len) 
+		i  <-  i + len 
+		curr[i] <- 1 
+		i <- i+1 
+
+		Arraycopy(pre, 0, curr, i, len) 
+		i  <-  i + len 
+		curr[i] <- 0 
+		i <- i+1 
+
+		Arraycopy(revMir, 0, curr, i, len) 
+		i <- i + len 
+		curr[i] <- 0 
+		i <- i+1 
+
+		Arraycopy(pre, 0, curr, i, len) 
+
+END PROCEDURE
+
+
+
+
+int[] mirror( in) // spiegelt up&Down, gibt dircetions zurück
+	
+		int[] out = in
+        i <- 0
+		Loop
+		{
+			if (in[i] == 0) then out[i] <- (in[i]+2) mod 4
+			endif
+			i <- i+1
+ 			if (i >= in.length) then Break
+			endif           
+		endLoop
+
+		return out
+END PROCEDURE
+
+int[] reverse( in)
+        i <- 0
+		Loop
+		{
+			 out[i] <- (in[i]+2) mod 4
+			endif
+			i <- i+1
+ 			if (i >= in.length) then Break
+			endif           
+		endLoop
+
+		return out
+END PROCEDURE
