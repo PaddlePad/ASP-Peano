@@ -41,6 +41,7 @@ public class Peano
 				currGrad++;
 			}
 		}
+		
 
 		Point2D[] arr = new Point2D[curr.length + 1];
 		int x = 1;

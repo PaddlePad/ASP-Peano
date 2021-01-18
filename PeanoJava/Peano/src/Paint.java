@@ -21,7 +21,7 @@ public class Paint extends JFrame {
 
 		setTitle("Fuck Yeah!");
 		setSize(1000, 1000);
-		setBackground(Color.gray);
+		setBackground(Color.WHITE);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
@@ -46,8 +46,8 @@ public class Paint extends JFrame {
 		}
 		
 		Graphics2D curve = (Graphics2D)g;
-		curve.setStroke(new BasicStroke(3));
-		curve.setColor(Color.red);
+		curve.setStroke(new BasicStroke(2));
+		curve.setColor(Color.BLACK);
 		
 		for (int i = 1; i < field.length; i++) {
 			

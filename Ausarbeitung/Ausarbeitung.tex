@@ -52,6 +52,14 @@ Wir beschreiben nun unsere Ansatz einen iterativen Algorithmus zu finden, um die
 \section{Lösungsansatz}
 Da die von uns behandelte Peano-Kurve stets die selben Anfangs- und Endkoordinaten besizt, f(0) = (0,0) und f(1) = (1,1), 
 
+Der Aufbau der Peano-Kurve ermöglicht es die Kurve des aktuellen Grades mit einer Variation der gespiegelten und originalen Kurve des vorherigen Grades zu zeichnen.
+Diese Observation war der Grundstein unseres iterativen Algorithmus. Anfangs wird dabei die Startkurve hardcodiert in einem Integer Array abgespeichert wobei die Zahlen von 1 bis 4 jeweils einer der vier Richtungen entsprechen. Falls der eingegebene Grad n > 1 ist, wird aufsteigend über alle Grade bis inklusive n iteriert wobei während jedem Schritt die Kurve des vorherigen Grades in der entsprechenden Reihenfolge entweder im Originalzustand oder gespiegelt acht mal in den Array eingefügt wird, sodass die vollständige Kurve des aktuellen Grades entsteht. 
+
+Zu beachten ist dabei jedoch, dass durch das Spiegeln und Einfügen von Kurven deren Richtung noch inkorrekt sein könnte, dafür gibt es aber ähnlich zur Spiegelungsmethode eine Methode zum Umkehren der Richtung. Nach diesen Schritten sind die neun erstellten Kurven jedoch noch nicht miteinander verbunden. Da sich das Muster der ursprünglichen Kurve durch alle Grade wiederholt, kann nach jedem Schritt ein hardcodierter Pfad zur nächsten Kurve eingefügt werden.
+Nachdem über alle Grade iteriert wurde, läuft der Algorithmus den vollständigen Richtung Array durch, verändert dabei bei jedem Schritt je nach Richtungsangabe entweder die x oder y-Koordinate und speichert diese dann in die Ausgabeliste der Peano-Methode.
+
+
+
 % TODO: Je nach Aufgabenstellung einen der Begriffe wählen
 \section{Korrektheit} % oder Genauigkeit 
 
