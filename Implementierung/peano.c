@@ -105,8 +105,8 @@ char *pCh;
     }    
 // Avoid warning about unused parameter.
     (void) argc; (void) argv;
-	uint64_t *x;
-	uint64_t *y;
+	u_int64_t *x;
+	u_int64_t *y;
 	unsigned deg;
 	peano(deg,x,y);
 drawSvg(deg,x,y);
@@ -115,7 +115,7 @@ return 0;
 }
 
 
- void peano(unsigned grad, uint64_t* x1, uint64_t* y1)
+ void peano(unsigned grad, u_int64_t* x1, u_int64_t* y1)
 	{
 		int currGrad = 2;
 		if (grad <= 0){
