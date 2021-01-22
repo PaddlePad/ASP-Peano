@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#define LENGTH(x)  (sizeof(x) / sizeof((x)[0]))
 //void peano(unsigned degree, uint64_t* x, uint64_t* y);
 //------------------------HELP FUNCTIONS-------------------
 
@@ -15,7 +14,7 @@
 	dest[destPos+(i-srcPos)]=src[i];}
 
 }
-void drawSvg( unsigned deg ,u_int64_t* x, u_int64_t* y ,int size)
+void drawSvg( u_int64_t* x, u_int64_t* y ,int size)
 {
 
     FILE *fp;
@@ -66,63 +65,92 @@ void reverse(int* out , int* in, int size)// spiegelt up&Down, left&right
 
 		
 	}
-void changesize(int size , int** b){
-	free(*b);
-	*b=(int*) malloc (size);
-	
-}
 
 
 
 //---------------------DECLARATIONS------------------------
 	// base Kurve merken
-	int* pre=(int*)malloc(5);
-	int* curr=(int*)malloc(5);
-	int curr1[5] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left
+int length=8;
 	
-	arraycopy(pre,0,curr1,0,8);
-	
+int* curr=(int*)malloc(length*sizeof(int));
+int curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left
+arraycopy(curr,0,curr1,0,length);
+free(curr1);
 
-int main(int argc, char** argv) {
+//----------------------------PEANO HELP FUNCTIONS--------------
+void calcNext(int currGrad)
+	{
+		int* pre =(int*) malloc (length*sizeof(int));
+		arraycopy(curr,0,pre,0,length);
+		int* mir= (int*) malloc (length*sizeof(int) );
+		int * rev= (int*) malloc (length*sizeof(int));
+		int* revMir= (int*) malloc (length*sizeof(int));
+		mirror(mir,curr,length);
+		reverse(rev,curr,length);
+		reverse(revMir,mir, length);
+		
+		
+		curr = (int*)realloc (curr,(pow(9,currGrad) - 1)*sizeof(int)); // für 8 Dir pro base Kurve//TODO
+		
+		int i = 0;
+		
+		arraycopy(pre, 0, curr, i, length);
+		i = i + length;
+		curr[i] = 0;
+		i++;
 
-char *pCh;
-    unsigned long unlong = 42;
-    // Check enough arguments.
+		arraycopy(revMir, 0, curr, i, length);
+		i = i + length;
+		curr[i] = 0;
+		i++;
 
-    if (argc != 2) {
-        puts ("Not enough arguments");
-        return 1;
-    }    
-    
-    // Convert to ulong WITH CHECKING!
+		arraycopy(pre, 0, curr, i, length);
+		i = i + length;
+		curr[i] = 1;
+		i++;
 
-    unlong = strtoul (argv[1], &pCh, 10);
-// Ensure argument was okay.
+		arraycopy(mir, 0, curr, i, length);
+		i = i + length;
+		curr[i] = 2;
+		i++;
 
-    if ((pCh == argv[1]) || (*pCh != '\0')) {
-        puts ("Invalid number");
-        return 1;
-    }    
-// Avoid warning about unused parameter.
-    (void) argc; (void) argv;
-	u_int64_t *x;
-	u_int64_t *y;
-	unsigned deg;
-	peano(deg,x,y);
-drawSvg(deg,x,y);
+		arraycopy(rev, 0, curr, i, length);
+		i = i + length;
+		curr[i] = 2;
+		i++;
 
-return 0;
-}
+		arraycopy(mir, 0, curr, i, length);
+		i = i + length;
+		curr[i] = 1;
+		i++;
 
+		arraycopy(pre, 0, curr, i, length);
+		i = i + length;
+		curr[i] = 0;
+		i++;
 
- void peano(unsigned grad, u_int64_t* x1, u_int64_t* y1)
+		arraycopy(revMir, 0, curr, i, length);
+		i = i + length;
+		curr[i] = 0;
+		i++;
+
+		arraycopy(pre, 0, curr, i, length);
+		length=(pow(9,currGrad) - 1);
+		free (mir);
+		free(rev);
+		free (revMir);
+	}
+
+void peano(unsigned grad, u_int64_t* x1, u_int64_t* y1)
 	{
 		int currGrad = 2;
 		if (grad <= 0){
 				printf("Error number not valid !");
 				return;
 		}
-		
+	int curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left
+	arraycopy(curr1,0,curr,0,length);
+	free(curr1);
 		
 		if(grad != 1)
 		{
@@ -141,7 +169,7 @@ return 0;
 		y1[0]=y;
 		
 
-		for (int  d=0; d <length(curr) ;d++)
+		for (int  d=0; d <length ;d++)
 		{
 			switch (curr[d])
 			{
@@ -169,66 +197,46 @@ return 0;
 	
 	}
 
- void calcNext(int currGrad)
-	{
-		//System.arraycopy(curr, 0, pre, 0, curr.length);
-		int len = length(curr);
-		pre =(int*) malloc (len);
-		arraycopy(curr,0,pre,0,len);
-		mir= (int* )(int*) malloc (len);
-		rev= (int* )(int*) malloc (len);
-		revMir= (int* )(int*) malloc (len);
-		mirror(mir,curr,len);
-		reverse(rev,curr,len);
-		reverse(revMir,mir, len)
-		
-		free(curr);
-		curr = (int*)malloc (pow(9,currGrad) - 1); // für 8 Dir pro base Kurve//TODO
 
-		int i = 0;
-		
-		arraycopy(pre, 0, curr, i, len);
-		i = i + len;
-		curr[i] = 0;
-		i++;
+int main(int argc, char** argv) {
+char *pCh;
+    unsigned long deg = 42;
+    // Check enough arguments.
 
-		arraycopy(revMir, 0, curr, i, len);
-		i = i + len;
-		curr[i] = 0;
-		i++;
+    if (argc != 2) {
+        puts ("Not enough arguments");
+        return 1;
+    }    
+    
+    // Convert to ulong WITH CHECKING!
 
-		arraycopy(pre, 0, curr, i, len);
-		i = i + len;
-		curr[i] = 1;
-		i++;
+    deg = strtoul (argv[1], &pCh, 10);
+// Ensure argument was okay.
 
-		arraycopy(mir, 0, curr, i, len);
-		i = i + len;
-		curr[i] = 2;
-		i++;
+    if ((pCh == argv[1]) || (*pCh != '\0')) {
+        puts ("Invalid number");
+        return 1;
+    }    
+// Avoid warning about unused parameter.
+    (void) argc; (void) argv;
+	
+	
+	unsigned dim=pow(9,deg);
+	u_int64_t *x=(u_int64_t*)malloc(dim*sizeof(u_int64_t));
+	u_int64_t *y=(u_int64_t*)malloc(dim*sizeof(u_int64_t));
+	
+	peano(deg,x,y);
+	drawSvg(x,y,dim);
+	free(x);
+	free(y);
+	free(curr);
 
-		arraycopy(rev, 0, curr, i, len);
-		i = i + len;
-		curr[i] = 2;
-		i++;
+return 0;
+}
 
-		arraycopy(mir, 0, curr, i, len);
-		i = i + len;
-		curr[i] = 1;
-		i++;
 
-		arraycopy(pre, 0, curr, i, len);
-		i = i + len;
-		curr[i] = 0;
-		i++;
+ 
 
-		arraycopy(revMir, 0, curr, i, len);
-		i = i + len;
-		curr[i] = 0;
-		i++;
-
-		arraycopy(pre, 0, curr, i, len);
-	}
-
+ 
 	
 
