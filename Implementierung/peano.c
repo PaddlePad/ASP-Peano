@@ -4,16 +4,12 @@
 //void peano(unsigned degree, uint64_t* x, uint64_t* y);
 //------------------------HELP FUNCTIONS-------------------
 
-
-
-
- void arraycopy (int* src, int srcPos, int* dest, int destPos, int length1 )//VERIFY IF THIS WORKS
+void arraycopy (int* src, int srcPos, int* dest, int destPos, int length1 )//VERIFY IF THIS WORKS
 {
-
 	for (int i=srcPos; i<(srcPos+length1);i++){
 	dest[destPos+(i-srcPos)]=src[i];}
-
 }
+
 void drawSvg( u_int64_t* x, u_int64_t* y ,int size)
 {
 
@@ -24,10 +20,9 @@ void drawSvg( u_int64_t* x, u_int64_t* y ,int size)
    fprintf(fp, " <svg viewBox=""-10 -10 120 120"" xmlns=""http://www.w3.org/2000/svg"">\n");
    fprintf(fp, "<polyline stroke=""black"" fill=""none""\n");
    fprintf(fp, "points=");
-   for (int i=0 ; i<size;i++ ){
-      
-       fprintf(fp, "%ld,%ld ",x[i],y[i]);
-       
+   for (int i=0 ; i<size;i++ )
+   {  
+        fprintf(fp, "%ld,%ld ",x[i],y[i]);
    }
    
    fprintf(fp, "/>\n");
@@ -36,36 +31,29 @@ void drawSvg( u_int64_t* x, u_int64_t* y ,int size)
    //fputs("This is testing for fputs...\n", fp);
    fclose(fp);
 }
+
 void mirror(int* out , int* in, int size ) // spiegelt up&Down, gibt dircetions zurück
-	{
-		
+{
+    for (int i = 0; i < size; i++)
+    {
+        if ((in[i] %2) == 0)
+        {
+            out[i] = (in[i]+2) % 4;
+        }
+            else
+        {
+        out[i] == in[i];}
+        
+    }
+}
 
-		for (int i = 0; i < size; i++)
-		{
-			if ((in[i] %2) == 0)
-			{
-				out[i] = (in[i]+2) % 4;
-			}
-			 else
-			{
-			out[i] == in[i];}
-			
-		}
-
-		
-	}
 void reverse(int* out , int* in, int size)// spiegelt up&Down, left&right
-	{
-		
-
-		for (int i = 0; i < size; i++)
-		{
-			out[i]=(in[i]+2)%4;
-		}
-
-		
-	}
-
+{
+    for (int i = 0; i < size; i++)
+    {
+        out[i]=(in[i]+2)%4;
+    }
+}
 
 
 //---------------------DECLARATIONS------------------------
@@ -76,130 +64,127 @@ int* curr=(int*)malloc(length*sizeof(int));
 int curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left
 arraycopy(curr,0,curr1,0,length);
 free(curr1);
-
 //----------------------------PEANO HELP FUNCTIONS--------------
 void calcNext(int currGrad)
-	{
-		int* pre =(int*) malloc (length*sizeof(int));
-		arraycopy(curr,0,pre,0,length);
-		int* mir= (int*) malloc (length*sizeof(int) );
-		int * rev= (int*) malloc (length*sizeof(int));
-		int* revMir= (int*) malloc (length*sizeof(int));
-		mirror(mir,curr,length);
-		reverse(rev,curr,length);
-		reverse(revMir,mir, length);
-		
-		
-		curr = (int*)realloc (curr,(pow(9,currGrad) - 1)*sizeof(int)); // für 8 Dir pro base Kurve//TODO
-		
-		int i = 0;
-		
-		arraycopy(pre, 0, curr, i, length);
-		i = i + length;
-		curr[i] = 0;
-		i++;
+{
+    int* pre =(int*) malloc (length*sizeof(int));
+    arraycopy(curr,0,pre,0,length);
+    int* mir= (int*) malloc (length*sizeof(int) );
+    int * rev= (int*) malloc (length*sizeof(int));
+    int* revMir= (int*) malloc (length*sizeof(int));
+    mirror(mir,curr,length);
+    reverse(rev,curr,length);
+    reverse(revMir,mir, length);
+    
+    
+    curr = (int*)realloc (curr,(pow(9,currGrad) - 1)*sizeof(int)); // für 8 Dir pro base Kurve//TODO
+    
+    int i = 0;
+    
+    arraycopy(pre, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 0;
+    i++;
 
-		arraycopy(revMir, 0, curr, i, length);
-		i = i + length;
-		curr[i] = 0;
-		i++;
+    arraycopy(revMir, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 0;
+    i++;
 
-		arraycopy(pre, 0, curr, i, length);
-		i = i + length;
-		curr[i] = 1;
-		i++;
+    arraycopy(pre, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 1;
+    i++;
 
-		arraycopy(mir, 0, curr, i, length);
-		i = i + length;
-		curr[i] = 2;
-		i++;
+    arraycopy(mir, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 2;
+    i++;
 
-		arraycopy(rev, 0, curr, i, length);
-		i = i + length;
-		curr[i] = 2;
-		i++;
+    arraycopy(rev, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 2;
+    i++;
 
-		arraycopy(mir, 0, curr, i, length);
-		i = i + length;
-		curr[i] = 1;
-		i++;
+    arraycopy(mir, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 1;
+    i++;
 
-		arraycopy(pre, 0, curr, i, length);
-		i = i + length;
-		curr[i] = 0;
-		i++;
+    arraycopy(pre, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 0;
+    i++;
 
-		arraycopy(revMir, 0, curr, i, length);
-		i = i + length;
-		curr[i] = 0;
-		i++;
+    arraycopy(revMir, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 0;
+    i++;
 
-		arraycopy(pre, 0, curr, i, length);
-		length=(pow(9,currGrad) - 1);
-		free (mir);
-		free(rev);
-		free (revMir);
-	}
+    arraycopy(pre, 0, curr, i, length);
+    length=(pow(9,currGrad) - 1);
+    free (mir);
+    free(rev);
+    free (revMir);
+}
 
 void peano(unsigned grad, u_int64_t* x1, u_int64_t* y1)
-	{
-		int currGrad = 2;
-		if (grad <= 0){
-				printf("Error number not valid !");
-				return;
-		}
-	int curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left
-	arraycopy(curr1,0,curr,0,length);
-	free(curr1);
-		
-		if(grad != 1)
-		{
-			while(currGrad <= grad)
-			{
-				calcNext(currGrad);
-				currGrad++;
-			}
-		}
+{
+    int currGrad = 2;
+    if (grad <= 0)
+    {
+        printf("Error number not valid !");
+        return;
+    }
+    int curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left
+    arraycopy(curr1,0,curr,0,length);
+    free(curr1);
+    
+    if(grad != 1)
+    {
+        while(currGrad <= grad)
+        {
+            calcNext(currGrad);
+            currGrad++;
+        }
+    }
 
-		
-		int x = 1;
-		int y = 1;
-		int i = 1;
-		x1[0]=x;
-		y1[0]=y;
-		
-
-		for (int  d=0; d <length ;d++)
-		{
-			switch (curr[d])
-			{
-				case 0:
-					y++;
-					break;
-				case 2:
-					y--;
-					break;
-				case 3:
-					x--;
-					break;
-				case 1:
-					x++;
-					break;
-				default:
-					break;
-			}
-		x1[i]=x;
-		y1[i]=y;
-			
-			i++;
-		}
-
-	
-	}
+    int x = 1;
+    int y = 1;
+    int i = 1;
+    x1[0]=x;
+    y1[0]=y;
+    
+    for (int  d=0; d <length ;d++)
+    {
+        switch (curr[d])
+        {
+            case 0:
+                y++;
+                break;
+            case 2:
+                y--;
+                break;
+            case 3:
+                x--;
+                break;
+            case 1:
+                x++;
+                break;
+            default:
+                break;
+        }
+    x1[i]=x;
+    y1[i]=y;
+        
+        i++;
+    }
+}
 
 
-int main(int argc, char** argv) {
-char *pCh;
+int main(int argc, char** argv) #
+{
+    char *pCh;
     unsigned long deg = 42;
     // Check enough arguments.
 
@@ -220,7 +205,6 @@ char *pCh;
 // Avoid warning about unused parameter.
     (void) argc; (void) argv;
 	
-	
 	unsigned dim=pow(9,deg);
 	u_int64_t *x=(u_int64_t*)malloc(dim*sizeof(u_int64_t));
 	u_int64_t *y=(u_int64_t*)malloc(dim*sizeof(u_int64_t));
@@ -231,7 +215,7 @@ char *pCh;
 	free(y);
 	free(curr);
 
-return 0;
+    return 0;
 }
 
 

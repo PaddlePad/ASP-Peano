@@ -27,7 +27,7 @@
 
 \begin{document}
 \maketitle
-
+\newpage
 \section{Einleitung}
 
 Raumfüllende Kurven bilden die Brücke zwischen Kunst und mathematischer Geometrie. In der Mathematik werden sie gemeinhin benutzt um ein n-dimensionales Problem in ein eindimensionales zu konvertieren. Eine solche Kurve beschreibt essentiell einen linearen Pfad durch n-dimensionale Räume. Giuseppe Peano war der Erste, der eine solche Kurve 1890 definierte.
@@ -39,7 +39,7 @@ In einem Iterationsschritt lässt sich eines der 9 Quadrate in weitere 9 Quadrat
 \begin{figure} [ht] %vorher, eigentlich bild unter text
 \centering
 \includegraphics{PeanoBsp.png}
-\caption{Peano-Kurve mit n = \{1,2,3\}, ~\cite{aufgabenstellung}}\label{Abb:Peano}				%TEST
+\caption{Peano-Kurve mit n = \{1,2,3\}, ~\cite{aufgabenstellung}}\label{Abb:Peano}		%TEST
 \end{figure}
 
 %bilder von n=1 bis n=3, wahrscheinlich seite voll?
@@ -66,20 +66,34 @@ Nachdem über alle Grade iteriert wurde, läuft der Algorithmus den vollständig
 % TODO: Je nach Aufgabenstellung einen der Begriffe wählen
 \section{Korrektheit} % oder Genauigkeit 
 
-Die Genauigkeit unseres Algorithmus ist abhängig von dem Grad $n$, dass die Anzahl an Iterationen bestimmt, wie in den Abb.1 beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Ansonsten ist die Kurve wie ebenfalls schon oben beschrieben definiert, weshalb nur die Korrektheit unseres Algorithmus entscheidend ist.
-Grundsätzlich lässt sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen indem man ihre graphischen Darstellungen vergleicht. Da das Theoretisch aber nicht möglich ist, folgt auch eine Implementierung in Assambler und C.
+Die Genauigkeit unseres Algorithmus ist abhängig von dem Grad $n$, dass die Anzahl an Iterationen bestimmt, wie in den Abb.1 beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus genauer, je größer der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert annähern. Ansonsten ist die Kurve wie ebenfalls schon oben beschrieben definiert, weshalb nur die Korrektheit unseres Algorithmus entscheidend ist.
+Grundsätzlich lässt sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen indem man ihre graphischen Darstellungen vergleicht. Da das Theoretisch aber nicht möglich ist, folgt auch eine Implementierung in Assambler und C, die wir auch hinsichtlich ihrer Performanz analysieren wollen.
 Wir wollen dennoch unseren Ansatz auf Korrektheit prüfen.
-Nachdem die Kurve immer wieder die gleichen (elementaren) Bestandteile verwendet, müssen diese und deren Permutationen richtig berechnet werden. Im speziellen sind das die Kurven mit $n = 1$ und $n = 2$. So lässt sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel beschrieben, zum berechnen eine Kurve n-ten Grades nur die Kurve selbst sowie die gespiegelte und invertierte Versionen der Kurve vom Grad n-1 benutzen.
+
+Nachdem die Kurve immer wieder die gleichen (elementaren) Bestandteile verwendet, müssen diese und deren Permutationen richtig berechnet werden. Im speziellen sind das die Kurven mit $n = 1$ und $n = 2$. So lässt sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel beschrieben, zum berechnen eine Kurve n-ten Grades nur die Kurve selbst sowie die gespiegelte und invertierte Versionen der Kurve vom Grad n-1 benutzen. Bei der "invertierten" Version handelt es sich in diesem Kontext um eine Punktspiegelung im Mittelpunkt der vorhergehenden Kurve, weitere Erläuterungen folgen.
+
 %induktionsbasis
 Beginnen wir mit $n = 1$. Hier ist die Kurve vordefiniert, dementsprechend gibt es nichts zu zeigen. Da auf diesem Muster alle anderen Kurven mit $n>1$ basieren, ist sie in unserem Algorithmus ebenfalls als Basis fest gegeben.
+Des Weiteren ist die Definition der Kurve mit $n = 2$ für die Berechnung aller weiteren Kurven von Nöten, da man anhand dieser Kurve die Bedingungen der weiteren Konstruktion ableiten kann.
 %induktionsannahme
 Da die Funktion wie definiert surrjektiv ist, gilt: 
+
 $\forall n>1 \in \mathbb{N}$, $\exists y \in \mathbb{R}^n$ mit $x \in [0,1]$: $f(x)= y$	%evtl ändern...
+
 Dadurch lassen sich Kurven mit höherem Grad konstruieren. Sei nun $n>1$ und beliebig gewählt.
-%induktionschritt
-Betrachten wir nun Kurven mit $n>=2$. Hierzu müssen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad n benötigen.
-Die gespiegelte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, also von $p=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich außer der Reihenfolge der Punkte an der grundlegenden Kurve nichts ändert. Somit ist die Spiegelung induktiv eben so korrekt wie die zugrundeliegende Kurve niedrigeren Grades.
+%induktionschritt - evtl Unterkapitel
+
+Betrachten wir nun Kurven mit $n>=2$. Hierzu müssen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad n benötigen.	%Spiegelung
+Die gespiegelte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, also von $p_1=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich außer der Reihenfolge der Punkte an der grundlegenden Kurve nichts ändert. Somit ist die Spiegelung induktiv eben so korrekt wie die zugrundeliegende Kurve niedrigeren Grades.
+
+%Invertierung
 Bei der Invertierung wird die Kurve ähnlich zur Achsenspiegelung ebenfalls die vertikale Richtung geändert, jedoch wird weiterhin auch die horizontale Richtung geändert. Die Kurve wird in dem mittlerem Punkt der Kurve gespiegelt. Da die Kurve immer $9^n$ Felder besitzt, existiert immer ein solcher Mittelpunkt. Dadurch wird die vorausgehende Kurve notwendiger weise verändert.  Diese zusätzliche Operation ist ebenfalls elementare Spiegelungen sind und somit direkt auf die Koordinatenberechnung Einfluss haben ohne die Kurve anders zu verändern, ändert sich der charakteristische Verlauf der Kurve nicht.
+
+%Punktsymetrie
+Die Eigenschaft der Punktsymetrie lässt sich wie folgt belegen: 
+%Verbinden der Permutationen
+
+Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine eben solche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einfügen. Zudem ist dies teil auch ebenso teil der Definition dieser Kurve. 
 
 %Mathematischen sachen be/ver-weisen!
 %Mappen wir in [0,1]? sonst evtl Text ändern!
