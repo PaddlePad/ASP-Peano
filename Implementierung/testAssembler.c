@@ -2,63 +2,48 @@
 #include <stdlib.h>
 #include <math.h>
 
-void peano(unsigned degree, uint64_t* x, uint64_t* y);
-void reverse(u_int64_t in, u_int64_t out, unsinged size);
-void mirror(u_int64_t in, u_int64_t out, unsinged size);
+extern void peano(unsigned degree, u_int64_t *x, u_int64_t *y);
+extern void reverse(u_int64_t *in, u_int64_t *out, unsigned size);
+extern void mirror(u_int64_t *in, u_int64_t *out, unsigned size);
 
-void printCurve(int length, int* curve)
+void printCurve(int length, u_int64_t *curve)
 {
     for (int i = 0; i < length; i++)
     {
-        printf("%d, ", curve[i]);
+        printf("%ld, ", curve[i]);
     }
+
+    printf("\n");
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-    char *pCh;
-    unsigned long deg = 42;
-    // Check enough arguments.
+    // Avoid warning about unused parameter.
+    (void)argc;
+    (void)argv;
 
-    if (argc != 2) {
-        puts ("Not enough arguments");
-        return 1;
-    }    
-    
-    // Convert to ulong WITH CHECKING!
-
-    deg = strtoul (argv[1], &pCh, 10);
-// Ensure argument was okay.
-
-    if ((pCh == argv[1]) || (*pCh != '\0')) {
-        puts ("Invalid number");
-        return 1;
-    }    
-// Avoid warning about unused parameter.
-    (void) argc; (void) argv;
-	
-	unsigned dim=pow(9,deg);
     int length = 8;
-	u_int64_t *x=(u_int64_t*)malloc(dim*sizeof(u_int64_t));
-	u_int64_t *y=(u_int64_t*)malloc(dim*sizeof(u_int64_t));
-	int curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left , Kurve mit grad 1
-    int* curr=(int*)malloc(length*sizeof(int));
-    int* curr2=(int*)malloc(length*sizeof(int));
-	//peano(deg,x,y);
-    printCurve(length, curr1);    
-    printCurve(length, curr);
-    printCurve(length, curr2);
-	free(x);
-	free(y);
-	free(curr);
-    free(curr1);
+    u_int64_t curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left , Kurve mit grad 1
+    // u_int64_t *curr1 = (u_int64_t *)malloc(length * sizeof(u_int64_t));
+    // curr1[0] = 0;
+    // curr1[1] = 0;
+    // curr1[2] = 1;
+    // curr1[3] = 2;
+    // curr1[4] = 2;
+    // curr1[5] = 1;
+    // curr1[6] = 0;
+    // curr1[7] = 0;
+    u_int64_t *rev = (u_int64_t *)malloc(length * sizeof(u_int64_t));
+    u_int64_t *mirr = (u_int64_t *)malloc(length * sizeof(u_int64_t));
+
+    printCurve(length, curr1);
+    reverse(curr1, rev, length);
+    printCurve(length, rev);
+    mirror(curr1, mirr, length);
+    printCurve(length, mirr);
+    free(rev);
+    //free(curr1);
+    free(mirr);
 
     return 0;
 }
-
-
- 
-
- 
-	
-
