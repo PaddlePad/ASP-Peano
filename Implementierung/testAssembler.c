@@ -24,15 +24,6 @@ int main(int argc, char **argv)
 
     int length = 8;
     u_int64_t curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left , Kurve mit grad 1
-    // u_int64_t *curr1 = (u_int64_t *)malloc(length * sizeof(u_int64_t));
-    // curr1[0] = 0;
-    // curr1[1] = 0;
-    // curr1[2] = 1;
-    // curr1[3] = 2;
-    // curr1[4] = 2;
-    // curr1[5] = 1;
-    // curr1[6] = 0;
-    // curr1[7] = 0;
     u_int64_t *rev = (u_int64_t *)malloc(length * sizeof(u_int64_t));
     u_int64_t *mirr = (u_int64_t *)malloc(length * sizeof(u_int64_t));
 
@@ -42,7 +33,6 @@ int main(int argc, char **argv)
     mirror(curr1, mirr, length);
     printCurve(length, mirr);
     free(rev);
-    //free(curr1);
     free(mirr);
 
     return 0;
