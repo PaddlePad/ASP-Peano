@@ -1,5 +1,5 @@
 # Add additional compiler flags here
-CFLAGS=-O0 -Wall -Wextra
+CFLAGS=-O0 -Wall -Wextra -DNDEBUG -g
 
 all: peano
 peano: peano.c peano.S

@@ -2,17 +2,26 @@
 #include <stdlib.h>
 #include <math.h>
 //void peano(unsigned degree, uint64_t* x, uint64_t* y);
-//------------------------HELP FUNCTIONS-------------------
+//void reverse(u_int64_t in, u_int64_t out, unsinged size);
+//void mirror(u_int64_t in, u_int64_t out, unsinged size);
+//---------------------DECLARATIONS------------------------
+	// base Kurve merken
+int length = 8;
+	
+int* curr=(int*)malloc(length*sizeof(int));
+int curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left
+//arraycopy(curr, 0, curr1, 0, length);
+//free(curr1);
 
+//------------------------HELP FUNCTIONS-------------------
 void arraycopy (int* src, int srcPos, int* dest, int destPos, int length1 )//VERIFY IF THIS WORKS
 {
-	for (int i=srcPos; i<(srcPos+length1);i++){
-	dest[destPos+(i-srcPos)]=src[i];}
+	for (int i=srcPos; i<(srcPos+length1); i++)
+    { dest[destPos+(i-srcPos)]=src[i]; }
 }
 
-void drawSvg( u_int64_t* x, u_int64_t* y ,int size)
+void drawSvg(u_int64_t *x, u_int64_t *y, int size)
 {
-
     FILE *fp;
 
    fp = fopen("tot.svg", "w+");
@@ -22,7 +31,7 @@ void drawSvg( u_int64_t* x, u_int64_t* y ,int size)
    fprintf(fp, "points=");
    for (int i=0 ; i<size;i++ )
    {  
-        fprintf(fp, "%ld,%ld ",x[i],y[i]);
+        fprintf(fp, "%ld,%ld ", x[i], y[i]);
    }
    
    fprintf(fp, "/>\n");
@@ -36,14 +45,14 @@ void mirror(int* out , int* in, int size ) // spiegelt up&Down, gibt dircetions 
 {
     for (int i = 0; i < size; i++)
     {
-        if ((in[i] %2) == 0)
+        if ((in[i] % 2) == 0)
         {
             out[i] = (in[i]+2) % 4;
         }
             else
         {
-        out[i] == in[i];}
-        
+            out[i] == in[i];
+        }
     }
 }
 
@@ -51,19 +60,10 @@ void reverse(int* out , int* in, int size)// spiegelt up&Down, left&right
 {
     for (int i = 0; i < size; i++)
     {
-        out[i]=(in[i]+2)%4;
+        out[i]=(in[i]+2) % 4;
     }
 }
 
-
-//---------------------DECLARATIONS------------------------
-	// base Kurve merken
-int length=8;
-	
-int* curr=(int*)malloc(length*sizeof(int));
-int curr1[] = {0,0,1,2,2,1,0,0}; //0 : up , 1 : right , 2 : down , 3 : left
-arraycopy(curr,0,curr1,0,length);
-free(curr1);
 //----------------------------PEANO HELP FUNCTIONS--------------
 void calcNext(int currGrad)
 {
@@ -128,7 +128,7 @@ void calcNext(int currGrad)
     free (revMir);
 }
 
-void peano(unsigned grad, u_int64_t* x1, u_int64_t* y1)
+void peano(unsigned grad, u_int64_t* x1, uint64_t* y1)
 {
     int currGrad = 2;
     if (grad <= 0)
@@ -182,7 +182,7 @@ void peano(unsigned grad, u_int64_t* x1, u_int64_t* y1)
 }
 
 
-int main(int argc, char** argv) #
+int main(int argc, char** argv)
 {
     char *pCh;
     unsigned long deg = 42;
@@ -214,6 +214,7 @@ int main(int argc, char** argv) #
 	free(x);
 	free(y);
 	free(curr);
+    free(curr1);
 
     return 0;
 }
