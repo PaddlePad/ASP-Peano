@@ -181,7 +181,6 @@ void peano(unsigned grad, u_int64_t* x1, uint64_t* y1)
     }
 }
 
-
 int main(int argc, char** argv)
 {
     char *pCh;
