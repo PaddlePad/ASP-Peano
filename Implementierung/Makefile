@@ -1,8 +1,8 @@
 # Add additional compiler flags here
 CFLAGS=-O0 -Wall -Wextra -DNDEBUG -g
-## peano.c peano.S
+## 
 all: peano
-peano: testAssembler.c mirror.S reverse.S
-	$(CC) $(CFLAGS) -o $@ $^
+peano: peano.c peano.S #testAssembler.c mirror.S reverse.S
+	$(CC) $(CFLAGS) -o $@ $^ -lm
 clean:
 	rm -f peano
