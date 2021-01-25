@@ -240,8 +240,8 @@ int main(int argc, char **argv)
 {
     char *pCh;
     unsigned long deg = 42;
-    char* exRek = "-r";
-    char* exInC = "-C";
+    char* executeRekursive = "-r";
+    char* executeInC = "-C";
 
     // Check arguments
     if (argc > 3 || argc < 2)
@@ -263,7 +263,7 @@ int main(int argc, char **argv)
                 deg = strtoul(argv[1], &pCh, 10);
             }
         }
-        else if (argc == 3 && (strcmp(argv[1], exInC) == 0 || strcmp(argv[1], exRek) == 0))
+        else if (argc == 3 && (strcmp(argv[1], executeInC) == 0 || strcmp(argv[1], executeRekursive) == 0))
         {
             // Ensure argument was okay.
             deg = strtoul(argv[2], &pCh, 10);
@@ -286,21 +286,21 @@ int main(int argc, char **argv)
     (void)argv;
 
     unsigned dim = (int)pow(9, deg);
-    u_int64_t *x = (u_int64_t *)oc(dim * sizeof(u_int64_t));
-    u_int64_t *y = (u_int64_t *)oc(dim * sizeof(u_int64_t));
+    u_int64_t *x = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
+    u_int64_t *y = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
 
     //WENN FERTIG EINKOMMENTIEREN!!
     /*if(argc == 2)   //Execute Assembler
     {
-
+        puts("Assembler, GOGOGO!");
     }
-    else if(argc == 3 && strcmp(argv[1], exInC) == 0)   //execute Peano in C
+    else if(argc == 3 && strcmp(argv[1], executeInC) == 0)   //execute Peano in C
     {
-
+        puts("Iterativ, GOGOGO!");
     }
     else    //execute Rekursive
     {
-        
+        puts("Rekursiv, GOGOGO!");
     }*/
     
     peano(deg, x, y);
