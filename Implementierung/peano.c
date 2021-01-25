@@ -23,28 +23,43 @@ void arraycopy(int *src, int srcPos, int *dest, int destPos, int length1) //VERI
 
 void drawSvg(u_int64_t *x, u_int64_t *y, int size)
 {
+    int width = size / 3;
+    int dim = width / 3;
+
     FILE *fp;
 
-    fp = fopen("tot.svg", "w+");
+    char* title = (char*) malloc(sizeof(char) * 10);
+    sprintf(title, "peanoGrad%d.svg", dim);
+    free(title);
+    
+    fp = fopen("peano.svg", "w+");
 
-    fprintf(fp, " <svg viewBox="
-                "-10 -10 120 120"
-                " xmlns="
-                "http://www.w3.org/2000/svg"
-                ">\n");
-    fprintf(fp, "<polyline stroke="
-                "black"
-                " fill="
-                "none"
-                "\n");
-    fprintf(fp, "points=");
+    fprintf(fp, "<?xml version=\"1.0\"?>\n");
+    fprintf(fp, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
+    fprintf(fp, "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
+
+    fprintf(fp, "\n<svg height=\"%d\" width=\"%d\">\n", width * 300 / dim, width * 300 / dim);
+    fprintf(fp, "\t<polyline points=\"");
     for (int i = 0; i < size; i++)
     {
-        fprintf(fp, "%ld,%ld ", x[i], y[i]);
-    }
-
-    fprintf(fp, "/>\n");
+        fprintf(fp, "%ld,%ld ", x[i] * 225 / dim, (width + (width / 2) - y[i]) * 225 / dim);
+        if(i > 0 && i % 9 == 0)
+            fprintf(fp, "\n\t");
+    }      
+    fprintf(fp, "\"\n\tstyle=\"fill:none;stroke:black;stroke-width:3\" />\n");
     fprintf(fp, "</svg>\n");
+                
+               
+
+    // fprintf(fp, "\n<svg viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\">\n");
+    // fprintf(fp, "<polyline style=\"stroke:black;fill:none;stroke-width:1\"\n");
+    // fprintf(fp, "points=\"");
+    // for (int i = 0; i < size; i++)
+    // {
+    //     fprintf(fp, "%ld,%ld ", x[i], y[i]);
+    // }
+    // fprintf(fp, "\"/>\n");
+    // fprintf(fp, "</svg>\n");
 
     //fputs("This is testing for fputs...\n", fp);
     fclose(fp);
@@ -77,7 +92,6 @@ void reverse(int *out, int *in, int size) // spiegelt up&Down, left&right
 void calcNext(int currGrad, int *curr)
 {
     int *pre = (int *)malloc(length * sizeof(int));
-    arraycopy(curr, 0, pre, 0, length);
     int *mir = (int *)malloc(length * sizeof(int));
     int *rev = (int *)malloc(length * sizeof(int));
     int *revMir = (int *)malloc(length * sizeof(int));
@@ -85,7 +99,8 @@ void calcNext(int currGrad, int *curr)
     reverse(rev, curr, length);
     reverse(revMir, mir, length);
 
-    curr = (int *)realloc(curr,  ((int)pow(9, currGrad) - 1) * sizeof(int)); // für 8 Dir pro base Kurve//TODO
+    arraycopy(curr, 0, pre, 0, length);
+    curr = (int *)realloc(curr, ((int)pow(9, currGrad) - 1) * sizeof(int)); // für 8 Dir pro base Kurve//TODO
 
     int i = 0;
 
@@ -131,6 +146,7 @@ void calcNext(int currGrad, int *curr)
 
     arraycopy(pre, 0, curr, i, length);
     length = ((int)pow(9, currGrad) - 1);
+    free(pre);
     free(mir);
     free(rev);
     free(revMir);
@@ -145,7 +161,7 @@ void peano(unsigned grad, u_int64_t *x1, u_int64_t *y1)
         return;
     }
 
-    int *curr = (int*)malloc(length * sizeof(int));
+    int *curr = (int *)malloc(length * sizeof(int));
     int curr1[] = {0, 0, 1, 2, 2, 1, 0, 0}; //0 : up , 1 : right , 2 : down , 3 : left
     arraycopy(curr1, 0, curr, 0, length);
 
@@ -153,7 +169,7 @@ void peano(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     {
         while (currGrad <= grad)
         {
-            calcNext(currGrad, curr);
+            calcNext(currGrad, curr, pre, mir, rev, revMir);
             currGrad++;
         }
     }
@@ -192,36 +208,101 @@ void peano(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     free(curr);
 }
 
+void getHelp()
+{
+    printf("---------------------HELP---------------------\n");
+    printf("Dieses Programm enthält unterschiedliche Arten\n");
+    printf("eine Peano-Kurve als .svg Datei ausgeben zu \n");
+    printf(" lassen. In dieser Implementierung benotigt \n");
+    printf(" die Kurve den Parameter <Grad>. Dieser gibt \n");
+    printf(" die Anzahl an Iterationen an. Für weiter\n");
+    printf(" Informationen (zur Peano-Kurve) lesen sie \n");
+    printf(" bitte \"Ausarbeitung.pdf\". \n");
+
+    printf("1.) Die Peano Kurve iterativ in C). \n");
+    printf("\tDazu das Programm mit den Argumenten: \n");
+    printf("\t -C <Grad> \n");
+    printf("\tstarten, wobei <Grad> eine Ganze Zahl ist.\n");
+
+    printf("2.) Die Peano Kurve iterativ in Assembler. \n");
+    printf("\tDazu das Programm mit den Argumenten: \n");
+    printf("\t <Grad> \n");
+    printf("\tstarten, wobei <Grad> eine Ganze Zahl ist.\n");
+
+    printf("3.) Die Peano Kurve rekursiv in C. \n");
+    printf("\tDazu das Programm mit den Argumenten: \n");
+    printf("\t -r <Grad> \n");
+    printf("\tstarten, wobei <Grad> eine Ganze Zahl ist.\n");
+    printf("----------------------------------------------\n");
+}
+
 int main(int argc, char **argv)
 {
     char *pCh;
     unsigned long deg = 42;
-    // Check enough arguments.
+    char* exRek = "-r";
+    char* exInC = "-C";
 
-    if (argc != 2)
+    // Check arguments
+    if (argc > 3 || argc < 2)
     {
-        puts("Not enough arguments");
+        puts("Not enough or too many arguments. Try again with -h for Help.");
         return 1;
     }
-
+    else
+    {
+        if(argc == 2)
+        {
+            if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "-help") == 0)
+            {
+                getHelp();
+                return 0;
+            }
+            else    //Peno Kurve iterativ in Assembler aufrufen
+            {
+                deg = strtoul(argv[1], &pCh, 10);
+            }
+        }
+        else if (argc == 3 && (strcmp(argv[1], exInC) == 0 || strcmp(argv[1], exRek) == 0))
+        {
+            // Ensure argument was okay.
+            deg = strtoul(argv[2], &pCh, 10);
+        }
+        else
+        {
+            puts("Invalid Arguments. Try again with -h for help (in GER).");
+            return 2;
+        }
+    }
+    
     // Convert to ulong WITH CHECKING!
-
-    deg = strtoul(argv[1], &pCh, 10);
-    // Ensure argument was okay.
-
     if ((pCh == argv[1]) || (*pCh != '\0'))
     {
         puts("Invalid number");
         return 1;
     }
-    // Avoid warning about unused parameter.
+    // Avoid warning about unused parameter.    eigentlich unnötig...
     (void)argc;
     (void)argv;
 
     unsigned dim = (int)pow(9, deg);
-    u_int64_t *x = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
-    u_int64_t *y = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
+    u_int64_t *x = (u_int64_t *)oc(dim * sizeof(u_int64_t));
+    u_int64_t *y = (u_int64_t *)oc(dim * sizeof(u_int64_t));
 
+    //WENN FERTIG EINKOMMENTIEREN!!
+    /*if(argc == 2)   //Execute Assembler
+    {
+
+    }
+    else if(argc == 3 && strcmp(argv[1], exInC) == 0)   //execute Peano in C
+    {
+
+    }
+    else    //execute Rekursive
+    {
+        
+    }*/
+    
     peano(deg, x, y);
     drawSvg(x, y, dim);
     free(x);
