@@ -176,13 +176,12 @@ void peano(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
     int x = 1;
     int y = 1;
-    int i = 1;
     x1[0] = x;
     y1[0] = y;
 
-    for (int d = 0; d < length; d++)
+    for (int i; i < length; i++)
     {
-        switch (curr[d])
+        switch (curr[i])
         {
         case 0:
             y++;
@@ -201,8 +200,6 @@ void peano(unsigned grad, u_int64_t *x1, u_int64_t *y1)
         }
         x1[i] = x;
         y1[i] = y;
-
-        i++;
     }
 
     free(curr);

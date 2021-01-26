@@ -6,15 +6,94 @@
 //  x*   = rsi
 //  y*   = rdx
 
+//BENUTZTE REGISTER:
+//Parameter:    rdi, rsi, rdx
+//Callersaved:  rcx, rax, 
+//Calleesaved:  rbp, rsp, r12, r13  //Pat: These
+
 // Directions: 0 = up , 1 = right , 2 = down , 3 = left
 
-peano: // rdi = grad, rsi x*, rcx* y
-mov rbp, 1
+peano: // rdi = grad, rsi x*, rdx* y
+    mov al, 1                       //AL == 1
+    mov rbp, al                  //Für calcNext auf 1 setzen
 
+    //Hardcode default Kurve in rsi //immediate oder register?
+    mov qword ptr[rsi], 0 
+    mov qword ptr[rsi + 8], 0 
+    mov qword ptr[rsi + 16], al
+    mov qword ptr[rsi + 24], 2
+    mov qword ptr[rsi + 32], 2 
+    mov qword ptr[rsi + 40], al
+    mov qword ptr[rsi + 48], 0 
+    mov qword ptr[rsi + 56], 0
+
+    cmp rdi, al                  //wenn grad = 1, koord berechnen und fertig
+    jle .LKoordinatenCalc
+    mov r13, rbp                    //imm 1 oder rbp?
+.LoopCalcNext:  //currGrad = r13, Zielgrad
+    cmp r13, rdi
+    jge .LKoordinatenCalc       //ausprobieren ob jg oder jge
+    call calcNext
+    inc r13                     //currGrad++
+    jmp .LoopCalcNext
+
+.LKoordinatenCalc:   // rsi x*, rdx* y
+    //index x = rax, index y = rcx, laufindex = r8
+    mov rax, 1
+    mov rcx, rax    //alles auf 1 setzen
+    xor r8, r8      //r8 = 0
+    //anzahl Felder berechnen für abbruch
+    mul rbp, 9
+
+.LKoordinatenIteration:
+    //Abbruchbedingung
+    cmp r8, rbp
+    jg .LEnd
+
+    //letzen 2 bit entscheidend
+    test qword ptr[rsi + r8 * 8], 0x0000_0000_0000_0001 //ob zahl gerade
+    jnz .LDirUngerade                               //wenn %2 != 0, dir = 1 oder 3
+    test ptr[rsi + r8 * 8], 0x0000_0000_0000_0002   //test 2. bit -> dir 0 oder 2
+    jnz .LDir2
+
+    //Dir0  //oben
+    inc rcx
+    mov qword ptr[rdx + r8 * 8], rcx    //y-koord in y* //change steht oben
+    mov qword ptr[rsi + r8 * 8], rax    //x-koord in x*
+    jmp .LKoordinatenIterationEnd
+
+    .LDir2: //unten
+    dec rcx
+    mov qword ptr[rdx + r8 * 8], rcx    //y-koord in y*
+    mov qword ptr[rsi + r8 * 8], rax    //x-koord in x*
+    jmp .LKoordinatenIterationEnd
+
+.LDirUngerade:
+    test ptr[rsi + r8 * 8], 0x0000_0000_0000_0002   //test 2. bit 
+    jnz .LDir3
+
+    //Dir1  //rechts
+    inc rax
+    mov qword ptr[rsi + r8 * 8], rax    //x-koord in x*
+    mov qword ptr[rdx + r8 * 8], rcx    //y-koord in y*
+    jmp .LKoordinatenIterationEnd
+
+    .LDir3: //links
+    dec rax
+    mov qword ptr[rsi + r8 * 8], rax    //x-koord in x*
+    mov qword ptr[rdx + r8 * 8], rcx    //y-koord in y*
+    jmp .LKoordinatenIterationEnd
+
+.LKoordinatenIterationEnd:
+    inc r8
+    jmp .LKoordinatenIteration
+
+.LEnd:
+ret
 
 //--------------HILFSFUNKTIONEN--------------
 
-calcNext: // rdi = Grad, rsi curr array pointer
+calcNext: //rsi curr array pointer, currGrad = r8
     // wir versuchen die arrays jedes mal zu erstellen
     // wenn wir sie brauchen
 
@@ -46,8 +125,8 @@ calcNext: // rdi = Grad, rsi curr array pointer
     call normalInsert
     add rsp, rbp                // i = i + length;
 
-    //Verbindungsschritt nach Links
-    mov qword ptr[rsi + rsp * 8], 3
+    //Verbindungsschritt nach Rechts
+    mov qword ptr[rsi + rsp * 8], 1
 
     //Vierter Step
     mov rcx, rbp                
@@ -73,8 +152,8 @@ calcNext: // rdi = Grad, rsi curr array pointer
     call mirror
     add rsp, rbp
 
-    //Verbindungsschritt nach Links
-    mov qword ptr[rsi + rsp * 8], 3
+    //Verbindungsschritt nach rechts
+    mov qword ptr[rsi + rsp * 8], 1
 
     //Siebter Schritt
     mov rcx, rbp                
@@ -103,7 +182,8 @@ calcNext: // rdi = Grad, rsi curr array pointer
     call normalInsert
 
     //length = ((int)pow(9, currGrad) - 1);
-
+    
+ret
 
 normalInsert: // rsi = array, size = rcx, offset = rsp        //Normales einfügen der Schleife
     cmp rcx, 0          //ende der Schleife
