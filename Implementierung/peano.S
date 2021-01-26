@@ -32,19 +32,92 @@ calcNext: // rdi = Grad, rsi curr array pointer
     mov rcx, rbp                
     dec rcx                     // counter neu setzen  
     call reverse                
-    mov r12, rsp                
+    mov r12, rsp                //reverse mirror offset setzen
+    call mirror                 //TESTEN
     add rsp, rbp                // i = i + length;
     xor r12, r12                // reverse-mirror offset nullen
-
+    
     // Verbindungsschritt nach oben
     mov qword ptr[rsi + rsp * 8], 0
 
     // Dritter step
+    mov rcx, rbp                //counter setzen
+    dec rcx 
+    call normalInsert
+    add rsp, rbp                // i = i + length;
+
+    //Verbindungsschritt nach Links
+    mov qword ptr[rsi + rsp * 8], 3
+
+    //Vierter Step
+    mov rcx, rbp                
+    dec rcx   
+    call mirror
+    add rsp, rbp                // i = i + length;
+
+    //Verbindungsschritt nach Unten
+    mov qword ptr[rsi + rsp * 8], 2
+
+    //Fünfter Step
+    mov rcx, rbp                
+    dec rcx 
+    call reverse
+    add rsp, rbp
+
+    //Verbindungsschritt nach Unten
+    mov qword ptr[rsi + rsp * 8], 2
+
+    //Sechster Step
+    mov rcx, rbp                
+    dec rcx 
+    call mirror
+    add rsp, rbp
+
+    //Verbindungsschritt nach Links
+    mov qword ptr[rsi + rsp * 8], 3
+
+    //Siebter Schritt
+    mov rcx, rbp                
+    dec rcx 
+    call normalInsert
+    add rsp, rbp
+
+    //Verbindungsschritt nach oben
+    mov qword ptr[rsi + rsp * 8], 0
+
+    //Achter Step               //wie oben
+    mov rcx, rbp                
+    dec rcx                     // counter neu setzen  
+    call reverse                
+    mov r12, rsp                //reverse mirror offset setzen
+    call mirror                 
+    add rsp, rbp                // i = i + length;
+    xor r12, r12                // reverse-mirror offset nullen
+
+    //Verbindungsschritt nach oben
+    mov qword ptr[rsi + rsp * 8], 0
+
+    //Letzter Step
+    mov rcx, rbp                
+    dec rcx 
+    call normalInsert
+
+    //length = ((int)pow(9, currGrad) - 1);
+
+
+normalInsert: // rsi = array, size = rcx, offset = rsp        //Normales einfügen der Schleife
+    cmp rcx, 0          //ende der Schleife
+    jle .LEndInsert
+
+    mov rax, qword ptr[rsi + rcx * 8]
+    mov qword ptr[rsi + rcx * 8 + rsp], rax  //wert von array in anderen Bereich schreiben
     
+    dec rcx
+    jmp normalInsert
 
+.LEndInsert: ret
 
-
-reverse: // rsi = array, size = rcx (in bleiben gleich)
+reverse: // rsi = array, size = rcx, offset = rsp
 //für schnellere Vergleiche evtl 0 in al oder so
     cmp rcx, 0          //ende der Schleife
     jle .LEndReverse
@@ -61,7 +134,6 @@ reverse: // rsi = array, size = rcx (in bleiben gleich)
     jmp reverse
 
 .LEndReverse:
-    //SPÄTER
 ret   
 
 mirror: //  rsi = array, size = rcx, offset = rsp, reverse-mirror offset = r12 
@@ -84,6 +156,4 @@ mirror: //  rsi = array, size = rcx, offset = rsp, reverse-mirror offset = r12
     jmp mirror
 
 .LEndMirror:
-    //SPÄTER
-
 ret
