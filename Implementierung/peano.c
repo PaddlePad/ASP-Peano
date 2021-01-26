@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 //void peano(unsigned degree, uint64_t* x, uint64_t* y);
 //void reverse(u_int64_t in, u_int64_t out, unsinged size);
 //void mirror(u_int64_t in, u_int64_t out, unsinged size);
@@ -169,7 +170,7 @@ void peano(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     {
         while (currGrad <= grad)
         {
-            calcNext(currGrad, curr, pre, mir, rev, revMir);
+            calcNext(currGrad, curr);
             currGrad++;
         }
     }
@@ -179,7 +180,7 @@ void peano(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     x1[0] = x;
     y1[0] = y;
 
-    for (int i; i < length; i++)
+    for (int i = 0; i < length; i++)
     {
         switch (curr[i])
         {
