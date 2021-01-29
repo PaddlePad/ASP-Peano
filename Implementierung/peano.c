@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-//void peano(unsigned degree, uint64_t* x, uint64_t* y);
+extern void peano(unsigned degree, u_int64_t* x, u_int64_t* y);
 //void reverse(u_int64_t in, u_int64_t out, unsinged size);
 //void mirror(u_int64_t in, u_int64_t out, unsinged size);
+//u_int64_t = long unsigned int
 //---------------------DECLARATIONS------------------------
 // base Kurve merken
 int length = 8;
@@ -153,10 +154,10 @@ void calcNext(int currGrad, int *curr)
     free(revMir);
 }
 
-void peano(unsigned grad, u_int64_t *x1, u_int64_t *y1)
+void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
     unsigned currGrad = 2;
-    if (grad <= 0)
+    if (grad <= 0)  //auch Auf überlauf checken!!
     {
         printf("Error number not valid !");
         return;
@@ -206,7 +207,7 @@ void peano(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     free(curr);
 }
 
-void getHelp()
+void getHelp()  //Wertebereich des Grads angeben!
 {
     printf("---------------------HELP---------------------\n");
     printf("Dieses Programm enthält unterschiedliche Arten\n");
@@ -220,17 +221,17 @@ void getHelp()
     printf("1.) Die Peano Kurve iterativ in C). \n");
     printf("\tDazu das Programm mit den Argumenten: \n");
     printf("\t -C <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze Zahl ist.\n");
+    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\nist.\n");
 
     printf("2.) Die Peano Kurve iterativ in Assembler. \n");
     printf("\tDazu das Programm mit den Argumenten: \n");
     printf("\t <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze Zahl ist.\n");
+    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\nist.\n");
 
     printf("3.) Die Peano Kurve rekursiv in C. \n");
     printf("\tDazu das Programm mit den Argumenten: \n");
     printf("\t -r <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze Zahl ist.\n");
+    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\nist.\n");
     printf("----------------------------------------------\n");
 }
 
@@ -288,24 +289,25 @@ int main(int argc, char **argv)
     u_int64_t *y = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
 
     //WENN FERTIG EINKOMMENTIEREN!!
-    /*if(argc == 2)   //Execute Assembler
+    if(argc == 2)   //Execute Assembler
     {
         puts("Assembler, GOGOGO!");
+        peano(deg, x, y);
+        drawSvg(x, y, dim);
     }
     else if(argc == 3 && strcmp(argv[1], executeInC) == 0)   //execute Peano in C
     {
         puts("Iterativ, GOGOGO!");
+        peanoInC(deg, x, y);
+        drawSvg(x, y, dim);
     }
     else    //execute Rekursive
     {
         puts("Rekursiv, GOGOGO!");
-    }*/
-    
-    peano(deg, x, y);
-    drawSvg(x, y, dim);
+    }
+
     free(x);
     free(y);
-
 
     return 0;
 }

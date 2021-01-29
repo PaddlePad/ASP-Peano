@@ -9,27 +9,29 @@
 //BENUTZTE REGISTER:
 //Parameter:    rdi, rsi, rdx
 //Callersaved:  rcx, rax, 
-//Calleesaved:  rbp, r12, r13, r14  //Pat: These
+//Calleesaved:  rbp, r12, r13, r14
 
 // Directions: 0 = up , 1 = right , 2 = down , 3 = left
 
 peano: // rdi = grad, rsi x*, rdx* y
-    mov rax, 1                       //AL == 1
+    mov rax, 1                    //AL == 1
     mov rbp, rax                  //Für calcNext auf 1 setzen
 
     //Hardcode default Kurve in rsi //immediate oder register?
-    mov qword ptr[rsi], 0 
-    mov qword ptr[rsi + 8], 0 
+    mov qword ptr[rsi], 0
+    mov qword ptr[rsi + 8], 0
     mov qword ptr[rsi + 16], rax
     mov qword ptr[rsi + 24], 2
-    mov qword ptr[rsi + 32], 2 
+    mov qword ptr[rsi + 32], 2
     mov qword ptr[rsi + 40], rax
-    mov qword ptr[rsi + 48], 0 
+    mov qword ptr[rsi + 48], 0
     mov qword ptr[rsi + 56], 0
 
     cmp rdi, rax                  //wenn grad = 1, koord berechnen und fertig
     jle .LKoordinatenCalc
     mov r13, rbp                    //imm 1 oder rbp?
+    mov qword ptr[rdx], 8           //8 speichern, wird so oft verwendet
+
 .LoopCalcNext:  //currGrad = r13, Zielgrad
     cmp r13, rdi
     jge .LKoordinatenCalc       //ausprobieren ob jg oder jge
@@ -195,8 +197,11 @@ normalInsert: // rsi = array, size = rcx, offset = r14        //Normales einfüg
     cmp rcx, 0          //ende der Schleife
     jle .LEndInsert
 
-    mov rax, qword ptr[rsi + rcx * 8]
-    mov qword ptr[rsi + rcx * 8 + r14], rax  //wert von array in anderen Bereich schreiben
+    mov r8, rcx                             //r8 = rcx
+    shl r8, 3                               //mul rcx, 8
+    mov rax, qword ptr[rsi + r8]            //qword ptr[rsi + rcx * 8]
+    add r8, r14                             //dann: rcx * 8 + r14
+    mov qword ptr[rsi + r8], rax            //wert von array in anderen Bereich schreiben, ptr[rsi + rcx * 8 + r14]
     
     dec rcx
     jmp normalInsert
@@ -209,12 +214,16 @@ reverse: // rsi = array, size = rcx, offset = r14
     jle .LEndReverse
 
     //Ziel: out[i] = (in[i] + 2) % 4;
-    mov rax, qword ptr[rsi + rcx * 8]
-    mov qword ptr[rsi + rcx * 8 + r14], rax  //wert von in in out schreiben
-    add qword ptr[rsi + rcx * 8 + r14], 2          //out[i] + 2    für schnellere Vergleiche evtl 2 in al oder so, Videos anschauen zu ptr
-    cmp qword ptr[rsi + rcx * 8 + r14], 3
+    mov r8, rcx
+    shl r8, 3                           //rcx*8
+    mov rax, qword ptr[rsi + r8]
+    add r8, r14                         //rcx * 8 + r14
+    mov qword ptr[rsi + r8], rax        //wert von in in out schreiben
+    add qword ptr[rsi + r8], 2          //out[i] + 2    für schnellere Vergleiche evtl 2 in al oder so, Videos anschauen zu ptr
+    cmp qword ptr[rsi + r8], 3
+
     jle .LoopReverse
-    sub qword ptr[rsi + rcx * 8 + r14], 4         //(out[i] + 2) % 4
+    sub qword ptr[rsi + r8], 4         //(out[i] + 2) % 4
 .LoopReverse:    
     dec rcx
     jmp reverse
@@ -228,14 +237,20 @@ mirror: //  rsi = array, size = rcx, offset = r14, reverse-mirror offset = r12
     jle .LEndMirror
 
     //Ziel: if ((in[i] % 2) == 0), do {out[i] = (in[i]+2) % 4;}
-    mov rax, qword ptr[rsi + rcx * 8 + r12]
-    mov qword ptr[rsi + rcx * 8 + r14], rax  //wert von in in out schreiben
-    test qword ptr[rsi + rcx * 8 + r14], 0x0000_0000_0000_0001    //test last bit (mod 2), check wegen Leerzeichen
+    mov r8, rcx
+    shl r8, 3
+    mov r9, r8
+    add r8, r14                             //rcx * 8 + r14
+    add r9, r12                             //rcx * 8 + r12
+
+    mov rax, qword ptr[rsi + r9]
+    mov qword ptr[rsi + r8], rax  //wert von in in out schreiben
+    test qword ptr[rsi + r8], 0x0000_0000_0000_0001    //test last bit (mod 2), check wegen Leerzeichen
     jnz .LoopMirror 
-    add qword ptr[rsi + rcx * 8 + r14], 2     //wie oben, (in[i]+2) % 4        
-    cmp qword ptr[rsi + rcx * 8 + r14], 3
+    add qword ptr[rsi + r8], 2     //wie oben, (in[i]+2) % 4        
+    cmp qword ptr[rsi + r8], 3
     jle .LoopMirror 
-    sub qword ptr[rsi + rcx * 8 + r14], 4
+    sub qword ptr[rsi + r8], 4
            
 .LoopMirror:    
     dec rcx
