@@ -25,15 +25,16 @@ void arraycopy(int *src, int srcPos, int *dest, int destPos, int length1) //VERI
 
 void drawSvg(u_int64_t *x, u_int64_t *y, int size)
 {
-    int width = size / 3;
-    int dim = width / 3;
-    int pixelWidth = dim * 300;
+    int grad = (int) (log(size) / log(3) / 2);
+    int pxWidth = 2187;             // 3⁷
+    int step = pxWidth / (int)sqrt(size);
+    pxWidth += step;                // pixel offset 
 
     FILE *fp;
 
-    char* title = (char*) malloc(sizeof(char) * 10);
-    sprintf(title, "peanoGrad%d.svg", dim);
-    free(title);
+    // char* title = (char*) malloc(sizeof(char) * 10);
+    // sprintf(title, "peanoGrad%d.svg", dim);
+    // free(title);
     
     fp = fopen("peano.svg", "w+");
 
@@ -41,16 +42,16 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     fprintf(fp, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
     fprintf(fp, "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
 
-    fprintf(fp, "\n<svg height=\"%d\" width=\"%d\">\n", pixelWidth, pixelWidth);
+    fprintf(fp, "\n<svg height=\"%d\" width=\"%d\">\n", pxWidth, pxWidth);
     fprintf(fp, "\t<polyline points=\"");
     for (int i = 0; i < size; i++)
     {
-        //fprintf(fp, "%ld,%ld ", x[i], y[i]);
-        fprintf(fp, "%ld,%ld ", x[i], y[i]);
+        //fprintf(fp, "%ld,%ld ", x[i] * pxWidth / size, pxWidth - (y[i] * pxWidth / size));
+        fprintf(fp, "%ld,%ld ", x[i] * step, pxWidth - (y[i] * step));
         if(i > 0 && i % 9 == 0)
             fprintf(fp, "\n\t");
     }      
-    fprintf(fp, "\"\n\tstyle=\"fill:none;stroke:black;stroke-width:3\" />\n");
+    fprintf(fp, "\"\n\tstyle=\"fill:none;stroke:white;stroke-width:%d\" />\n", 10 / grad * 2);
     fprintf(fp, "</svg>\n");
                 
                
