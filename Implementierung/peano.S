@@ -16,11 +16,10 @@
 peano: // rdi = grad, rsi x*, rdx* y
 
     // Calleesaved Registerwerte rdx abspeichern und danach wiederherstellen
-    mov qword ptr[rdx], rbp
-    mov qword ptr[rdx + 8], r12
-    mov qword ptr[rdx + 16], r13
-    mov qword ptr[rdx + 24], r14
-    mov qword ptr[rdx + 32], r15
+    push rbp
+    push r12
+    push r13
+    push r14
 
     mov rax, 1                    //AL == 1
     mov rbp, rax                  //Für calcNext auf 1 setzen
@@ -47,6 +46,7 @@ peano: // rdi = grad, rsi x*, rdx* y
     inc r13                     //currGrad++
     jmp .LoopCalcNext
 
+
 .LKoordinatenCalc:   // rsi x*, rdx* y
     //index x = rax, index y = rcx, laufindex = r8
     mov rax, 1
@@ -59,11 +59,12 @@ peano: // rdi = grad, rsi x*, rdx* y
 
     // Calleesave Registerwerte wiederherstellen
     mov rdi, rbp
-    mov rbp, qword ptr[rdx]
-    mov r12, qword ptr[rdx + 8]
-    mov r13, qword ptr[rdx + 16]
-    mov r14, qword ptr[rdx + 24]
-    mov r15, qword ptr[rdx + 32]
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
+
+    //ret
 
     // Erster Punkt hardcodiert
     mov qword ptr[rsi], 1     //x
@@ -161,7 +162,7 @@ calcNext: //rsi curr array pointer, currGrad = r8
     //Vierter Step
     mov rcx, r10  
     call mirror
-    add r14, rbp                // i = i + length;
+    add r14, r11                // i = i + length;
 
     //Verbindungsschritt nach Unten
     mov qword ptr[rsi + r14], 2
@@ -169,7 +170,7 @@ calcNext: //rsi curr array pointer, currGrad = r8
     //Fünfter Step
     mov rcx, r10 
     call reverse
-    add r14, rbp
+    add r14, r11
 
     //Verbindungsschritt nach Unten
     mov qword ptr[rsi + r14], 2
@@ -177,7 +178,7 @@ calcNext: //rsi curr array pointer, currGrad = r8
     //Sechster Step
     mov rcx, r10
     call mirror
-    add r14, rbp
+    add r14, r11
 
     //Verbindungsschritt nach rechts
     mov qword ptr[rsi + r14], 1
@@ -185,7 +186,7 @@ calcNext: //rsi curr array pointer, currGrad = r8
     //Siebter Schritt
     mov rcx, r10
     call normalInsert
-    add r14, rbp
+    add r14, r11
 
     //Verbindungsschritt nach oben
     mov qword ptr[rsi + r14], 0
@@ -196,7 +197,7 @@ calcNext: //rsi curr array pointer, currGrad = r8
     mov rcx, r10               
     mov r12, r14                //reverse mirror offset setzen
     call mirror                 
-    add r14, rbp                // i = i + length;
+    add r14, r11                // i = i + length;
     xor r12, r12                // reverse-mirror offset nullen
 
     //Verbindungsschritt nach oben
@@ -235,13 +236,13 @@ reverse: // rsi = array, size = rcx, offset = r14
     shl r8, 3                           //rcx*8
     mov rax, qword ptr[rsi + r8]
     add r8, r14                         //rcx * 8 + r14
-    mov qword ptr[rsi + r8], rax        //wert von in in out schreiben
-    add qword ptr[rsi + r8], 2          //out[i] + 2    für schnellere Vergleiche evtl 2 in al oder so, Videos anschauen zu ptr
-    cmp qword ptr[rsi + r8], 3
+    add rax, 2          //out[i] + 2    für schnellere Vergleiche evtl 2 in al oder so, Videos anschauen zu ptr
+    cmp rax, 3
 
     jle .LoopReverse
-    sub qword ptr[rsi + r8], 4         //(out[i] + 2) % 4
+    sub rax, 4         //(out[i] + 2) % 4
 .LoopReverse:    
+    mov qword ptr[rsi + r8], rax        //wert von in in out schreiben
     dec rcx
     jmp reverse
 
@@ -261,15 +262,15 @@ mirror: //  rsi = array, size = rcx, offset = r14, reverse-mirror offset = r12
     add r9, r12                             // reverse mirror offset: rcx * 8 + r12
 
     mov rax, qword ptr[rsi + r9]
-    mov qword ptr[rsi + r8], rax  //wert von in in out schreiben
-    test qword ptr[rsi + r8], 0x0000_0000_0000_0001    //test last bit (mod 2), check wegen Leerzeichen
+    test rax, 0x0000_0000_0000_0001    //test last bit (mod 2), check wegen Leerzeichen
     jnz .LoopMirror 
-    add qword ptr[rsi + r8], 2     //wie oben, (in[i]+2) % 4        
-    cmp qword ptr[rsi + r8], 3
+    add rax, 2     //wie oben, (in[i]+2) % 4        
+    cmp rax, 3
     jle .LoopMirror 
-    sub qword ptr[rsi + r8], 4
+    sub rax, 4
            
 .LoopMirror:    
+    mov qword ptr[rsi + r8], rax  //wert von in in out schreiben
     dec rcx
     jmp mirror
 

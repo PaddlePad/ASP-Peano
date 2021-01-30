@@ -27,6 +27,7 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
 {
     int width = size / 3;
     int dim = width / 3;
+    int pixelWidth = dim * 300;
 
     FILE *fp;
 
@@ -40,11 +41,12 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     fprintf(fp, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
     fprintf(fp, "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
 
-    fprintf(fp, "\n<svg height=\"%d\" width=\"%d\">\n", width * 300 / dim, width * 300 / dim);
+    fprintf(fp, "\n<svg height=\"%d\" width=\"%d\">\n", pixelWidth, pixelWidth);
     fprintf(fp, "\t<polyline points=\"");
     for (int i = 0; i < size; i++)
     {
-        fprintf(fp, "%ld,%ld ", x[i] * 225 / dim, (width + (width / 2) - y[i]) * 225 / dim);
+        //fprintf(fp, "%ld,%ld ", x[i], y[i]);
+        fprintf(fp, "%ld,%ld ", x[i], y[i]);
         if(i > 0 && i % 9 == 0)
             fprintf(fp, "\n\t");
     }      
@@ -237,11 +239,18 @@ void getHelp()  //Wertebereich des Grads angeben!
 
 void printCoordinates(u_int64_t *x, u_int64_t *y, unsigned len)
 {
+
+    (void)y;
+
     for (unsigned i = 0; i < len; i++)
     {
-        printf("x: %ld, y: %ld\n", x[i], y[i]);
+       printf("x: %ld, y: %ld\n", x[i], y[i]);
     }
-    
+
+    // for (unsigned i = 1; i < len; i++)
+    // {
+    //     printf("Direction: %ld\n", x[i]);
+    // }
 }
 
 int main(int argc, char **argv)
