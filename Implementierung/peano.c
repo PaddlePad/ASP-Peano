@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
+
 void peano(unsigned degree, u_int64_t* x, u_int64_t* y);
 //void reverse(u_int64_t in, u_int64_t out, unsinged size);
 //void mirror(u_int64_t in, u_int64_t out, unsinged size);
@@ -46,27 +48,13 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     fprintf(fp, "\t<polyline points=\"");
     for (int i = 0; i < size; i++)
     {
-        //fprintf(fp, "%ld,%ld ", x[i] * pxWidth / size, pxWidth - (y[i] * pxWidth / size));
         fprintf(fp, "%ld,%ld ", x[i] * step, pxWidth - (y[i] * step));
         if(i > 0 && i % 9 == 0)
             fprintf(fp, "\n\t");
     }      
     fprintf(fp, "\"\n\tstyle=\"fill:none;stroke:white;stroke-width:%d\" />\n", 10 / grad * 2);
     fprintf(fp, "</svg>\n");
-                
-               
 
-    // fprintf(fp, "\n<svg viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\">\n");
-    // fprintf(fp, "<polyline style=\"stroke:black;fill:none;stroke-width:1\"\n");
-    // fprintf(fp, "points=\"");
-    // for (int i = 0; i < size; i++)
-    // {
-    //     fprintf(fp, "%ld,%ld ", x[i], y[i]);
-    // }
-    // fprintf(fp, "\"/>\n");
-    // fprintf(fp, "</svg>\n");
-
-    //fputs("This is testing for fputs...\n", fp);
     fclose(fp);
 }
 
@@ -74,12 +62,16 @@ void mirror(int *out, int *in, int size) // spiegelt up&Down, gibt dircetions zu
 {
     for (int i = 0; i < size; i++)
     {
-        if ((in[i] % 2) == 0)
+        if (in[i] % 2 == 0)
         {
+            // int tmp = (in[i] + 2) % 4;
+            // out[i] = tmp;
             out[i] = (in[i] + 2) % 4;
         }
         else
         {
+            // int tmp = in[i];
+            // out[i] = tmp;
             out[i] = in[i];
         }
     }
@@ -89,6 +81,8 @@ void reverse(int *out, int *in, int size) // spiegelt up&Down, left&right
 {
     for (int i = 0; i < size; i++)
     {
+        // int tmp = (in[i] + 2) % 4; 
+        // out[i] = tmp;
         out[i] = (in[i] + 2) % 4;
     }
 }
@@ -103,9 +97,6 @@ void calcNext(int currGrad, int *curr)
     mirror(mir, curr, length);
     reverse(rev, curr, length);
     reverse(revMir, mir, length);
-
-    arraycopy(curr, 0, pre, 0, length);
-    curr = (int *)realloc(curr, ((int)pow(9, currGrad) - 1) * sizeof(int)); // für 8 Dir pro base Kurve//TODO
 
     int i = 0;
 
@@ -156,6 +147,53 @@ void calcNext(int currGrad, int *curr)
     free(rev);
     free(revMir);
 }
+
+void calcNextInplace(int currGrad, int *curr, int pos)
+{
+    int i = 0;
+    // Erster Zwischenstep
+    curr[pos++] = 0;
+
+    // Zweiter step
+    arraycopy(revMir, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 0;
+    i++;
+
+    arraycopy(pre, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 1;
+    i++;
+
+    arraycopy(mir, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 2;
+    i++;
+
+    arraycopy(rev, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 2;
+    i++;
+
+    arraycopy(mir, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 1;
+    i++;
+
+    arraycopy(pre, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 0;
+    i++;
+
+    arraycopy(revMir, 0, curr, i, length);
+    i = i + length;
+    curr[i] = 0;
+    i++;
+
+    arraycopy(pre, 0, curr, i, length);
+    length = ((int)pow(9, currGrad) - 1);
+}
+
 
 void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
@@ -210,6 +248,61 @@ void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     free(curr);
 }
 
+void peanoInplace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
+{
+    if (grad <= 0)  //auch Auf überlauf checken!!
+    {
+        printf("Error number not valid !");
+        return;
+    }
+    unsigned currGrad = 2;
+    unsigned amt = (unsigned) pow(3, 2 * grad);
+
+    u_int64_t *array = (u_int64_t *)malloc(amt * sizeof(u_int64_t));
+    u_int64_t curr1[] = {0, 0, 1, 2, 2, 1, 0, 0}; //0 : up , 1 : right , 2 : down , 3 : left
+    arraycopy(curr1, 0, array, 0, length);
+    int pos = 8;
+
+    if (grad != 1)
+    {
+        while (currGrad <= grad)
+        {
+            calcNextInplace(currGrad, array, &pos);
+            currGrad++;
+        }
+    }
+
+    int x = 1;
+    int y = 1;
+    x1[0] = x;
+    y1[0] = y;
+
+    for (int i = 0; i < length; i++)
+    {
+        switch (array[i])
+        {
+        case 0:
+            y++;
+            break;
+        case 2:
+            y--;
+            break;
+        case 3:
+            x--;
+            break;
+        case 1:
+            x++;
+            break;
+        default:
+            break;
+        }
+        x1[i] = x;
+        y1[i] = y;
+    }
+
+    free(array);
+}
+
 void getHelp()  //Wertebereich des Grads angeben!
 {
     printf("---------------------HELP---------------------\n");
@@ -240,18 +333,10 @@ void getHelp()  //Wertebereich des Grads angeben!
 
 void printCoordinates(u_int64_t *x, u_int64_t *y, unsigned len)
 {
-
-    (void)y;
-
     for (unsigned i = 0; i < len; i++)
     {
        printf("x: %ld, y: %ld\n", x[i], y[i]);
     }
-
-    // for (unsigned i = 1; i < len; i++)
-    // {
-    //     printf("Direction: %ld\n", x[i]);
-    // }
 }
 
 int main(int argc, char **argv)
@@ -307,12 +392,19 @@ int main(int argc, char **argv)
     u_int64_t *x = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
     u_int64_t *y = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
 
+    struct timespec before;
+    struct timespec after;
+
     //WENN FERTIG EINKOMMENTIEREN!!
     if(argc == 2)   //Execute Assembler
     {
         puts("Assembler, GOGOGO!");
+        clock_gettime(CLOCK_MONOTONIC, &before);
         peano(deg, x, y);
-        printCoordinates(x, y, dim);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+        printf("Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
+        printf("Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
+        //printCoordinates(x, y, dim);
         drawSvg(x, y, dim);
     }
     else if(argc == 3 && strcmp(argv[1], executeInC) == 0)   //execute Peano in C
