@@ -14,18 +14,26 @@
 // Directions: 0 = up , 1 = right , 2 = down , 3 = left
 
 peano: // rdi = grad, rsi x*, rdx* y
+
+    // Calleesaved Registerwerte rdx abspeichern und danach wiederherstellen
+    mov qword ptr[rdx], rbp
+    mov qword ptr[rdx + 8], r12
+    mov qword ptr[rdx + 16], r13
+    mov qword ptr[rdx + 24], r14
+    mov qword ptr[rdx + 32], r15
+
     mov rax, 1                    //AL == 1
     mov rbp, rax                  //Für calcNext auf 1 setzen
 
     //Hardcode default Kurve in rsi //immediate oder register?
-    mov qword ptr[rsi], 0
     mov qword ptr[rsi + 8], 0
-    mov qword ptr[rsi + 16], rax
-    mov qword ptr[rsi + 24], 2
+    mov qword ptr[rsi + 16], 0
+    mov qword ptr[rsi + 24], rax
     mov qword ptr[rsi + 32], 2
-    mov qword ptr[rsi + 40], rax
-    mov qword ptr[rsi + 48], 0
+    mov qword ptr[rsi + 40], 2
+    mov qword ptr[rsi + 48], rax
     mov qword ptr[rsi + 56], 0
+    mov qword ptr[rsi + 64], 0
 
     cmp rdi, rax                  //wenn grad = 1, koord berechnen und fertig
     jle .LKoordinatenCalc
@@ -43,17 +51,28 @@ peano: // rdi = grad, rsi x*, rdx* y
     //index x = rax, index y = rcx, laufindex = r8
     mov rax, 1
     mov rcx, rax    //alles auf 1 setzen
-    xor r8, r8      //r8 = 0
+    mov r8, rax      //r8 = 1
     //anzahl Felder berechnen für Abbruch 
     mov r9, rbp
     shl r9, 3
     add rbp, r9
-    //imul rbp, 9
+
+    // Calleesave Registerwerte wiederherstellen
+    mov rdi, rbp
+    mov rbp, qword ptr[rdx]
+    mov r12, qword ptr[rdx + 8]
+    mov r13, qword ptr[rdx + 16]
+    mov r14, qword ptr[rdx + 24]
+    mov r15, qword ptr[rdx + 32]
+
+    // Erster Punkt hardcodiert
+    mov qword ptr[rsi], 1     //x
+    mov qword ptr[rdx], 1     //y
 
 .LKoordinatenIteration:
     //Abbruchbedingung
-    cmp r8, rbp
-    jg .LEnd
+    cmp r8, rdi
+    jge .LEnd
 
     //letzen 2 bit entscheidend
     test qword ptr[rsi + r8 * 8], 0x0000_0000_0000_0001 //ob zahl gerade
@@ -106,87 +125,85 @@ calcNext: //rsi curr array pointer, currGrad = r8
     mov r9, rbp
     shl r9, 3
     add rbp, r9
-    //imul rbp, 9
-    // offset -> r14
+    mov r11, rbp        // i = i + length
+    shl r11, 3
+    mov r10, rbp        // counter festlegen für später (Effizienz)
+    dec r10
+    // offset -> r14, reversed mirror offset -> r12 // evtl mit bool austauschen falls cmp effizient
     mov r14, rbp
+    shl r14, 3          // offset vor der schleife bitshiften, ansonsten zu großer wert
     mov r12, r14
 
     // array -> rsi
     // Verbindungsschritt nach oben
-    mov qword ptr[rsi + r14 * 8], 0
+    mov qword ptr[rsi + r14], 0
 
     // Zweiter step reverse mirror (evtl nur mirror?)
-    mov rcx, rbp                
-    dec rcx                     // counter neu setzen  
+    mov rcx, r10       // counter neu setzen, start bei 136 rückwerts                       
     call reverse                
-    mov r12, r14                //reverse mirror offset setzen
-    call mirror                 //TESTEN
-    add r14, rbp                // i = i + length;
+    mov rcx, r10
+    mov r12, r14                //reverse mirror offset setzen, vllt sinnlos = löschen
+    call mirror                 
+    add r14, r11                 // i = i + length * 8;
     xor r12, r12                // reverse-mirror offset nullen
     
     // Verbindungsschritt nach oben
-    mov qword ptr[rsi + r14 * 8], 0
+    mov qword ptr[rsi + r14], 0
 
     // Dritter step
-    mov rcx, rbp                //counter setzen
-    dec rcx 
+    mov rcx, r10                //counter setzen
     call normalInsert
-    add r14, rbp                // i = i + length;
+    add r14, r11                // i = i + length * 8;
 
     //Verbindungsschritt nach Rechts
-    mov qword ptr[rsi + r14 * 8], 1
+    mov qword ptr[rsi + r14], 1
 
     //Vierter Step
-    mov rcx, rbp                
-    dec rcx   
+    mov rcx, r10  
     call mirror
     add r14, rbp                // i = i + length;
 
     //Verbindungsschritt nach Unten
-    mov qword ptr[rsi + r14 * 8], 2
+    mov qword ptr[rsi + r14], 2
 
     //Fünfter Step
-    mov rcx, rbp                
-    dec rcx 
+    mov rcx, r10 
     call reverse
     add r14, rbp
 
     //Verbindungsschritt nach Unten
-    mov qword ptr[rsi + r14 * 8], 2
+    mov qword ptr[rsi + r14], 2
 
     //Sechster Step
-    mov rcx, rbp                
-    dec rcx 
+    mov rcx, r10
     call mirror
     add r14, rbp
 
     //Verbindungsschritt nach rechts
-    mov qword ptr[rsi + r14 * 8], 1
+    mov qword ptr[rsi + r14], 1
 
     //Siebter Schritt
-    mov rcx, rbp                
-    dec rcx 
+    mov rcx, r10
     call normalInsert
     add r14, rbp
 
     //Verbindungsschritt nach oben
-    mov qword ptr[rsi + r14 * 8], 0
+    mov qword ptr[rsi + r14], 0
 
     //Achter Step               //wie oben
-    mov rcx, rbp                
-    dec rcx                     // counter neu setzen  
-    call reverse                
+    mov rcx, r10                // counter neu setzen  
+    call reverse 
+    mov rcx, r10               
     mov r12, r14                //reverse mirror offset setzen
     call mirror                 
     add r14, rbp                // i = i + length;
     xor r12, r12                // reverse-mirror offset nullen
 
     //Verbindungsschritt nach oben
-    mov qword ptr[rsi + r14 * 8], 0
+    mov qword ptr[rsi + r14], 0
 
     //Letzter Step
-    mov rcx, rbp                
-    dec rcx 
+    mov rcx, r10
     call normalInsert
 
     //length = ((int)pow(9, currGrad) - 1);
@@ -211,7 +228,7 @@ normalInsert: // rsi = array, size = rcx, offset = r14        //Normales einfüg
 reverse: // rsi = array, size = rcx, offset = r14
 //für schnellere Vergleiche evtl 0 in al oder so
     cmp rcx, 0          //ende der Schleife
-    jle .LEndReverse
+    jle .LEndReverse    // optimierung auf equal check
 
     //Ziel: out[i] = (in[i] + 2) % 4;
     mov r8, rcx
@@ -240,8 +257,8 @@ mirror: //  rsi = array, size = rcx, offset = r14, reverse-mirror offset = r12
     mov r8, rcx
     shl r8, 3
     mov r9, r8
-    add r8, r14                             //rcx * 8 + r14
-    add r9, r12                             //rcx * 8 + r12
+    add r8, r14                             // normaler offset: rcx * 8 + r14
+    add r9, r12                             // reverse mirror offset: rcx * 8 + r12
 
     mov rax, qword ptr[rsi + r9]
     mov qword ptr[rsi + r8], rax  //wert von in in out schreiben

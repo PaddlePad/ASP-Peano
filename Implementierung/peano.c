@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-extern void peano(unsigned degree, u_int64_t* x, u_int64_t* y);
+void peano(unsigned degree, u_int64_t* x, u_int64_t* y);
 //void reverse(u_int64_t in, u_int64_t out, unsinged size);
 //void mirror(u_int64_t in, u_int64_t out, unsinged size);
 //u_int64_t = long unsigned int
@@ -235,6 +235,15 @@ void getHelp()  //Wertebereich des Grads angeben!
     printf("----------------------------------------------\n");
 }
 
+void printCoordinates(u_int64_t *x, u_int64_t *y, unsigned len)
+{
+    for (unsigned i = 0; i < len; i++)
+    {
+        printf("x: %ld, y: %ld\n", x[i], y[i]);
+    }
+    
+}
+
 int main(int argc, char **argv)
 {
     char *pCh;
@@ -293,6 +302,7 @@ int main(int argc, char **argv)
     {
         puts("Assembler, GOGOGO!");
         peano(deg, x, y);
+        printCoordinates(x, y, dim);
         drawSvg(x, y, dim);
     }
     else if(argc == 3 && strcmp(argv[1], executeInC) == 0)   //execute Peano in C
