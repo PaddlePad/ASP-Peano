@@ -125,14 +125,14 @@ calcNext: //rsi curr array pointer, currGrad = r8
     mov r9, rbp
     shl r9, 3
     add rbp, r9
+
     mov r11, rbp        // i = i + length
     shl r11, 3
+    mov r12, r11        // offset vor der schleife bitshiften, ansonsten zu großer wert
+    
     mov r10, rbp        // counter festlegen für später (Effizienz)
     dec r10
-    // offset -> r12 // evtl mit bool austauschen falls cmp effizient
-    mov r12, rbp
-    shl r12, 3          // offset vor der schleife bitshiften, ansonsten zu großer wert
-
+  
     // array -> rsi
     // Verbindungsschritt nach oben
     mov qword ptr[rsi + r12], 0
@@ -216,8 +216,7 @@ normalInsert: // rsi = array, size = rcx, offset = r12        //Normales einfüg
 
 .LEndInsert: ret
 
-reverse: // rsi = array, size = rcx, offset = r12
-//für schnellere Vergleiche evtl 0 in al oder so
+reverse: // rsi = array, size = rcx, offset = r12 für schnellere Vergleiche evtl 0 in al oder so
     cmp rcx, 0          //ende der Schleife
     jle .LEndReverse    // optimierung auf equal check
 
@@ -225,13 +224,13 @@ reverse: // rsi = array, size = rcx, offset = r12
     mov r8, rcx
     shl r8, 3                           //rcx*8
     mov rax, qword ptr[rsi + r8]
-    add r8, r12                         //rcx * 8 + r12
-    add rax, 2          //out[i] + 2    für schnellere Vergleiche evtl 2 in al oder so, Videos anschauen zu ptr
+    add rax, 2                          //out[i] + 2    für schnellere Vergleiche evtl 2 in al oder so, Videos anschauen zu ptr
     cmp rax, 3
-
     jle .LoopReverse
-    sub rax, 4         //(out[i] + 2) % 4
+    sub rax, 4                          //(out[i] + 2) % 4
+
 .LoopReverse:    
+    add r8, r12                         //rcx * 8 + r12
     mov qword ptr[rsi + r8], rax        //wert von in in out schreiben
     dec rcx
     jmp reverse
@@ -239,8 +238,7 @@ reverse: // rsi = array, size = rcx, offset = r12
 .LEndReverse:
 ret   
 
-mirror: //  rsi = array, size = rcx, offset = r12
-//für schnellere Vergleiche evtl 0 in al oder so, wie oben
+mirror: //  rsi = array, size = rcx, offset = r12 //für schnellere Vergleiche evtl 0 in al oder so, wie oben
     cmp rcx, 0          //ende der Schleife
     jle .LEndMirror
 
@@ -266,8 +264,7 @@ mirror: //  rsi = array, size = rcx, offset = r12
 .LEndMirror:
 ret
 
-reverseMirror: //  rsi = array, size = rcx, offset = r12
-//für schnellere Vergleiche evtl 0 in al oder so, wie oben
+reverseMirror: //  rsi = array, size = rcx, offset = r12//für schnellere Vergleiche evtl 0 in al oder so, wie oben
     cmp rcx, 0          //ende der Schleife
     jle .LEndReverseMirror
 
