@@ -27,6 +27,7 @@
 
 \begin{document}
 \maketitle
+
 \newpage
 \section{Einleitung}
 
@@ -54,7 +55,7 @@ Diese Observation war der Grundstein unseres iterativen Algorithmus. Anfangs wir
 
 \begin{figure} 	%ZU GROSS!!
 \centering
-\includegraphics[width=50mm,scale=0.5]{PeanoFarbcodiert.png}
+\includegraphics[scale=0.7]{PeanoFarbcodiert.png}
 \caption{Peano-Kurve mit n = 1, n = 2}\label{Abb:Peano Lösungsidee}
 \end{figure}
 
@@ -65,6 +66,8 @@ Nachdem über alle Grade iteriert wurde, läuft der Algorithmus den vollständig
 
 % TODO: Je nach Aufgabenstellung einen der Begriffe wählen
 \section{Korrektheit} % oder Genauigkeit 
+
+%Kurve definieren!
 
 Die Genauigkeit unseres Algorithmus ist abhängig von dem Grad $n$, dass die Anzahl an Iterationen bestimmt, wie in den Abb.1 beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus genauer, je größer der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert annähern. Ansonsten ist die Kurve wie ebenfalls schon oben beschrieben definiert, weshalb nur die Korrektheit unseres Algorithmus entscheidend ist.
 Grundsätzlich lässt sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen indem man ihre graphischen Darstellungen vergleicht. Da das Theoretisch aber nicht möglich ist, folgt auch eine Implementierung in Assambler und C, die wir auch hinsichtlich ihrer Performanz analysieren wollen.
@@ -101,6 +104,10 @@ Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine eben solch
 %verbinden der Kurven!
 \newpage
 \section{Performanzanalyse}
+Zunächst setzen wir 
+
+%Assembler 
+
 
 \newpage
 \section{Zusammenfassung und Ausblick}

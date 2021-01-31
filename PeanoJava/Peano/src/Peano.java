@@ -18,10 +18,20 @@ public class Peano
 		int grad = Integer.parseInt(gradStr);
 
 		Point2D[] field = peano(grad);
-
+		
+		print(field);
+		
 		Paint g = new Paint(field, grad);
 	}
-
+	
+	public static void print(Point2D[] arr) 
+	{
+		for(Point2D p : arr)
+		{
+			System.out.println("x: " + p.getX() + ", y: " + p.getY());
+		}
+	}
+	
 	public static void main(String[] args)
 	{
 		new Peano();
