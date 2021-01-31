@@ -487,7 +487,7 @@ int main(int argc, char **argv)
         clock_gettime(CLOCK_MONOTONIC, &after);
         printf("Assembly Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
         printf("Assembly Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        //drawSvg(x, y, dim);
+        drawSvg(x, y, dim);
     }
     else if(argc == 3 && strcmp(argv[1], executeInC) == 0)   //execute Peano in C
     {
@@ -497,7 +497,7 @@ int main(int argc, char **argv)
         clock_gettime(CLOCK_MONOTONIC, &after);
         printf("C Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
         printf("C Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        //drawSvg(x, y, dim);
+        drawSvg(x, y, dim);
     }
     else    //execute Rekursive
     {

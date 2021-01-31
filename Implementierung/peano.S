@@ -9,7 +9,7 @@
 //BENUTZTE REGISTER:
 //Parameter:    rdi, rsi, rdx
 //Callersaved:  rcx, rax, 
-//Calleesaved:  rbp, r12, r13, r14
+//Calleesaved:  rbp, r13, r12
 
 // Directions: 0 = up , 1 = right , 2 = down , 3 = left
 
@@ -17,23 +17,23 @@ peano: // rdi = grad, rsi x*, rdx* y
 
     // Calleesaved Registerwerte rdx abspeichern und danach wiederherstellen
     push rbp
-    push r12
     push r13
-    push r14
+    push r12
 
     mov rax, 1                    //AL == 1
-    mov rbp, rax                  //Für calcNext auf 1 setzen
+    xor rbp, rbp
 
     //Hardcode default Kurve in rsi //immediate oder register?
-    mov qword ptr[rsi + 8], 0
-    mov qword ptr[rsi + 16], 0
+    mov qword ptr[rsi + 8], rbp
+    mov qword ptr[rsi + 16], rbp
     mov qword ptr[rsi + 24], rax
     mov qword ptr[rsi + 32], 2
     mov qword ptr[rsi + 40], 2
     mov qword ptr[rsi + 48], rax
-    mov qword ptr[rsi + 56], 0
-    mov qword ptr[rsi + 64], 0
+    mov qword ptr[rsi + 56], rbp
+    mov qword ptr[rsi + 64], rbp
 
+    mov rbp, rax                  //Für calcNext auf 1 setzen
     cmp rdi, rax                  //wenn grad = 1, koord berechnen und fertig
     jle .LKoordinatenCalc
     mov r13, rbp                    //imm 1 oder rbp?
@@ -59,9 +59,8 @@ peano: // rdi = grad, rsi x*, rdx* y
 
     // Calleesave Registerwerte wiederherstellen
     mov rdi, rbp
-    pop r14
-    pop r13
     pop r12
+    pop r13
     pop rbp
 
     //ret
@@ -130,78 +129,69 @@ calcNext: //rsi curr array pointer, currGrad = r8
     shl r11, 3
     mov r10, rbp        // counter festlegen für später (Effizienz)
     dec r10
-    // offset -> r14, reversed mirror offset -> r12 // evtl mit bool austauschen falls cmp effizient
-    mov r14, rbp
-    shl r14, 3          // offset vor der schleife bitshiften, ansonsten zu großer wert
-    mov r12, r14
+    // offset -> r12 // evtl mit bool austauschen falls cmp effizient
+    mov r12, rbp
+    shl r12, 3          // offset vor der schleife bitshiften, ansonsten zu großer wert
 
     // array -> rsi
     // Verbindungsschritt nach oben
-    mov qword ptr[rsi + r14], 0
+    mov qword ptr[rsi + r12], 0
 
     // Zweiter step reverse mirror (evtl nur mirror?)
     mov rcx, r10       // counter neu setzen, start bei 136 rückwerts                       
-    call reverse                
-    mov rcx, r10
-    mov r12, r14                //reverse mirror offset setzen, vllt sinnlos = löschen
-    call mirror                 
-    add r14, r11                 // i = i + length * 8;
-    xor r12, r12                // reverse-mirror offset nullen
+    call reverseMirror                               
+    add r12, r11                 // i = i + length * 8;
     
     // Verbindungsschritt nach oben
-    mov qword ptr[rsi + r14], 0
+    mov qword ptr[rsi + r12], 0
 
     // Dritter step
     mov rcx, r10                //counter setzen
     call normalInsert
-    add r14, r11                // i = i + length * 8;
+    add r12, r11                // i = i + length * 8;
 
     //Verbindungsschritt nach Rechts
-    mov qword ptr[rsi + r14], 1
+    mov qword ptr[rsi + r12], 1
 
     //Vierter Step
     mov rcx, r10  
     call mirror
-    add r14, r11                // i = i + length;
+    add r12, r11                // i = i + length;
 
     //Verbindungsschritt nach Unten
-    mov qword ptr[rsi + r14], 2
+    mov qword ptr[rsi + r12], 2
 
     //Fünfter Step
     mov rcx, r10 
     call reverse
-    add r14, r11
+    add r12, r11
 
     //Verbindungsschritt nach Unten
-    mov qword ptr[rsi + r14], 2
+    mov qword ptr[rsi + r12], 2
 
     //Sechster Step
     mov rcx, r10
     call mirror
-    add r14, r11
+    add r12, r11
 
     //Verbindungsschritt nach rechts
-    mov qword ptr[rsi + r14], 1
+    mov qword ptr[rsi + r12], 1
 
     //Siebter Schritt
     mov rcx, r10
     call normalInsert
-    add r14, r11
+    add r12, r11
 
     //Verbindungsschritt nach oben
-    mov qword ptr[rsi + r14], 0
+    mov qword ptr[rsi + r12], 0
 
     //Achter Step               //wie oben
     mov rcx, r10                // counter neu setzen  
-    call reverse 
-    mov rcx, r10               
-    mov r12, r14                //reverse mirror offset setzen
-    call mirror                 
-    add r14, r11                // i = i + length;
-    xor r12, r12                // reverse-mirror offset nullen
+    call reverseMirror              
+    add r12, r11                // i = i + length;
 
     //Verbindungsschritt nach oben
-    mov qword ptr[rsi + r14], 0
+    mov qword ptr[rsi + r12], 0
 
     //Letzter Step
     mov rcx, r10
@@ -211,22 +201,22 @@ calcNext: //rsi curr array pointer, currGrad = r8
     
 ret
 
-normalInsert: // rsi = array, size = rcx, offset = r14        //Normales einfügen der Schleife
+normalInsert: // rsi = array, size = rcx, offset = r12        //Normales einfügen der Schleife
     cmp rcx, 0          //ende der Schleife
     jle .LEndInsert
 
     mov r8, rcx                             //r8 = rcx
     shl r8, 3                               //mul rcx, 8
     mov rax, qword ptr[rsi + r8]            //qword ptr[rsi + rcx * 8]
-    add r8, r14                             //dann: rcx * 8 + r14
-    mov qword ptr[rsi + r8], rax            //wert von array in anderen Bereich schreiben, ptr[rsi + rcx * 8 + r14]
+    add r8, r12                             //dann: rcx * 8 + r12
+    mov qword ptr[rsi + r8], rax            //wert von array in anderen Bereich schreiben, ptr[rsi + rcx * 8 + r12]
     
     dec rcx
     jmp normalInsert
 
 .LEndInsert: ret
 
-reverse: // rsi = array, size = rcx, offset = r14
+reverse: // rsi = array, size = rcx, offset = r12
 //für schnellere Vergleiche evtl 0 in al oder so
     cmp rcx, 0          //ende der Schleife
     jle .LEndReverse    // optimierung auf equal check
@@ -235,7 +225,7 @@ reverse: // rsi = array, size = rcx, offset = r14
     mov r8, rcx
     shl r8, 3                           //rcx*8
     mov rax, qword ptr[rsi + r8]
-    add r8, r14                         //rcx * 8 + r14
+    add r8, r12                         //rcx * 8 + r12
     add rax, 2          //out[i] + 2    für schnellere Vergleiche evtl 2 in al oder so, Videos anschauen zu ptr
     cmp rax, 3
 
@@ -249,7 +239,7 @@ reverse: // rsi = array, size = rcx, offset = r14
 .LEndReverse:
 ret   
 
-mirror: //  rsi = array, size = rcx, offset = r14, reverse-mirror offset = r12 
+mirror: //  rsi = array, size = rcx, offset = r12
 //für schnellere Vergleiche evtl 0 in al oder so, wie oben
     cmp rcx, 0          //ende der Schleife
     jle .LEndMirror
@@ -258,8 +248,7 @@ mirror: //  rsi = array, size = rcx, offset = r14, reverse-mirror offset = r12
     mov r8, rcx
     shl r8, 3
     mov r9, r8
-    add r8, r14                             // normaler offset: rcx * 8 + r14
-    add r9, r12                             // reverse mirror offset: rcx * 8 + r12
+    add r8, r12                             // normaler offset: rcx * 8 + r12
 
     mov rax, qword ptr[rsi + r9]
     test rax, 0x0000_0000_0000_0001    //test last bit (mod 2), check wegen Leerzeichen
@@ -275,4 +264,31 @@ mirror: //  rsi = array, size = rcx, offset = r14, reverse-mirror offset = r12
     jmp mirror
 
 .LEndMirror:
+ret
+
+reverseMirror: //  rsi = array, size = rcx, offset = r12
+//für schnellere Vergleiche evtl 0 in al oder so, wie oben
+    cmp rcx, 0          //ende der Schleife
+    jle .LEndReverseMirror
+
+    //Ziel: if ((in[i] % 2) == 0), do {out[i] = (in[i]+2) % 4;}
+    mov r8, rcx
+    shl r8, 3
+    mov r9, r8
+    add r8, r12                             // normaler offset: rcx * 8 + r12
+
+    mov rax, qword ptr[rsi + r9]
+    test rax, 0x0000_0000_0000_0001    //test last bit (mod 2), check wegen Leerzeichen
+    jz .LoopReverseMirror 
+    add rax, 2     //wie oben, (in[i]+2) % 4        
+    cmp rax, 3
+    jle .LoopReverseMirror 
+    sub rax, 4
+           
+.LoopReverseMirror:    
+    mov qword ptr[rsi + r8], rax  //wert von in in out schreiben
+    dec rcx
+    jmp reverseMirror
+
+.LEndReverseMirror:
 ret
