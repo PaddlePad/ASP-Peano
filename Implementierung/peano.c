@@ -148,18 +148,18 @@ void calcNext(int currGrad, int *curr)
     free(revMir);
 }
 
-void reverseInPlace(u_int64_t *arr, int pos, unsigned size)
+void reverseInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
 {
-    for (unsigned i = 0; i < size; i++)
+    for (u_int64_t i = 1; i <= size; i++)
     {
-        u_int64_t temp  = arr[i] + 2 % 4;
+        u_int64_t temp  = (arr[i] + 2) % 4;
         arr[pos + i] = temp;
     }
 }
 
-void mirrorInPlace(u_int64_t *arr, int pos, unsigned size)
+void mirrorInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
 {
-    for(unsigned i = 0; i<size; i++)
+    for(u_int64_t i = 1; i<=size; i++)
     {
         u_int64_t temp = arr[i];
         if (temp % 2 == 0)
@@ -173,19 +173,19 @@ void mirrorInPlace(u_int64_t *arr, int pos, unsigned size)
     }
 }
 
-void copyInPlace(u_int64_t *arr, int pos, unsigned size)
+void copyInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
 {
-    for (unsigned i = 0; i < size; i++)
+    for (u_int64_t i = 1; i <= size; i++)
     {
-        arr[pos +i] = arr[i];
+        arr[pos + i] = arr[i];
     }
 }
 
-int calcNextInplace(int currGrad, u_int64_t *curr, int pos)
+int calcNextInplace(int currGrad, u_int64_t *curr, u_int64_t pos)
 {
-    unsigned size = (int) pow(3, 2 * currGrad);
+    u_int64_t size = (int) pow(3, 2 * currGrad);
     // Erster Zwischenstep
-    curr[pos++] = 0;
+    curr[pos] = 0;
 
     // Zweiter step
     reverseInPlace(curr, pos, size);
@@ -193,55 +193,54 @@ int calcNextInplace(int currGrad, u_int64_t *curr, int pos)
     pos += size;
 
     //Zwischenschritt nach oben
-    curr[pos++] = 0;
+    curr[++pos] = 0;
 
     // Dritter step
-    copyInPlace(curr, pos, size);
+    copyInPlace(curr, pos-1, size);
     pos += size;
 
     //Zwischenschritt nach rechts
-    curr[pos++] = 1;
+    curr[++pos] = 1;
 
     //Vierter Step
-    mirrorInPlace(curr, pos, size);
+    mirrorInPlace(curr, pos-1, size);
     pos += size;
 
     //Zwischenschritt nach unten
-    curr[pos++] = 2;
+    curr[++pos] = 2;
 
     //Fünfter Step
-    reverseInPlace(curr, pos, size);
+    reverseInPlace(curr, pos-1, size);
     pos += size;
 
     //Zwischenschritt nach unten
-    curr[pos++] = 2;
+    curr[++pos] = 2;
 
     //Sechster Step
-    mirrorInPlace(curr, pos, size);
+    mirrorInPlace(curr, pos-1, size);
     pos += size;
 
     //Zwischenschritt nach rechts
-    curr[pos++] = 1;
+    curr[++pos] = 1;
 
     //Siebter Step
-    copyInPlace(curr, pos, size);
+    copyInPlace(curr, pos-1, size);
     pos += size;
 
     //Zwischenschritt nach oben
-    curr[pos++] = 0;
+    curr[++pos] = 0;
 
     //Achter Step
-    reverseInPlace(curr, pos, size);
-    mirrorInPlace(curr, pos, size);
+    reverseInPlace(curr, pos-1, size);
+    mirrorInPlace(curr, pos-1, size);
     pos += size;
 
     //Zwischenschritt nach oben
-    curr[pos++] = 0;
+    curr[++pos] = 0;
 
     //Letzter Step
-    copyInPlace(curr, pos, size);
-
-    length = ((int)pow(9, currGrad) - 1);
+    copyInPlace(curr, pos-1, size);
+    pos += size;
     return pos;
 }
 
@@ -305,34 +304,31 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
         printf("Error number not valid !");
         return;
     }
-    unsigned currGrad = 2;
-    unsigned amt = (unsigned) pow(3, 2 * grad);
+
+    unsigned currGrad = 1;
+    u_int64_t amt = (u_int64_t) pow(3, 2 * grad);
 
     u_int64_t *array = (u_int64_t *)malloc(amt * sizeof(u_int64_t));
     u_int64_t curr1[] = {0, 0, 1, 2, 2, 1, 0, 0}; //0 : up , 1 : right , 2 : down , 3 : left
-    int pos = 9;
+    unsigned pos = 10;
 
-    for (unsigned i = 1; i < 10; i++)
+    for (u_int64_t i = 1; i < pos; i++)
     {
         array[i] = curr1[i-1];
     }
 
-    currGrad--;
-    if (grad != 1)
+    while (currGrad < grad)
     {
-        while (currGrad < grad)
-        {
-            pos = calcNextInplace(currGrad, array, pos);
-            currGrad++;
-        }
+        pos = calcNextInplace(currGrad, array, pos);
+        currGrad++;
     }
 
-    int x = 1;
-    int y = 1;
+    u_int64_t x = 1;
+    u_int64_t y = 1;
     x1[0] = x;
     y1[0] = y;
 
-    for (int i = 1; i < (int) amt; i++)
+    for (u_int64_t i = 1; i < amt; i++)
     {
         switch (array[i])
         {
