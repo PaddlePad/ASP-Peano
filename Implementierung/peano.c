@@ -3,8 +3,9 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
-void peano(unsigned degree, u_int64_t* x, u_int64_t* y);
+void peano(unsigned degree, u_int64_t *x, u_int64_t *y);
 void printDirections(int *dir, u_int64_t len);
 //void reverse(u_int64_t in, u_int64_t out, unsinged size);
 //void mirror(u_int64_t in, u_int64_t out, unsinged size);
@@ -28,17 +29,17 @@ void arraycopy(int *src, int srcPos, int *dest, int destPos, int length1) //VERI
 
 void drawSvg(u_int64_t *x, u_int64_t *y, int size)
 {
-    int grad = (int) (log(size) / log(3) / 2);
-    int pxWidth = 2187;             // 3⁷
+    int grad = (int)(log(size) / log(3) / 2);
+    int pxWidth = 2187; // 3⁷
     int step = pxWidth / (int)sqrt(size);
-    pxWidth += step;                // pixel offset 
+    pxWidth += step; // pixel offset
 
     FILE *fp;
 
     // char* title = (char*) malloc(sizeof(char) * 10);
     // sprintf(title, "peanoGrad%d.svg", dim);
     // free(title);
-    
+
     fp = fopen("peano.svg", "w+");
 
     fprintf(fp, "<?xml version=\"1.0\"?>\n");
@@ -50,9 +51,9 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     for (int i = 0; i < size; i++)
     {
         fprintf(fp, "%ld,%ld ", x[i] * step, pxWidth - (y[i] * step));
-        if(i > 0 && i % 9 == 0)
+        if (i > 0 && i % 9 == 0)
             fprintf(fp, "\n\t");
-    }      
+    }
     fprintf(fp, "\"\n\tstyle=\"fill:none;stroke:white;stroke-width:%d\" />\n", 10 / grad * 2);
     fprintf(fp, "</svg>\n");
 
@@ -82,7 +83,7 @@ void reverse(int *out, int *in, int size) // spiegelt up&Down, left&right
 {
     for (int i = 0; i < size; i++)
     {
-        // int tmp = (in[i] + 2) % 4; 
+        // int tmp = (in[i] + 2) % 4;
         // out[i] = tmp;
         out[i] = (in[i] + 2) % 4;
     }
@@ -153,14 +154,14 @@ void reverseInPlace(int *arr, u_int64_t pos, u_int64_t size)
 {
     for (u_int64_t i = 1; i <= size; i++)
     {
-        int temp  = (arr[i] + 2) % 4;
+        int temp = (arr[i] + 2) % 4;
         arr[pos + i] = temp;
     }
 }
 
 void mirrorInPlace(int *arr, u_int64_t pos, u_int64_t size)
 {
-    for(u_int64_t i = 1; i <= size; i++)
+    for (u_int64_t i = 1; i <= size; i++)
     {
         int temp = arr[i];
 
@@ -203,7 +204,7 @@ void reverseMirrorInPlace(int *arr, u_int64_t pos, u_int64_t size)
 
 int calcNextInplace(int currGrad, int *curr, u_int64_t pos)
 {
-    u_int64_t size = (u_int64_t) pow(3, 2 * currGrad);
+    u_int64_t size = (u_int64_t)pow(3, 2 * currGrad);
     // Erster Zwischenstep
     curr[pos] = 0;
 
@@ -265,7 +266,7 @@ int calcNextInplace(int currGrad, int *curr, u_int64_t pos)
 void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
     unsigned currGrad = 2;
-    if (grad <= 0)  //auch Auf überlauf checken!!
+    if (grad <= 0) //auch Auf überlauf checken!!
     {
         printf("Error number not valid !");
         return;
@@ -317,13 +318,13 @@ void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
 void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
-    if (grad <= 0)  //auch Auf überlauf checken!!
+    if (grad <= 0) //auch Auf überlauf checken!!
     {
         printf("Error number not valid !");
         return;
     }
 
-    u_int64_t amt = (u_int64_t) pow(3, 2 * grad);
+    u_int64_t amt = (u_int64_t)pow(3, 2 * grad);
 
     // Richtungsarray allokieren und die Startkurve hardcodiert einfügen
     int *array = (int *)malloc(amt * sizeof(int));
@@ -355,20 +356,20 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     {
         switch (array[i])
         {
-            case 0: //oben
-                y++;
-                break;
-            case 2: //unten     
-                y--;
-                break;
-            case 3: //links
-                x--;
-                break;
-            case 1: //rechts
-                x++;
-                break;
-            default:
-                break;
+        case 0: //oben
+            y++;
+            break;
+        case 2: //unten
+            y--;
+            break;
+        case 3: //links
+            x--;
+            break;
+        case 1: //rechts
+            x++;
+            break;
+        default:
+            break;
         }
 
         x1[i] = x;
@@ -378,7 +379,7 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     free(array);
 }
 
-void getHelp()  //Wertebereich des Grads angeben!
+void getHelp() //Wertebereich des Grads angeben!
 {
     printf("---------------------HELP---------------------\n");
     printf("Dieses Programm enthält unterschiedliche Arten\n");
@@ -410,7 +411,7 @@ void printCoordinates(u_int64_t *x, u_int64_t *y, u_int64_t len)
 {
     for (u_int64_t i = 0; i < len; i++)
     {
-       printf("x: %ld, y: %ld\n", x[i], y[i]);
+        printf("x: %ld, y: %ld\n", x[i], y[i]);
     }
 }
 
@@ -427,8 +428,8 @@ int main(int argc, char **argv)
 {
     char *pCh;
     unsigned long deg = 42;
-    char* executeRekursive = "-r";
-    char* executeInC = "-C";
+    char *executeRekursive = "-r";
+    char *executeInC = "-C";
 
     // Check arguments
     if (argc > 3 || argc < 2)
@@ -438,14 +439,14 @@ int main(int argc, char **argv)
     }
     else
     {
-        if(argc == 2)
+        if (argc == 2)
         {
-            if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "-help") == 0)
+            if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "-help") == 0)
             {
                 getHelp();
                 return 0;
             }
-            else    //Peno Kurve iterativ in Assembler aufrufen
+            else //Peno Kurve iterativ in Assembler aufrufen
             {
                 deg = strtoul(argv[1], &pCh, 10);
             }
@@ -461,7 +462,7 @@ int main(int argc, char **argv)
             return 2;
         }
     }
-    
+
     // Convert to ulong WITH CHECKING!
     if ((pCh == argv[1]) || (*pCh != '\0'))
     {
@@ -472,34 +473,42 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    unsigned dim = (int)pow(9, deg);
-    u_int64_t *x = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
-    u_int64_t *y = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
+    unsigned size = (int)pow(9, deg);
+    u_int64_t *x = (u_int64_t *)malloc(size * sizeof(u_int64_t));
+    u_int64_t *y = (u_int64_t *)malloc(size * sizeof(u_int64_t));
 
     struct timespec before;
     struct timespec after;
 
-    if(argc == 2)   //Execute Assembler
+    if (argc == 2) //Execute Assembler
     {
         puts("Assembler, GOGOGO!");
-        clock_gettime(CLOCK_MONOTONIC, &before);
-        peano(deg, x, y);
-        clock_gettime(CLOCK_MONOTONIC, &after);
-        printf("Assembly Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
-        printf("Assembly Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        drawSvg(x, y, dim);
+        if (clock_gettime(CLOCK_MONOTONIC, &before) == 0)
+        {
+            //sleep(1);
+            peano(deg, x, y);
+        }
+        else
+            puts("Error");
+
+        if (clock_gettime(CLOCK_MONOTONIC, &after) == 0)
+        {
+            printf("Assembly Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
+            printf("Assembly Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
+        }
+        //drawSvg(x, y, dim);
     }
-    else if(argc == 3 && strcmp(argv[1], executeInC) == 0)   //execute Peano in C
+    else if (argc == 3 && strcmp(argv[1], executeInC) == 0) //execute Peano in C
     {
         puts("Iterativ, GOGOGO!");
         clock_gettime(CLOCK_MONOTONIC, &before);
         peanoInPlace(deg, x, y);
         clock_gettime(CLOCK_MONOTONIC, &after);
-        printf("C Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
+        printf("C Nanoseconds passed: %ld\n", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
         printf("C Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        drawSvg(x, y, dim);
+        drawSvg(x, y, size);
     }
-    else    //execute Rekursive
+    else //execute Rekursive
     {
         puts("Rekursiv, GOGOGO!");
     }

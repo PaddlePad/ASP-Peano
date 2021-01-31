@@ -201,9 +201,9 @@ calcNext: //rsi curr array pointer, currGrad = r8
     
 ret
 
-normalInsert: // rsi = array, size = rcx, offset = r12        //Normales einfügen der Schleife
-    cmp rcx, 0          //ende der Schleife
-    jle .LEndInsert
+normalInsert: // rsi = array, size = rcx, offset = r12  Normales einfügen der Schleife
+    cmp rcx, 0                              //ende der Schleife
+    jle .LEndInsert                         // eventuell durch je austauschen
 
     mov r8, rcx                             //r8 = rcx
     shl r8, 3                               //mul rcx, 8
