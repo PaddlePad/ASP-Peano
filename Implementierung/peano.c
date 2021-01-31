@@ -159,7 +159,7 @@ void reverseInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
 
 void mirrorInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
 {
-    for(u_int64_t i = 1; i<=size; i++)
+    for(u_int64_t i = 1; i <= size; i++)
     {
         u_int64_t temp = arr[i];
         if (temp % 2 == 0)
@@ -177,13 +177,14 @@ void copyInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
 {
     for (u_int64_t i = 1; i <= size; i++)
     {
-        arr[pos + i] = arr[i];
+        u_int64_t temp = arr[i];
+        arr[pos + i] = temp;
     }
 }
 
 int calcNextInplace(int currGrad, u_int64_t *curr, u_int64_t pos)
 {
-    u_int64_t size = (int) pow(3, 2 * currGrad);
+    u_int64_t size = (u_int64_t) pow(3, 2 * currGrad);
     // Erster Zwischenstep
     curr[pos] = 0;
 
@@ -193,53 +194,53 @@ int calcNextInplace(int currGrad, u_int64_t *curr, u_int64_t pos)
     pos += size;
 
     //Zwischenschritt nach oben
-    curr[++pos] = 0;
+    curr[pos] = 0;
 
     // Dritter step
-    copyInPlace(curr, pos-1, size);
+    copyInPlace(curr, pos, size);
     pos += size;
 
     //Zwischenschritt nach rechts
-    curr[++pos] = 1;
+    curr[pos] = 1;
 
     //Vierter Step
-    mirrorInPlace(curr, pos-1, size);
+    mirrorInPlace(curr, pos, size);
     pos += size;
 
     //Zwischenschritt nach unten
-    curr[++pos] = 2;
+    curr[pos] = 2;
 
     //Fünfter Step
-    reverseInPlace(curr, pos-1, size);
+    reverseInPlace(curr, pos, size);
     pos += size;
 
     //Zwischenschritt nach unten
-    curr[++pos] = 2;
+    curr[pos] = 2;
 
     //Sechster Step
-    mirrorInPlace(curr, pos-1, size);
+    mirrorInPlace(curr, pos, size);
     pos += size;
 
     //Zwischenschritt nach rechts
-    curr[++pos] = 1;
+    curr[pos] = 1;
 
     //Siebter Step
-    copyInPlace(curr, pos-1, size);
+    copyInPlace(curr, pos, size);
     pos += size;
 
     //Zwischenschritt nach oben
-    curr[++pos] = 0;
+    curr[pos] = 0;
 
     //Achter Step
-    reverseInPlace(curr, pos-1, size);
-    mirrorInPlace(curr, pos-1, size);
+    reverseInPlace(curr, pos, size);
+    mirrorInPlace(curr, pos, size);
     pos += size;
 
     //Zwischenschritt nach oben
-    curr[++pos] = 0;
+    curr[pos] = 0;
 
     //Letzter Step
-    copyInPlace(curr, pos-1, size);
+    copyInPlace(curr, pos, size);
     pos += size;
     return pos;
 }
@@ -310,9 +311,9 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
     u_int64_t *array = (u_int64_t *)malloc(amt * sizeof(u_int64_t));
     u_int64_t curr1[] = {0, 0, 1, 2, 2, 1, 0, 0}; //0 : up , 1 : right , 2 : down , 3 : left
-    unsigned pos = 10;
+    unsigned pos = 9;
 
-    for (u_int64_t i = 1; i < pos; i++)
+    for (u_int64_t i = 1; i <= pos; i++)
     {
         array[i] = curr1[i-1];
     }
