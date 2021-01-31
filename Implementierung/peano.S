@@ -37,7 +37,6 @@ peano: // rdi = grad, rsi x*, rdx* y
     cmp rdi, rax                  //wenn grad = 1, koord berechnen und fertig
     jle .LKoordinatenCalc
     mov r13, rbp                    //imm 1 oder rbp?
-    mov qword ptr[rdx], 8           //8 speichern, wird so oft verwendet
 
 .LoopCalcNext:  //currGrad = r13, Zielgrad
     cmp r13, rdi
@@ -63,8 +62,6 @@ peano: // rdi = grad, rsi x*, rdx* y
     pop r13
     pop rbp
 
-    //ret
-
     // Erster Punkt hardcodiert
     mov qword ptr[rsi], 1     //x
     mov qword ptr[rdx], 1     //y
@@ -74,38 +71,41 @@ peano: // rdi = grad, rsi x*, rdx* y
     cmp r8, rdi
     jge .LEnd
 
+    lea r9, [rsi + r8 * 8]
+    lea r10, [rdx + r8 * 8]
+
     //letzen 2 bit entscheidend
-    test qword ptr[rsi + r8 * 8], 0x0000_0000_0000_0001 //ob zahl gerade
+    test qword ptr[r9], 0x0000_0000_0000_0001 //ob zahl gerade
     jnz .LDirUngerade                               //wenn %2 != 0, dir = 1 oder 3
-    test qword ptr[rsi + r8 * 8], 0x0000_0000_0000_0002   //test 2. bit -> dir 0 oder 2
+    test qword ptr[r9], 0x0000_0000_0000_0002   //test 2. bit -> dir 0 oder 2
     jnz .LDir2
 
     //Dir0  //oben
     inc rcx
-    mov qword ptr[rdx + r8 * 8], rcx    //y-koord in y* //change steht oben
-    mov qword ptr[rsi + r8 * 8], rax    //x-koord in x*
+    mov qword ptr[r10], rcx    //y-koord in y* //change steht oben
+    mov qword ptr[r9], rax    //x-koord in x*
     jmp .LKoordinatenIterationEnd
 
     .LDir2: //unten
     dec rcx
-    mov qword ptr[rdx + r8 * 8], rcx    //y-koord in y*
-    mov qword ptr[rsi + r8 * 8], rax    //x-koord in x*
+    mov qword ptr[r10], rcx    //y-koord in y*
+    mov qword ptr[r9], rax    //x-koord in x*
     jmp .LKoordinatenIterationEnd
 
 .LDirUngerade:
-    test qword ptr[rsi + r8 * 8], 0x0000_0000_0000_0002   //test 2. bit 
+    test qword ptr[r9], 0x0000_0000_0000_0002   //test 2. bit 
     jnz .LDir3
 
     //Dir1  //rechts
     inc rax
-    mov qword ptr[rsi + r8 * 8], rax    //x-koord in x*
-    mov qword ptr[rdx + r8 * 8], rcx    //y-koord in y*
+    mov qword ptr[r9], rax    //x-koord in x*
+    mov qword ptr[r10], rcx    //y-koord in y*
     jmp .LKoordinatenIterationEnd
 
     .LDir3: //links
     dec rax
-    mov qword ptr[rsi + r8 * 8], rax    //x-koord in x*
-    mov qword ptr[rdx + r8 * 8], rcx    //y-koord in y*
+    mov qword ptr[r9], rax    //x-koord in x*
+    mov qword ptr[r10], rcx    //y-koord in y*
     jmp .LKoordinatenIterationEnd
 
 .LKoordinatenIterationEnd:
