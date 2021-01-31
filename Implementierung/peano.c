@@ -5,6 +5,7 @@
 #include <time.h>
 
 void peano(unsigned degree, u_int64_t* x, u_int64_t* y);
+void printDirections(int *dir, u_int64_t len);
 //void reverse(u_int64_t in, u_int64_t out, unsinged size);
 //void mirror(u_int64_t in, u_int64_t out, unsinged size);
 //u_int64_t = long unsigned int
@@ -148,20 +149,21 @@ void calcNext(int currGrad, int *curr)
     free(revMir);
 }
 
-void reverseInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
+void reverseInPlace(int *arr, u_int64_t pos, u_int64_t size)
 {
     for (u_int64_t i = 1; i <= size; i++)
     {
-        u_int64_t temp  = (arr[i] + 2) % 4;
+        int temp  = (arr[i] + 2) % 4;
         arr[pos + i] = temp;
     }
 }
 
-void mirrorInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
+void mirrorInPlace(int *arr, u_int64_t pos, u_int64_t size)
 {
     for(u_int64_t i = 1; i <= size; i++)
     {
-        u_int64_t temp = arr[i];
+        int temp = arr[i];
+
         if (temp % 2 == 0)
         {
             arr[pos + i] = (temp + 2) % 4;
@@ -173,24 +175,40 @@ void mirrorInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
     }
 }
 
-void copyInPlace(u_int64_t *arr, u_int64_t pos, u_int64_t size)
+void copyInPlace(int *arr, u_int64_t pos, u_int64_t size)
 {
     for (u_int64_t i = 1; i <= size; i++)
     {
-        u_int64_t temp = arr[i];
+        int temp = arr[i];
         arr[pos + i] = temp;
     }
 }
 
-int calcNextInplace(int currGrad, u_int64_t *curr, u_int64_t pos)
+void reverseMirrorInPlace(int *arr, u_int64_t pos, u_int64_t size)
+{
+    for (u_int64_t i = 1; i < size; i++)
+    {
+        int temp = arr[i];
+
+        if (temp % 2 == 0)
+        {
+            arr[pos + i] = temp;
+        }
+        else
+        {
+            arr[pos + i] = (temp + 2) % 4;
+        }
+    }
+}
+
+int calcNextInplace(int currGrad, int *curr, u_int64_t pos)
 {
     u_int64_t size = (u_int64_t) pow(3, 2 * currGrad);
     // Erster Zwischenstep
     curr[pos] = 0;
 
     // Zweiter step
-    reverseInPlace(curr, pos, size);
-    mirrorInPlace(curr, pos, size);
+    reverseMirrorInPlace(curr, pos, size);
     pos += size;
 
     //Zwischenschritt nach oben
@@ -232,8 +250,7 @@ int calcNextInplace(int currGrad, u_int64_t *curr, u_int64_t pos)
     curr[pos] = 0;
 
     //Achter Step
-    reverseInPlace(curr, pos, size);
-    mirrorInPlace(curr, pos, size);
+    reverseMirrorInPlace(curr, pos, size);
     pos += size;
 
     //Zwischenschritt nach oben
@@ -309,7 +326,8 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     unsigned currGrad = 1;
     u_int64_t amt = (u_int64_t) pow(3, 2 * grad);
 
-    u_int64_t *array = (u_int64_t *)malloc(amt * sizeof(u_int64_t));
+    int *array = (int *)malloc(amt * sizeof(int));
+
     u_int64_t curr1[] = {0, 0, 1, 2, 2, 1, 0, 0}; //0 : up , 1 : right , 2 : down , 3 : left
     unsigned pos = 9;
 
@@ -324,6 +342,8 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
         currGrad++;
     }
 
+    //printDirections(array, amt);
+
     u_int64_t x = 1;
     u_int64_t y = 1;
     x1[0] = x;
@@ -333,20 +353,20 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     {
         switch (array[i])
         {
-        case 0:
-            y++;
-            break;
-        case 2:
-            y--;
-            break;
-        case 3:
-            x--;
-            break;
-        case 1:
-            x++;
-            break;
-        default:
-            break;
+            case 0: //oben
+                y++;
+                break;
+            case 2: //unten     
+                y--;
+                break;
+            case 3: //links
+                x--;
+                break;
+            case 1: //rechts
+                x++;
+                break;
+            default:
+                break;
         }
 
         x1[i] = x;
@@ -384,12 +404,21 @@ void getHelp()  //Wertebereich des Grads angeben!
     printf("----------------------------------------------\n");
 }
 
-void printCoordinates(u_int64_t *x, u_int64_t *y, unsigned len)
+void printCoordinates(u_int64_t *x, u_int64_t *y, u_int64_t len)
 {
-    for (unsigned i = 0; i < len; i++)
+    for (u_int64_t i = 0; i < len; i++)
     {
        printf("x: %ld, y: %ld\n", x[i], y[i]);
     }
+}
+
+void printDirections(int *dir, u_int64_t len)
+{
+    for (u_int64_t i = 0; i < len; i++)
+    {
+        printf("Direction: %d \n", dir[i]);
+    }
+    puts("\n");
 }
 
 int main(int argc, char **argv)
@@ -445,14 +474,12 @@ int main(int argc, char **argv)
     u_int64_t *x = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
     u_int64_t *y = (u_int64_t *)malloc(dim * sizeof(u_int64_t));
 
-    //struct timespec before;
-    //struct timespec after;
+    struct timespec before;
+    struct timespec after;
 
-    peanoInPlace(deg, x, y);
-    printCoordinates(x,y, dim);
 
     //WENN FERTIG EINKOMMENTIEREN!!
-    /*if(argc == 2)   //Execute Assembler
+    if(argc == 2)   //Execute Assembler
     {
         puts("Assembler, GOGOGO!");
         clock_gettime(CLOCK_MONOTONIC, &before);
@@ -466,13 +493,15 @@ int main(int argc, char **argv)
     else if(argc == 3 && strcmp(argv[1], executeInC) == 0)   //execute Peano in C
     {
         puts("Iterativ, GOGOGO!");
-        peanoInC(deg, x, y);
+        //peanoInC(deg, x, y);
+        peanoInPlace(deg, x, y);
+        //printCoordinates(x,y, dim);
         drawSvg(x, y, dim);
     }
     else    //execute Rekursive
     {
         puts("Rekursiv, GOGOGO!");
-    }*/
+    }
 
     free(x);
     free(y);
