@@ -323,19 +323,21 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
         return;
     }
 
-    unsigned currGrad = 1;
     u_int64_t amt = (u_int64_t) pow(3, 2 * grad);
 
+    // Richtungsarray allokieren und die Startkurve hardcodiert einfügen
     int *array = (int *)malloc(amt * sizeof(int));
+    array[1] = 0;
+    array[2] = 0;
+    array[3] = 1;
+    array[4] = 2;
+    array[5] = 2;
+    array[6] = 1;
+    array[7] = 0;
+    array[8] = 0;
 
-    u_int64_t curr1[] = {0, 0, 1, 2, 2, 1, 0, 0}; //0 : up , 1 : right , 2 : down , 3 : left
     unsigned pos = 9;
-
-    for (u_int64_t i = 1; i <= pos; i++)
-    {
-        array[i] = curr1[i-1];
-    }
-
+    unsigned currGrad = 1;
     while (currGrad < grad)
     {
         pos = calcNextInplace(currGrad, array, pos);
@@ -477,26 +479,25 @@ int main(int argc, char **argv)
     struct timespec before;
     struct timespec after;
 
-
-    //WENN FERTIG EINKOMMENTIEREN!!
     if(argc == 2)   //Execute Assembler
     {
         puts("Assembler, GOGOGO!");
         clock_gettime(CLOCK_MONOTONIC, &before);
         peano(deg, x, y);
         clock_gettime(CLOCK_MONOTONIC, &after);
-        printf("Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
-        printf("Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        //printCoordinates(x, y, dim);
-        drawSvg(x, y, dim);
+        printf("Assembly Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
+        printf("Assembly Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
+        //drawSvg(x, y, dim);
     }
     else if(argc == 3 && strcmp(argv[1], executeInC) == 0)   //execute Peano in C
     {
         puts("Iterativ, GOGOGO!");
-        //peanoInC(deg, x, y);
+        clock_gettime(CLOCK_MONOTONIC, &before);
         peanoInPlace(deg, x, y);
-        //printCoordinates(x,y, dim);
-        drawSvg(x, y, dim);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+        printf("C Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
+        printf("C Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
+        //drawSvg(x, y, dim);
     }
     else    //execute Rekursive
     {
