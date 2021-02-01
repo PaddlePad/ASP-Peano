@@ -102,9 +102,37 @@ Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine eben solch
 %Mappen wir in [0,1]? sonst evtl Text ändern!
 %Punktsymetrie beweisen!
 %verbinden der Kurven!
+
 \newpage
 \section{Performanzanalyse}
-Zunächst setzen wir 
+
+%Technische Limitationen in C
+Bei dem testen unseres Programms fallen bei Graden von $n > 6$ bestimmte technische Limitationen unser Rechensysteme auf. 
+
+Zum einen haben wir kein Programm gefunden, dass die generierten .svg Dateien von einer Größe 43.0 Megabyte (Peano-Kurve mit $n = 7$) öffnen kann. Mit zunehmendem Grad enthält die .svg Dateien immer mehr Punkte der Kurve, weshalb sie ebenfalls exponentiell zur Basis 9 steigt. Deshalb möchten wir an dieser Stelle auf das Kapitel "Korrektheit" verweisen um die Kurve auf selbige zu prüfen.
+
+Zum anderen ist es nicht möglich, beliebig viel Speicher zu allokieren, da die von uns benutzte  "malloc"-Funktion maximal 17.179.869.184 Bytes auf dem Heap allokieren kann und der Heap zusätzlich in seiner Größe begrenzt ist. Deshalb können wir auf unseren Systemen die Funktion mit maximal $n = 9$ ausführen, da sonst nicht genügend Speicher allokiert wird. Für $n = 10$ müssten 27.894.275.208 Bytes allokieren, wozu wir eben nicht im Stande sind, weshalb wir den Wertebereich von $n$ auf $[1;9]$ limitiert haben.
+
+Um zu ermitteln, wie viel Speicher wir allokieren können, haben wir eine For-Schleife  folgenden Typs ausgeführt:
+
+\begin{PseudoCode}	%Formatieren! 
+u\_int64\_t *v;    	
+
+
+for (u\_int64\_t i = 1; v = (u\_int64\_t *) malloc(i); i <<= 1)   
+
+  
+\{     
+
+    
+print(i);  
+	
+	      
+free(v);    
+	
+	 
+\}
+\end{PseudoCode}
 
 %Assembler 
 

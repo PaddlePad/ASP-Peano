@@ -1,0 +1,8 @@
+Max malloc in bytes     :  17.179.869.184
+Max malloc in bits      : 137.438.953.472
+
+Arraygröße bei Grad 9   :     387.420.489
+Malloc Grad 9 in bytes  :   3.099.363.912 
+
+Arraygröße bei Grad 10  :   3.486.784.401
+Malloc Grad 10 in bytes :  27.894.275.208
