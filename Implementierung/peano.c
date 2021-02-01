@@ -4,23 +4,18 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdbool.h>
 
+// Assemblyfunktion
 void peano(unsigned degree, u_int64_t *x, u_int64_t *y);
-void printDirections(int *dir, u_int64_t len);
-//void reverse(u_int64_t in, u_int64_t out, unsinged size);
-//void mirror(u_int64_t in, u_int64_t out, unsinged size);
-//u_int64_t = long unsigned int
-//---------------------DECLARATIONS------------------------
-// base Kurve merken
-//int length = 8;
 
 //----------------------------PEANO ITERATIVE NOT OUT-OF-PLACE----------------------------
 
-void arraycopy(int *src, int srcPos, int *dest, int destPos, int length1) //VERIFY IF THIS WORKS
+void arraycopy(int *src, int *dest, int insertStartPosition, int length1) //VERIFY IF THIS WORKS
 {
-    for (int i = srcPos; i < (srcPos + length1); i++)
+    for (int i = 0; i < +length1; i++)
     {
-        dest[destPos + (i - srcPos)] = src[i];
+        dest[insertStartPosition + i] = src[i];
     }
 }
 
@@ -66,7 +61,7 @@ void calcNext(int prevGrad, int *array)
     int *mir = (int *)malloc(currSize * sizeof(int));
     int *rev = (int *)malloc(currSize * sizeof(int));
     int *revMir = (int *)malloc(currSize * sizeof(int));
-    arraycopy(array, 0, pre, 0, currSize);
+    arraycopy(array, pre, 0, currSize);
     mirror(mir, array, currSize, 0);
     reverse(rev, array, currSize);
     mirror(revMir, array, currSize, 1);
@@ -77,56 +72,56 @@ void calcNext(int prevGrad, int *array)
     array[i++] = 0;
 
     // Erster Schritt: reversed, mirrored
-    arraycopy(revMir, 0, array, i, currSize);
+    arraycopy(revMir, array, i, currSize);
     i += stepSize;
 
     // Zweiter Zwischenschritt nach oben
     array[i++] = 0;
 
     // Zweiter Schritt
-    arraycopy(pre, 0, array, i, currSize);
+    arraycopy(pre, array, i, currSize);
     i += stepSize;
 
     // Dritter Zwischenschritt nach rechts
     array[i++] = 1;
 
     // Dritter Schritt: mirrored
-    arraycopy(mir, 0, array, i, currSize);
+    arraycopy(mir, array, i, currSize);
     i += stepSize;
 
     // Vierter Zwischenschritt nach unten
     array[i++] = 2;
 
     // Vierter Schritt: reversed
-    arraycopy(rev, 0, array, i, currSize);
+    arraycopy(rev, array, i, currSize);
     i += stepSize;
 
     // Fünfter Zwischenschritt nach unten
     array[i++] = 2;
 
     // Fünfter Schritt: mirrored
-    arraycopy(mir, 0, array, i, currSize);
+    arraycopy(mir, array, i, currSize);
     i += stepSize;
 
     // Sechster Zwischenschritt nach rechts
     array[i++] = 1;
 
     // Sechster Schritt
-    arraycopy(pre, 0, array, i, currSize);
+    arraycopy(pre, array, i, currSize);
     i += stepSize;
 
     // Siebter Zwischenschritt nach oben
     array[i++] = 0;
 
     // Siebter Schritt: reversed + mirrored
-    arraycopy(revMir, 0, array, i, currSize);
+    arraycopy(revMir, array, i, currSize);
     i += stepSize;
 
     // Achter Zwischenschritt nach oben
     array[i++] = 0;
 
     // Achter Schritt
-    arraycopy(pre, 0, array, i, currSize);
+    arraycopy(pre, array, i, currSize);
 
     currSize = ((int)pow(9, prevGrad) - 1);
     free(pre);
@@ -385,23 +380,35 @@ void getHelp() //Wertebereich des Grads angeben!
     printf("Informationen (zur Peano-Kurve) lesen Sie \n");
     printf("bitte \"Ausarbeitung.pdf\".\n\n");
 
-    printf("1.) Die Peano Kurve iterativ in C). \n");
+    printf("1.) Die Peano Kurve iterativ in-place in C). \n");
     printf("\tDazu das Programm mit den Argumenten: \n");
-    printf("\t-C <Grad> \n");
+    printf("\t-i <Grad> \n");
     printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
     printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
 
-    printf("2.) Die Peano Kurve iterativ in Assembler. \n");
+    printf("2.) Die Peano Kurve iterativ out-of-place in C). \n");
     printf("\tDazu das Programm mit den Argumenten: \n");
-    printf("\t<Grad> \n");
+    printf("\t-o <Grad> \n");
     printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
     printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
 
-    printf("3.) Die Peano Kurve rekursiv in C. \n");
+    printf("3.) Die Peano Kurve iterativ in Assembler. \n");
+    printf("\tDazu das Programm mit den Argumenten: \n");
+    printf("\t-a <Grad> \n");
+    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
+    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
+
+    printf("4.) Die Peano Kurve rekursiv in C. \n");
     printf("\tDazu das Programm mit den Argumenten: \n");
     printf("\t-r <Grad> \n");
     printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
-    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
+    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n\n");
+
+    printf("Zusäztlich kann ein Argument -svg hinzugefügt\n");
+    printf("werden um eine SVG-Datei mit der gezeichneten Kurve\n");
+    printf("zu erstellen und ein Argument -t um die gemessene Zeit\n");
+    printf("für den ausgewählten Algorithmus auszugeben.\n");
+
     printf("----------------------------------------------\n");
 }
 
@@ -459,44 +466,80 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
 
 //-----------------------------------MAIN--------------------------------------
 
-int main(int argc, char **argv)
+// int checkInput(int agrc, char *argv[])
+// {
+
+// }
+
+int main(int argc, char *argv[])
 {
-    // argument einbauen für SVG File ja/nein
+    // Argumente einbauen für SVG File ja/nein und für Zeitausgabe
 
     char *pCh;
     unsigned long deg = 42;
+    char *executeAssembly = "-a";
+    char *executeInplace = "-i";
+    char *executeOutOfPlace = "-o";
     char *executeRekursive = "-r";
-    char *executeInplace = "-C";
-    char *executeC = "-c";
+
+    bool svg = false;
+    bool time = false; 
 
     // Check arguments
     if (argc > 3 || argc < 2)
     {
-        puts("Not enough or too many arguments. Try again with -h for Help.");
+        puts("Not enough or too many arguments. Try again with -h or --help for help.");
         return 1;
     }
     else
     {
-        if (argc == 2)
+        if (argc > 1)
         {
-            if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "-help") == 0)
+            if (argc == 2 && strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
             {
                 getHelp();
                 return 0;
             }
-            else //Peno Kurve iterativ in Assembler aufrufen
-            {
-                deg = strtoul(argv[1], &pCh, 10);
-            }
         }
-        else if (argc == 3 && (strcmp(argv[1], executeInplace) == 0 || strcmp(argv[1], executeRekursive) == 0 || strcmp(argv[1], executeC) == 0))
+        else if (argc == 3 && (strcmp(argv[1], executeInplace) == 0 || strcmp(argv[1], executeRekursive) == 0 || strcmp(argv[1], executeOutOfPlace) == 0 || strcmp(argv[1], executeAssembly) == 0))
         {
             // Ensure argument was okay.
             deg = strtoul(argv[2], &pCh, 10);
         }
+        else if (argc == 4)
+        {
+            if(strcmp(argv[3],"-svg") == 0)
+                svg = true;
+            else if(strcmp(argv[3],"-t") == 0)
+                time = true;
+            else
+            {
+                printf("Invalid parameter on position 4, try '-svg' to create an .svg file or '-t' to output the operating time.");
+                exit(1);
+            }
+            
+        }
+        else if (argc == 5)
+        {
+            if((strcmp(argv[3],"-svg") == 0 && strcmp(argv[4],"-t") == 0) || (strcmp(argv[4],"-svg") == 0 && strcmp(argv[3],"-t") == 0))
+            {
+                svg = true;
+                time = true;
+            }
+            else if((strcmp(argv[3],"-svg") == 0 && strcmp(argv[4],"-t") != 0) || (strcmp(argv[3],"-t") == 0 && strcmp(argv[4],"-svg") != 0))
+            {
+                printf("Invalid parameter on position 5, try '-svg' to create an .svg file and '-t' to output the operating time.");
+                exit(1);
+            }
+            else if((strcmp(argv[4],"-svg") == 0 && strcmp(argv[3],"-t") != 0) || (strcmp(argv[4],"-t") == 0 && strcmp(argv[3],"-svg") != 0))
+            {
+                printf("Invalid parameter on position 4, try '-svg' to create an .svg file and '-t' to output the operating time.");
+                exit(1);
+            }
+        }
         else
         {
-            puts("Invalid Arguments. Try again with -h for help (in GER).");
+            puts("Invalid Arguments. Try again with -h or --help for help.");
             return 2;
         }
     }
@@ -513,6 +556,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
+    // Svg abfrage (Austauschen durch Eingabeparameter)
     char scn[1];
     printf("SVG erstellen? 1 = yes, 0 = no\n");
     int q = scanf("%s", scn);
@@ -559,7 +603,7 @@ int main(int argc, char **argv)
         if (svg == 1)
             drawSvg(x, y, size);
     }
-    else if (argc == 3 && strcmp(argv[1], executeC) == 0)
+    else if (argc == 3 && strcmp(argv[1], executeOutOfPlace) == 0)
     {
         puts("Out-Of-Place Iterativ in C...");
         clock_gettime(CLOCK_MONOTONIC, &before);
