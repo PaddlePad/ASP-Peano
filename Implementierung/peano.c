@@ -24,7 +24,7 @@ void arraycopy(int *src, int srcPos, int *dest, int destPos, int length1) //VERI
     }
 }
 
-void mirror(int *out, int *in, int size, int reverse) // spiegelt up&Down, gibt dircetions zurück
+void mirror(int *out, int *in, int size, int reverse) // spiegelt up&Down, gibt dircetions zurück, wenn 'reverse' auf 1 gesetzt wird, wird zudem auch reversed
 {
     for (int i = 0; i < size; i++)
     {
@@ -124,10 +124,9 @@ void calcNext(int prevGrad, int *array)
 
     // Achter Zwischenschritt nach oben
     array[i++] = 0;
-    
+
     // Achter Schritt
     arraycopy(pre, 0, array, i, currSize);
-    
 
     currSize = ((int)pow(9, prevGrad) - 1);
     free(pre);
@@ -167,9 +166,9 @@ void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     x1[0] = x;
     y1[0] = y;
 
-    for (u_int64_t i = 0; i < size; i++)
+    for (u_int64_t i = 1; i < size; i++)
     {
-        switch (array[i])
+        switch (array[i - 1])
         {
         case 0:
             y++;
@@ -540,26 +539,18 @@ int main(int argc, char **argv)
 
     if (argc == 2) //Execute Assembler
     {
-        puts("Assembler, GOGOGO!");
-        if (clock_gettime(CLOCK_MONOTONIC, &before) == 0)
-        {
-            //sleep(1);
-            peano(deg, x, y);
-            if (svg == 1)
-                drawSvg(x, y, size);
-        }
-        else
-            puts("Error");
-
-        if (clock_gettime(CLOCK_MONOTONIC, &after) == 0)
-        {
-            printf("Assembly Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
-            printf("Assembly Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        }
+        puts("Assembly...");
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        peano(deg, x, y);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+        printf("Assembly Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
+        printf("Assembly Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
+        if (svg == 1)
+            drawSvg(x, y, size);
     }
     else if (argc == 3 && strcmp(argv[1], executeInplace) == 0) //execute Peano in C
     {
-        puts("Iterativ in C...");
+        puts("In-Place Iterativ in C...");
         clock_gettime(CLOCK_MONOTONIC, &before);
         peanoInPlace(deg, x, y);
         clock_gettime(CLOCK_MONOTONIC, &after);
@@ -570,8 +561,12 @@ int main(int argc, char **argv)
     }
     else if (argc == 3 && strcmp(argv[1], executeC) == 0)
     {
-        puts("C...");
+        puts("Out-Of-Place Iterativ in C...");
+        clock_gettime(CLOCK_MONOTONIC, &before);
         peanoInC(deg, x, y);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+        printf("C Nanoseconds passed: %ld\n", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+        printf("C Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
         if (svg == 1)
             drawSvg(x, y, size);
     }
