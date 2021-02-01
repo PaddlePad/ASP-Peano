@@ -12,52 +12,16 @@ void printDirections(int *dir, u_int64_t len);
 //u_int64_t = long unsigned int
 //---------------------DECLARATIONS------------------------
 // base Kurve merken
-int length = 8;
+//int length = 8;
 
-//int curr1[] = {0, 0, 1, 2, 2, 1, 0, 0}; //0 : up , 1 : right , 2 : down , 3 : left
-//arraycopy(curr, 0, curr1, 0, length);
-//free(curr1);
+//----------------------------PEANO ITERATIVE NOT OUT-OF-PLACE----------------------------
 
-//------------------------HELP FUNCTIONS-------------------
 void arraycopy(int *src, int srcPos, int *dest, int destPos, int length1) //VERIFY IF THIS WORKS
 {
     for (int i = srcPos; i < (srcPos + length1); i++)
     {
         dest[destPos + (i - srcPos)] = src[i];
     }
-}
-
-void drawSvg(u_int64_t *x, u_int64_t *y, int size)
-{
-    int grad = (int)(log(size) / log(3) / 2);
-    int pxWidth = 2187; // 3⁷
-    int step = pxWidth / (int)sqrt(size);
-    pxWidth += step; // pixel offset
-
-    FILE *fp;
-
-    // char* title = (char*) malloc(sizeof(char) * 10);
-    // sprintf(title, "peanoGrad%d.svg", dim);
-    // free(title);
-
-    fp = fopen("peano.svgz", "w+");
-
-    fprintf(fp, "<?xml version=\"1.0\"?>\n");
-    fprintf(fp, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
-    fprintf(fp, "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
-
-    fprintf(fp, "\n<svg height=\"%d\" width=\"%d\">\n", pxWidth, pxWidth);
-    fprintf(fp, "\t<polyline points=\"");
-    for (int i = 0; i < size; i++)
-    {
-        fprintf(fp, "%ld,%ld ", x[i] * step, pxWidth - (y[i] * step));
-        if (i > 0 && i % 9 == 0)
-            fprintf(fp, "\n\t");
-    }
-    fprintf(fp, "\"\n\tstyle=\"fill:none;stroke:black;stroke-width:%d\" />\n", 10 / grad * 2);
-    fprintf(fp, "</svg>\n");
-
-    fclose(fp);
 }
 
 void mirror(int *out, int *in, int size) // spiegelt up&Down, gibt dircetions zurück
@@ -89,66 +53,127 @@ void reverse(int *out, int *in, int size) // spiegelt up&Down, left&right
     }
 }
 
-//----------------------------PEANO HELP FUNCTIONS--------------
 void calcNext(int currGrad, int *curr)
 {
-    int *pre = (int *)malloc(length * sizeof(int));
-    int *mir = (int *)malloc(length * sizeof(int));
-    int *rev = (int *)malloc(length * sizeof(int));
-    int *revMir = (int *)malloc(length * sizeof(int));
-    mirror(mir, curr, length);
-    reverse(rev, curr, length);
-    reverse(revMir, mir, length);
+    u_int64_t currSize = (u_int64_t) pow(3, currGrad * 2);
+
+    int *pre = (int *)malloc(currSize * sizeof(int));
+    int *mir = (int *)malloc(currSize * sizeof(int));
+    int *rev = (int *)malloc(currSize * sizeof(int));
+    int *revMir = (int *)malloc(currSize * sizeof(int));
+    mirror(mir, curr, currSize);
+    reverse(rev, curr, currSize);
+    reverse(revMir, mir, currSize);
 
     int i = 0;
 
-    arraycopy(pre, 0, curr, i, length);
-    i = i + length;
+    arraycopy(pre, 0, curr, i, currSize);
+    i = i + currSize;
     curr[i] = 0;
     i++;
 
-    arraycopy(revMir, 0, curr, i, length);
-    i = i + length;
+    arraycopy(revMir, 0, curr, i, currSize);
+    i = i + currSize;
     curr[i] = 0;
     i++;
 
-    arraycopy(pre, 0, curr, i, length);
-    i = i + length;
+    arraycopy(pre, 0, curr, i, currSize);
+    i = i + currSize;
     curr[i] = 1;
     i++;
 
-    arraycopy(mir, 0, curr, i, length);
-    i = i + length;
+    arraycopy(mir, 0, curr, i, currSize);
+    i = i + currSize;
     curr[i] = 2;
     i++;
 
-    arraycopy(rev, 0, curr, i, length);
-    i = i + length;
+    arraycopy(rev, 0, curr, i, currSize);
+    i = i + currSize;
     curr[i] = 2;
     i++;
 
-    arraycopy(mir, 0, curr, i, length);
-    i = i + length;
+    arraycopy(mir, 0, curr, i, currSize);
+    i = i + currSize;
     curr[i] = 1;
     i++;
 
-    arraycopy(pre, 0, curr, i, length);
-    i = i + length;
+    arraycopy(pre, 0, curr, i, currSize);
+    i = i + currSize;
     curr[i] = 0;
     i++;
 
-    arraycopy(revMir, 0, curr, i, length);
-    i = i + length;
+    arraycopy(revMir, 0, curr, i, currSize);
+    i = i + currSize;
     curr[i] = 0;
     i++;
 
-    arraycopy(pre, 0, curr, i, length);
-    length = ((int)pow(9, currGrad) - 1);
+    arraycopy(pre, 0, curr, i, currSize);
+    currSize = ((int)pow(9, currGrad) - 1);
     free(pre);
     free(mir);
     free(rev);
     free(revMir);
 }
+
+void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
+{
+    if (grad < 1 || grad > 9) //auch Auf überlauf checken!!
+    {
+        printf("Error number not valid !");
+        return;
+    }
+
+    u_int64_t size = (u_int64_t)pow(3, 2 * grad);
+    int *array = (int *)malloc(size * sizeof(int));
+    array[0] = 0;
+    array[1] = 0;
+    array[2] = 1;
+    array[3] = 2;
+    array[4] = 2;
+    array[5] = 1;
+    array[6] = 0;
+    array[7] = 0;
+
+    unsigned currGrad = 2;
+
+    while (currGrad <= grad)
+    {
+        calcNext(currGrad, array);
+        currGrad++;
+    }
+
+    int x = 1;
+    int y = 1;
+    x1[0] = x;
+    y1[0] = y;
+
+    for (u_int64_t i = 0; i < size; i++)
+    {
+        switch (array[i])
+        {
+        case 0:
+            y++;
+            break;
+        case 2:
+            y--;
+            break;
+        case 3:
+            x--;
+            break;
+        case 1:
+            x++;
+            break;
+        default:
+            break;
+        }
+        x1[i] = x;
+        y1[i] = y;
+    }
+
+    free(array);
+}
+
+//---------------------------------PEANO ITERATIVE IN-PLACE---------------------------------
 
 void reverseInPlace(int *arr, u_int64_t pos, u_int64_t size)
 {
@@ -263,59 +288,6 @@ int calcNextInplace(int currGrad, int *curr, u_int64_t pos)
     return pos;
 }
 
-void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
-{
-    unsigned currGrad = 2;
-    if (grad <= 0) //auch Auf überlauf checken!!
-    {
-        printf("Error number not valid !");
-        return;
-    }
-
-    int *curr = (int *)malloc(length * sizeof(int));
-    int curr1[] = {0, 0, 1, 2, 2, 1, 0, 0}; //0 : up , 1 : right , 2 : down , 3 : left
-    arraycopy(curr1, 0, curr, 0, length);
-
-    if (grad != 1)
-    {
-        while (currGrad <= grad)
-        {
-            calcNext(currGrad, curr);
-            currGrad++;
-        }
-    }
-
-    int x = 1;
-    int y = 1;
-    x1[0] = x;
-    y1[0] = y;
-
-    for (int i = 0; i < length; i++)
-    {
-        switch (curr[i])
-        {
-        case 0:
-            y++;
-            break;
-        case 2:
-            y--;
-            break;
-        case 3:
-            x--;
-            break;
-        case 1:
-            x++;
-            break;
-        default:
-            break;
-        }
-        x1[i] = x;
-        y1[i] = y;
-    }
-
-    free(curr);
-}
-
 void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
     if (grad <= 0 || grad > 9) //auch Auf überlauf checken!!
@@ -324,10 +296,10 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
         return;
     }
 
-    u_int64_t amt = (u_int64_t)pow(3, 2 * grad);
+    u_int64_t size = (u_int64_t)pow(3, 2 * grad);
 
     // Richtungsarray allokieren und die Startkurve hardcodiert einfügen
-    int *array = (int *)malloc(amt * sizeof(int));
+    int *array = (int *)malloc(size * sizeof(int));
     array[1] = 0;
     array[2] = 0;
     array[3] = 1;
@@ -352,7 +324,7 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     x1[0] = x;
     y1[0] = y;
 
-    for (u_int64_t i = 1; i < amt; i++)
+    for (u_int64_t i = 1; i < size; i++)
     {
         switch (array[i])
         {
@@ -379,6 +351,10 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     free(array);
 }
 
+//----------------------------PEANO RECURSIVE (TODO)----------------------------
+
+//----------------------------HELPER FUNCTIONS----------------------------
+
 void getHelp() //Wertebereich des Grads angeben!
 {
     printf("---------------------HELP---------------------\n");
@@ -387,7 +363,7 @@ void getHelp() //Wertebereich des Grads angeben!
     printf("lassen. In dieser Implementierung benötigt \n");
     printf("die Kurve den Parameter <Grad>. Dieser gibt \n");
     printf("die Anzahl an Iterationen an. Für weiter\n");
-    printf("Informationen (zur Peano-Kurve) lesen sie \n");
+    printf("Informationen (zur Peano-Kurve) lesen Sie \n");
     printf("bitte \"Ausarbeitung.pdf\".\n\n");
 
     printf("1.) Die Peano Kurve iterativ in C). \n");
@@ -427,12 +403,52 @@ void printDirections(int *dir, u_int64_t len)
     puts("\n");
 }
 
+void drawSvg(u_int64_t *x, u_int64_t *y, int size)
+{
+    int grad = (int)(log(size) / log(3) / 2);
+    int pxWidth = 2187; // 3⁷
+    int step = pxWidth / (int)sqrt(size);
+    pxWidth += step; // pixel offset
+
+    FILE *fp;
+
+    // char* title = (char*) malloc(sizeof(char) * 10);
+    // sprintf(title, "peanoGrad%d.svg", dim);
+    // free(title);
+
+    fp = fopen("peano.svg", "w+");
+
+    fprintf(fp, "<?xml version=\"1.0\"?>\n");
+    fprintf(fp, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
+    fprintf(fp, "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
+
+    fprintf(fp, "\n<svg height=\"%d\" width=\"%d\">\n", pxWidth, pxWidth);
+    fprintf(fp, "\t<polyline points=\"");
+    for (int i = 0; i < size; i++)
+    {
+        fprintf(fp, "%ld,%ld ", x[i] * step, pxWidth - (y[i] * step));
+        if (i > 0 && i % 9 == 0)
+            fprintf(fp, "\n\t");
+    }
+    fprintf(fp, "\"\n\tstyle=\"fill:none;stroke:black;stroke-width:%d\" />\n", 10 / grad * 2);
+    fprintf(fp, "</svg>\n");
+
+    fclose(fp);
+
+    printf("Created new svg file for Grad %d\n", grad);
+}
+
+//-----------------------------------MAIN--------------------------------------
+
 int main(int argc, char **argv)
 {
+    // argument einbauen für SVG File ja/nein
+
     char *pCh;
     unsigned long deg = 42;
     char *executeRekursive = "-r";
-    char *executeInC = "-C";
+    char *executeInplace = "-C";
+    char *executeC = "-c";
 
     // Check arguments
     if (argc > 3 || argc < 2)
@@ -454,7 +470,7 @@ int main(int argc, char **argv)
                 deg = strtoul(argv[1], &pCh, 10);
             }
         }
-        else if (argc == 3 && (strcmp(argv[1], executeInC) == 0 || strcmp(argv[1], executeRekursive) == 0))
+        else if (argc == 3 && (strcmp(argv[1], executeInplace) == 0 || strcmp(argv[1], executeRekursive) == 0 || strcmp(argv[1], executeC) == 0))
         {
             // Ensure argument was okay.
             deg = strtoul(argv[2], &pCh, 10);
@@ -471,13 +487,19 @@ int main(int argc, char **argv)
     {
         puts("Invalid character, try an integer ;)");
         exit(1);
-    }
-    if(1 < deg || deg > 9)
+    } 
+    if (1 > deg || deg > 9)
     {
         puts("Invalid integer, must be in [1;9]");
         exit(1);
     }
 
+    char scn[1];
+    printf("SVG erstellen? 1 = yes, 0 = no\n");
+    int q = scanf("%s", scn);
+    int svg = atoi(scn);
+
+    (void)q;
 
     // Avoid warning about unused parameter.    eigentlich unnötig...
     // (void)argc;
@@ -486,6 +508,12 @@ int main(int argc, char **argv)
     int size = (int)pow(9, deg);
     u_int64_t *x = (u_int64_t *)malloc(size * sizeof(u_int64_t));
     u_int64_t *y = (u_int64_t *)malloc(size * sizeof(u_int64_t));
+
+    if (x == NULL || y == NULL)
+    {
+        puts("It's to fucking big!");
+        exit(3);
+    }
 
     struct timespec before;
     struct timespec after;
@@ -497,7 +525,8 @@ int main(int argc, char **argv)
         {
             //sleep(1);
             peano(deg, x, y);
-            //drawSvg(x, y, size);
+            if(svg == 1)
+                drawSvg(x, y, size);
         }
         else
             puts("Error");
@@ -508,7 +537,7 @@ int main(int argc, char **argv)
             printf("Assembly Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
         }
     }
-    else if (argc == 3 && strcmp(argv[1], executeInC) == 0) //execute Peano in C
+    else if (argc == 3 && strcmp(argv[1], executeInplace) == 0) //execute Peano in C
     {
         puts("Iterativ in C...");
         clock_gettime(CLOCK_MONOTONIC, &before);
@@ -516,7 +545,14 @@ int main(int argc, char **argv)
         clock_gettime(CLOCK_MONOTONIC, &after);
         printf("C Nanoseconds passed: %ld\n", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
         printf("C Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        drawSvg(x, y, size);
+        if(svg == 1)
+            drawSvg(x, y, size);
+    }
+    else if (argc == 3 && strcmp(argv[1], executeC) == 0)
+    {
+        puts("C...");
+        if(svg == 1)
+            drawSvg(x, y, size);
     }
     else //execute Rekursive
     {
