@@ -40,7 +40,7 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     // sprintf(title, "peanoGrad%d.svg", dim);
     // free(title);
 
-    fp = fopen("peano.svg", "w+");
+    fp = fopen("peano.svgz", "w+");
 
     fprintf(fp, "<?xml version=\"1.0\"?>\n");
     fprintf(fp, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
@@ -54,7 +54,7 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
         if (i > 0 && i % 9 == 0)
             fprintf(fp, "\n\t");
     }
-    fprintf(fp, "\"\n\tstyle=\"fill:none;stroke:white;stroke-width:%d\" />\n", 10 / grad * 2);
+    fprintf(fp, "\"\n\tstyle=\"fill:none;stroke:black;stroke-width:%d\" />\n", 10 / grad * 2);
     fprintf(fp, "</svg>\n");
 
     fclose(fp);
@@ -318,7 +318,7 @@ void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
 void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
-    if (grad <= 0) //auch Auf überlauf checken!!
+    if (grad <= 0 || grad > 9) //auch Auf überlauf checken!!
     {
         printf("Error number not valid !");
         return;
@@ -384,26 +384,29 @@ void getHelp() //Wertebereich des Grads angeben!
     printf("---------------------HELP---------------------\n");
     printf("Dieses Programm enthält unterschiedliche Arten\n");
     printf("eine Peano-Kurve als .svg Datei ausgeben zu \n");
-    printf(" lassen. In dieser Implementierung benotigt \n");
-    printf(" die Kurve den Parameter <Grad>. Dieser gibt \n");
-    printf(" die Anzahl an Iterationen an. Für weiter\n");
-    printf(" Informationen (zur Peano-Kurve) lesen sie \n");
-    printf(" bitte \"Ausarbeitung.pdf\". \n");
+    printf("lassen. In dieser Implementierung benötigt \n");
+    printf("die Kurve den Parameter <Grad>. Dieser gibt \n");
+    printf("die Anzahl an Iterationen an. Für weiter\n");
+    printf("Informationen (zur Peano-Kurve) lesen sie \n");
+    printf("bitte \"Ausarbeitung.pdf\".\n\n");
 
     printf("1.) Die Peano Kurve iterativ in C). \n");
     printf("\tDazu das Programm mit den Argumenten: \n");
-    printf("\t -C <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\nist.\n");
+    printf("\t-C <Grad> \n");
+    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
+    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
 
     printf("2.) Die Peano Kurve iterativ in Assembler. \n");
     printf("\tDazu das Programm mit den Argumenten: \n");
-    printf("\t <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\nist.\n");
+    printf("\t<Grad> \n");
+    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
+    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
 
     printf("3.) Die Peano Kurve rekursiv in C. \n");
     printf("\tDazu das Programm mit den Argumenten: \n");
-    printf("\t -r <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\nist.\n");
+    printf("\t-r <Grad> \n");
+    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
+    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
     printf("----------------------------------------------\n");
 }
 
@@ -466,14 +469,21 @@ int main(int argc, char **argv)
     // Convert to ulong WITH CHECKING!
     if ((pCh == argv[1]) || (*pCh != '\0'))
     {
-        puts("Invalid number");
-        return 1;
+        puts("Invalid character, try an integer ;)");
+        exit(1);
     }
-    // Avoid warning about unused parameter.    eigentlich unnötig...
-    (void)argc;
-    (void)argv;
+    if(1 < deg || deg > 9)
+    {
+        puts("Invalid integer, must be in [1;9]");
+        exit(1);
+    }
 
-    unsigned size = (int)pow(9, deg);
+
+    // Avoid warning about unused parameter.    eigentlich unnötig...
+    // (void)argc;
+    // (void)argv;
+
+    int size = (int)pow(9, deg);
     u_int64_t *x = (u_int64_t *)malloc(size * sizeof(u_int64_t));
     u_int64_t *y = (u_int64_t *)malloc(size * sizeof(u_int64_t));
 
@@ -487,6 +497,7 @@ int main(int argc, char **argv)
         {
             //sleep(1);
             peano(deg, x, y);
+            //drawSvg(x, y, size);
         }
         else
             puts("Error");
@@ -496,11 +507,10 @@ int main(int argc, char **argv)
             printf("Assembly Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
             printf("Assembly Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
         }
-        //drawSvg(x, y, dim);
     }
     else if (argc == 3 && strcmp(argv[1], executeInC) == 0) //execute Peano in C
     {
-        puts("Iterativ, GOGOGO!");
+        puts("Iterativ in C...");
         clock_gettime(CLOCK_MONOTONIC, &before);
         peanoInPlace(deg, x, y);
         clock_gettime(CLOCK_MONOTONIC, &after);
@@ -510,7 +520,7 @@ int main(int argc, char **argv)
     }
     else //execute Rekursive
     {
-        puts("Rekursiv, GOGOGO!");
+        puts("Rekursiv in C...");
     }
 
     free(x);
