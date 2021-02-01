@@ -24,21 +24,25 @@ void arraycopy(int *src, int srcPos, int *dest, int destPos, int length1) //VERI
     }
 }
 
-void mirror(int *out, int *in, int size) // spiegelt up&Down, gibt dircetions zurück
+void mirror(int *out, int *in, int size, int reverse) // spiegelt up&Down, gibt dircetions zurück
 {
     for (int i = 0; i < size; i++)
     {
-        if (in[i] % 2 == 0)
+        int temp = in[i];
+
+        if (temp % 2 == 0)
         {
-            // int tmp = (in[i] + 2) % 4;
-            // out[i] = tmp;
-            out[i] = (in[i] + 2) % 4;
+            if (reverse == 1)
+                out[i] = temp;
+            else
+                out[i] = (temp + 2) % 4;
         }
         else
         {
-            // int tmp = in[i];
-            // out[i] = tmp;
-            out[i] = in[i];
+            if (reverse == 1)
+                out[i] = (temp + 2) % 4;
+            else
+                out[i] = temp;
         }
     }
 }
@@ -53,62 +57,79 @@ void reverse(int *out, int *in, int size) // spiegelt up&Down, left&right
     }
 }
 
-void calcNext(int currGrad, int *curr)
+void calcNext(int prevGrad, int *array)
 {
-    u_int64_t currSize = (u_int64_t) pow(3, currGrad * 2);
+    u_int64_t currSize = (u_int64_t)pow(3, prevGrad * 2);
+    u_int64_t stepSize = currSize - 1;
 
     int *pre = (int *)malloc(currSize * sizeof(int));
     int *mir = (int *)malloc(currSize * sizeof(int));
     int *rev = (int *)malloc(currSize * sizeof(int));
     int *revMir = (int *)malloc(currSize * sizeof(int));
-    mirror(mir, curr, currSize);
-    reverse(rev, curr, currSize);
-    reverse(revMir, mir, currSize);
+    arraycopy(array, 0, pre, 0, currSize);
+    mirror(mir, array, currSize, 0);
+    reverse(rev, array, currSize);
+    mirror(revMir, array, currSize, 1);
 
-    int i = 0;
+    int i = stepSize;
 
-    arraycopy(pre, 0, curr, i, currSize);
-    i = i + currSize;
-    curr[i] = 0;
-    i++;
+    // Erster Zwischenschritt nach oben
+    array[i++] = 0;
 
-    arraycopy(revMir, 0, curr, i, currSize);
-    i = i + currSize;
-    curr[i] = 0;
-    i++;
+    // Erster Schritt: reversed, mirrored
+    arraycopy(revMir, 0, array, i, currSize);
+    i += stepSize;
 
-    arraycopy(pre, 0, curr, i, currSize);
-    i = i + currSize;
-    curr[i] = 1;
-    i++;
+    // Zweiter Zwischenschritt nach oben
+    array[i++] = 0;
 
-    arraycopy(mir, 0, curr, i, currSize);
-    i = i + currSize;
-    curr[i] = 2;
-    i++;
+    // Zweiter Schritt
+    arraycopy(pre, 0, array, i, currSize);
+    i += stepSize;
 
-    arraycopy(rev, 0, curr, i, currSize);
-    i = i + currSize;
-    curr[i] = 2;
-    i++;
+    // Dritter Zwischenschritt nach rechts
+    array[i++] = 1;
 
-    arraycopy(mir, 0, curr, i, currSize);
-    i = i + currSize;
-    curr[i] = 1;
-    i++;
+    // Dritter Schritt: mirrored
+    arraycopy(mir, 0, array, i, currSize);
+    i += stepSize;
 
-    arraycopy(pre, 0, curr, i, currSize);
-    i = i + currSize;
-    curr[i] = 0;
-    i++;
+    // Vierter Zwischenschritt nach unten
+    array[i++] = 2;
 
-    arraycopy(revMir, 0, curr, i, currSize);
-    i = i + currSize;
-    curr[i] = 0;
-    i++;
+    // Vierter Schritt: reversed
+    arraycopy(rev, 0, array, i, currSize);
+    i += stepSize;
 
-    arraycopy(pre, 0, curr, i, currSize);
-    currSize = ((int)pow(9, currGrad) - 1);
+    // Fünfter Zwischenschritt nach unten
+    array[i++] = 2;
+
+    // Fünfter Schritt: mirrored
+    arraycopy(mir, 0, array, i, currSize);
+    i += stepSize;
+
+    // Sechster Zwischenschritt nach rechts
+    array[i++] = 1;
+
+    // Sechster Schritt
+    arraycopy(pre, 0, array, i, currSize);
+    i += stepSize;
+
+    // Siebter Zwischenschritt nach oben
+    array[i++] = 0;
+
+    // Siebter Schritt: reversed + mirrored
+    arraycopy(revMir, 0, array, i, currSize);
+    i += stepSize;
+
+    // Achter Zwischenschritt nach oben
+    array[i++] = 0;
+    
+    // Achter Schritt
+    arraycopy(pre, 0, array, i, currSize);
+    
+
+    currSize = ((int)pow(9, prevGrad) - 1);
     free(pre);
     free(mir);
     free(rev);
@@ -134,9 +155,8 @@ void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     array[6] = 0;
     array[7] = 0;
 
-    unsigned currGrad = 2;
-
-    while (currGrad <= grad)
+    unsigned currGrad = 1;
+    while (currGrad < grad)
     {
         calcNext(currGrad, array);
         currGrad++;
@@ -487,7 +507,7 @@ int main(int argc, char **argv)
     {
         puts("Invalid character, try an integer ;)");
         exit(1);
-    } 
+    }
     if (1 > deg || deg > 9)
     {
         puts("Invalid integer, must be in [1;9]");
@@ -525,7 +545,7 @@ int main(int argc, char **argv)
         {
             //sleep(1);
             peano(deg, x, y);
-            if(svg == 1)
+            if (svg == 1)
                 drawSvg(x, y, size);
         }
         else
@@ -545,13 +565,14 @@ int main(int argc, char **argv)
         clock_gettime(CLOCK_MONOTONIC, &after);
         printf("C Nanoseconds passed: %ld\n", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
         printf("C Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        if(svg == 1)
+        if (svg == 1)
             drawSvg(x, y, size);
     }
     else if (argc == 3 && strcmp(argv[1], executeC) == 0)
     {
         puts("C...");
-        if(svg == 1)
+        peanoInC(deg, x, y);
+        if (svg == 1)
             drawSvg(x, y, size);
     }
     else //execute Rekursive
