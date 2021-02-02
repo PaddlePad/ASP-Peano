@@ -70,46 +70,43 @@ Nachdem über alle Grade iteriert wurde, läuft der Algorithmus den vollständig
 \section{Korrektheit} % oder Genauigkeit
 
 Die Genauigkeit unseres Algorithmus ist abhängig von dem Grad $n$, dass die Anzahl an Iterationen bestimmt, wie in den Abb.1 beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus genauer, je größer der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert annähern. Ansonsten ist die Kurve wie ebenfalls schon oben beschrieben definiert, weshalb nun die Korrektheit unseres Algorithmus entscheidend ist.
-Grundsätzlich lässt sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen indem man ihre graphischen Darstellungen vergleicht. Da das Theoretisch aber nicht möglich ist, folgt auch eine Implementierung in Assambler und (um die Performanz zu vergleichen in) C, die wir auch hinsichtlich ihrer Performanz analysieren wollen.
+Grundsätzlich lässt sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen indem man ihre graphischen Darstellungen vergleicht. Da das Theoretisch aber nicht möglich ist, folgt auch eine Implementierung in Assambler und in C, die wir auch hinsichtlich ihrer Performanz analysieren wollen.
 Wir wollen dennoch unseren Ansatz auf Korrektheit prüfen.
 
+\subsection{Beweis der Permutationen durch Induktion}
+Nachdem die Kurve immer wieder die gleichen, teilweise elementaren, Bestandteile verwendet, müssen diese und deren Permutationen richtig berechnet werden. Im speziellen sind das die Kurven mit $n = 1$ und $n = 2$. Aus diesen lässt sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel beschrieben, zum berechnen eine Kurve $n$-ten Grades nur die Kurve des Grads $n - 1$ sowie die gespiegelte und invertierte Version dieser benutzen. Bei der als invertierten Version betitelten Permutation handelt es sich in diesem Kontext um eine Punktspiegelung im Mittelpunkt der vorhergehenden Kurve, siehe Abb.2, weitere Erläuterungen folgen.	%echt Punktsymetrisch?
 
-Nachdem die Kurve immer wieder die gleichen, teilweise elementaren, Bestandteile verwendet, müssen diese und deren Permutationen richtig berechnet werden. Im speziellen sind das die Kurven mit $n = 1$ und $n = 2$. Aus diesen lässt sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel beschrieben, zum berechnen eine Kurve $n$-ten Grades nur die Kurve des Grads $n - 1$ sowie die gespiegelte und invertierte Version dieser benutzen. Bei der als "invertierten Version" betitelten Permutation handelt es sich in diesem Kontext um eine Punktspiegelung im Mittelpunkt der vorhergehenden Kurve, siehe Abb.2, weitere Erläuterungen folgen.	%echt Punktsymetrisch
-
-\subsection{Induktionsbeweis der Permutationen}
-%\paragraph{Induktionsbasis}
+\subsubsection{Induktionsbasis}
 Beginnen wir mit $n = 1$. Hier ist die Kurve vordefiniert, dementsprechend gibt es nichts zu zeigen. Da auf diesem Muster alle anderen Kurven mit $n > 1$ basieren, ist sie in unserem Algorithmus ebenfalls als Basis fest gegeben.
-Des Weiteren ist die Definition der Kurve mit $n = 2$ für die Berechnung aller weiteren Kurven von Nöten, da man anhand dieser Kurve die Bedingungen der weiteren Konstruktion ableiten kann. Diese Bedingungen sollen im folgenden ebenfalls geprüft werden.
-%Induktionsannahme
+Des Weiteren ist die Definition der Kurve mit $n = 2$ für die Berechnung aller weiteren Kurven von Nöten, da man anhand dieser Kurve alle notwendigen Bedingungen der Konstruktion weiterer Kurven ableiten kann. Deshalb nehmen wir sie also auch als definiert an \cite{aufgabenstellung}. Diese Bedingungen sollen im folgenden ebenfalls geprüft werden.
+
+\subsubsection{Induktionsannahme}
 Da die Funktion wie vorher definiert surrjektiv ist, gilt:
 
 \begin{center}
 $\forall n > 1 \in \mathbb{N}$, $\exists y \in \mathbb{R}^n$ mit $x \in [0,1]$: $f(x)= y$	%evtl ändern...
 \end{center}
 
-
 Dadurch lassen sich Kurven mit höherem Grad konstruieren. Sei nun $n > 1$ und beliebig gewählt.
 
-%\paragraph{Induktionsschritt}
+\subsubsection{Induktionsschritt}
 Betrachten wir nun Kurven $n$-ten Grades. Hierzu müssen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad n benötigen.	
 
-%Spiegelung
-Die gespiegelte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, im speziellen von $p_1=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich außer der Reihenfolge der Punkte an der grundlegenden Kurve nichts ändert. Somit ist die Spiegelung induktiv eben so korrekt wie die zugrundeliegende Kurve niedrigeren Grades, siehe auch Abb.2, FARBIGE Kurve.
+%Invertierung - Reverse in Implementierung
+Die invertierte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, im speziellen von $p_1=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich außer der Reihenfolge der Punkte an der grundlegenden Kurve nichts ändert. Somit ist die Invertierte Permutation induktiv eben so korrekt wie die zugrundeliegende Kurve niedrigeren Grades, siehe auch Abb.2, grüne Kurve.
 
-%Invertierung
-Bei der Invertierung wird die Kurve ähnlich zur Achsenspiegelung ebenfalls die vertikale Richtung geändert, jedoch wird weiterhin auch die horizontale Richtung geändert. Die Kurve wird in dem mittlerem Punkt der Kurve gespiegelt. Da die Kurve immer $9^n$ Felder besitzt, existiert immer ein solcher Mittelpunkt. Dadurch wird die vorausgehende Kurve notwendiger weise verändert.  Diese zusätzliche Operation ist ebenfalls elementare Spiegelungen sind und somit direkt auf die Koordinatenberechnung Einfluss haben ohne die Kurve anders zu verändern, ändert sich der charakteristische Verlauf der Kurve nicht. siehe auch Abb.2, FARBIGE Kurve.
+%Spiegelung - Mirror in Implementierung
+Bei der Spiegelung wird die Kurve an der Y-Achse gespiegelt. Wir verändern also ebenfalls die vertikale Richtung, behalten jedoch weiterhin die horizontale Richtung bei. Dadurch wird die vorausgehende Kurve notwendiger weise verändert. Diese zusätzliche Operation ist elementar und hat somit nur direkt auf die Koordinatenberechnung Einfluss, ohne die Kurve anderweitig zu verändern und ändert so den charakteristischen Verlauf der Kurve nicht. Siehe auch Abb.2, gelbe Kurve.
 
 %Kombination von beidem
-Abschließend bleibt noch die Kombination aus der vorangehenden Permutationen, die ebenfalls für die Konstruktion der Kurve von Nöten ist.
+Abschließend bleibt noch die Kombination aus der vorangehenden Permutationen, die ebenfalls für die Konstruktion der Kurve von Nöten ist. 
 
 
 %Verbinden der Permutationen
-Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine eben solche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einfügen. Zudem ist dies teil auch ebenso teil der Definition dieser Kurve. 
+Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine eben solche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einfügen, sonder nur die Art der graphischen Darstellung. Zudem ist dies auch ebenso Teil der Definition dieser Kurve. 
 
 %Mathematischen sachen be/ver-weisen!
-%Mappen wir in [0,1]? sonst evtl Text ändern!
-%Punktsymetrie beweisen!
-%verbinden der Kurven!
+%Punktsymetrie egal!
 
 \newpage
 \section{Performanzanalyse}
@@ -117,9 +114,9 @@ Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine eben solch
 %Technische Limitationen in C
 Bei dem testen unseres Programms fallen bei Graden von $n > 6$ bestimmte technische Limitationen unser Rechensysteme auf. 
 
-Zum einen haben wir kein Programm gefunden, dass die generierten .svg Dateien von einer Größe 43.0 Megabyte (Peano-Kurve mit $n = 7$) öffnen kann. Mit zunehmendem Grad enthält die .svg Dateien immer mehr Punkte der Kurve, weshalb sie ebenfalls exponentiell zur Basis 9 steigt. Deshalb möchten wir an dieser Stelle auf das Kapitel "Korrektheit" verweisen um die Kurve auf selbige zu prüfen.
+Zum einen haben wir kein Programm gefunden, dass die generierten .svg Dateien von einer Größe 43.0 Megabyte (Peano-Kurve mit $n = 7$) öffnen kann. Mit zunehmendem Grad enthält die .svg Dateien immer mehr Punkte der Kurve, weshalb sie ebenfalls exponentiell zur Basis 9 steigt. Deshalb möchten wir an dieser Stelle auf das Kapitel \textit{Korrektheit} verweisen um die Kurve auf selbige zu prüfen.
 
-Zum anderen ist es nicht möglich, beliebig viel Speicher zu allokieren, da die von uns benutzte  "malloc"-Funktion maximal 17.179.869.184 Bytes auf dem Heap allokieren kann und der Heap zusätzlich in seiner Größe begrenzt ist. Deshalb können wir auf unseren Systemen die Funktion mit maximal $n = 9$ ausführen, da sonst nicht genügend Speicher allokiert wird. Für $n = 10$ müssten 27.894.275.208 Bytes allokieren, wozu wir eben nicht im Stande sind, weshalb wir den Wertebereich von $n$ auf $[1;9]$ limitiert haben.
+Zum anderen ist es nicht möglich, beliebig viel Speicher zu allokieren, da die von uns benutzte \textit{malloc}-Funktion maximal 17.179.869.184 Bytes auf dem Heap allokieren kann und der Heap zusätzlich in seiner Größe begrenzt ist. Deshalb können wir auf unseren Systemen die Funktion mit maximal $n = 9$ ausführen, da sonst nicht genügend Speicher allokiert wird. Für $n = 10$ müssten 27.894.275.208 Bytes allokieren, wozu wir eben nicht im Stande sind, weshalb wir den Wertebereich von $n$ auf $[1;9]$ limitiert haben.
 
 Um zu ermitteln, wie viel Speicher wir allokieren können, haben wir eine For-Schleife  folgenden Typs ausgeführt:
 
