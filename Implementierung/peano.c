@@ -436,13 +436,7 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     int step = pxWidth / (int)sqrt(size);
     pxWidth += step; // pixel offset
 
-    FILE *fp;
-
-    // char* title = (char*) malloc(sizeof(char) * 10);
-    // sprintf(title, "peanoGrad%d.svg", dim);
-    // free(title);
-
-    fp = fopen("peano.svg", "w+");
+    FILE *fp = fopen("peano.svg", "w+");
 
     fprintf(fp, "<?xml version=\"1.0\"?>\n");
     fprintf(fp, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
@@ -473,96 +467,88 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
 
 int main(int argc, char *argv[])
 {
-    // Argumente einbauen für SVG File ja/nein und für Zeitausgabe
+    // Mit negativen graden testen
 
     char *pCh;
-    unsigned long deg = 42;
+    unsigned deg = 42;
     char *executeAssembly = "-a";
     char *executeInplace = "-i";
     char *executeOutOfPlace = "-o";
-    char *executeRekursive = "-r";
+    char *executeRecursive = "-r";
 
     bool svg = false;
-    bool time = false; 
+    bool time = false;
 
     // Check arguments
-    if (argc > 3 || argc < 2)
+    if (argc > 1)
     {
-        puts("Not enough or too many arguments. Try again with -h or --help for help.");
-        return 1;
-    }
-    else
-    {
-        if (argc > 1)
+        if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
         {
-            if (argc == 2 && strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
-            {
-                getHelp();
-                return 0;
-            }
+            getHelp();
+            return 0;
         }
-        else if (argc == 3 && (strcmp(argv[1], executeInplace) == 0 || strcmp(argv[1], executeRekursive) == 0 || strcmp(argv[1], executeOutOfPlace) == 0 || strcmp(argv[1], executeAssembly) == 0))
+        if (argc > 2)
         {
-            // Ensure argument was okay.
-            deg = strtoul(argv[2], &pCh, 10);
-        }
-        else if (argc == 4)
-        {
-            if(strcmp(argv[3],"-svg") == 0)
-                svg = true;
-            else if(strcmp(argv[3],"-t") == 0)
-                time = true;
-            else
+            if (strcmp(argv[1], executeInplace) == 0 || strcmp(argv[1], executeRecursive) == 0 || strcmp(argv[1], executeOutOfPlace) == 0 || strcmp(argv[1], executeAssembly) == 0)
             {
-                printf("Invalid parameter on position 4, try '-svg' to create an .svg file or '-t' to output the operating time.");
-                exit(1);
+                deg = strtoul(argv[2], &pCh, 10);
             }
-            
-        }
-        else if (argc == 5)
-        {
-            if((strcmp(argv[3],"-svg") == 0 && strcmp(argv[4],"-t") == 0) || (strcmp(argv[4],"-svg") == 0 && strcmp(argv[3],"-t") == 0))
+            if (argc > 3)
             {
-                svg = true;
-                time = true;
-            }
-            else if((strcmp(argv[3],"-svg") == 0 && strcmp(argv[4],"-t") != 0) || (strcmp(argv[3],"-t") == 0 && strcmp(argv[4],"-svg") != 0))
-            {
-                printf("Invalid parameter on position 5, try '-svg' to create an .svg file and '-t' to output the operating time.");
-                exit(1);
-            }
-            else if((strcmp(argv[4],"-svg") == 0 && strcmp(argv[3],"-t") != 0) || (strcmp(argv[4],"-t") == 0 && strcmp(argv[3],"-svg") != 0))
-            {
-                printf("Invalid parameter on position 4, try '-svg' to create an .svg file and '-t' to output the operating time.");
-                exit(1);
+                if (strcmp(argv[3], "-svg") == 0)
+                    svg = true;
+                else if (strcmp(argv[3], "-t") == 0)
+                    time = true;
+                else
+                {
+                    puts("Invalid parameter on position 4, try '-svg' to create an .svg file or '-t' to output the operating time.");
+                    return 1;
+                }
+
+                if (argc > 4)
+                {
+                    // Mometan unterstützt das Programm bis zu 5 Eingabeparameter, deshalb wird hier eine Fehlermeldung geworfen
+                    if(argc > 5)
+                    {
+                        puts("To many arguments. Try again with -h or --help for help\n");
+                        return (1);
+                    }
+
+                    if (strcmp(argv[4], "-svg") == 0 && !svg)
+                        svg = true;
+                    else if (strcmp(argv[4], "-t") == 0 && !time)
+                        time = true;
+                    else
+                    {
+                        puts("Invalid parameter on position 5, try '-svg' to create an .svg file or '-t' to output the operating time.");
+                        return (1);
+                    }
+                }
             }
         }
         else
         {
-            puts("Invalid Arguments. Try again with -h or --help for help.");
-            return 2;
+            puts("Invalid parameter input. Try again with -h or --help for help.");
+            return (1);
         }
+    }
+    else
+    {
+        puts("Not enough arguments. Try again with -h or --help for help.");
+        return (1);
     }
 
     // Convert to ulong WITH CHECKING!
     if ((pCh == argv[1]) || (*pCh != '\0'))
     {
-        puts("Invalid character, try an integer ;)");
-        exit(1);
+        printf("Invalid degree on position 2 (%s), try an integer ;)\n", argv[2]);
+        return (1);
     }
     if (1 > deg || deg > 9)
     {
-        puts("Invalid integer, must be in [1;9]");
-        exit(1);
+        printf("Invalid integer (%d), must be in [1;9].\n", deg);
+        return (1);
     }
-
-    // Svg abfrage (Austauschen durch Eingabeparameter)
-    char scn[1];
-    printf("SVG erstellen? 1 = yes, 0 = no\n");
-    int q = scanf("%s", scn);
-    int svg = atoi(scn);
-
-    (void)q;
 
     // Avoid warning about unused parameter.    eigentlich unnötig...
     // (void)argc;
@@ -575,46 +561,76 @@ int main(int argc, char *argv[])
     if (x == NULL || y == NULL)
     {
         puts("It's to fucking big!");
-        exit(3);
+        return (3);
     }
 
     struct timespec before;
     struct timespec after;
 
-    if (argc == 2) //Execute Assembler
+    if (argc > 2 && strcmp(argv[1], executeAssembly) == 0) //Execute Assembler
     {
-        puts("Assembly...");
+        printf("Running assembly algorithm with degree %d...\n", deg);
         clock_gettime(CLOCK_MONOTONIC, &before);
         peano(deg, x, y);
         clock_gettime(CLOCK_MONOTONIC, &after);
-        printf("Assembly Nanoseconds passed: %ld\n", after.tv_nsec - before.tv_nsec);
-        printf("Assembly Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        if (svg == 1)
+
+        // Je nach Angabeparameter wird eine SVG Datei erstellt
+        if (svg)
+        {
+            puts("Creating svg file...");
             drawSvg(x, y, size);
+        }
+
+        // Je nach Angabe wird die Zeit ausgegeben
+        printf("Oparation successfully terminated");
+        if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
+            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+
+        puts(".");
     }
-    else if (argc == 3 && strcmp(argv[1], executeInplace) == 0) //execute Peano in C
+    else if (argc > 2 && strcmp(argv[1], executeInplace) == 0) //execute Peano in C
     {
-        puts("In-Place Iterativ in C...");
+        printf("Running In-Place iterativ algorithm in C with degree %d...\n", deg);
         clock_gettime(CLOCK_MONOTONIC, &before);
         peanoInPlace(deg, x, y);
         clock_gettime(CLOCK_MONOTONIC, &after);
-        printf("C Nanoseconds passed: %ld\n", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-        printf("C Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        if (svg == 1)
+       
+        // Je nach Angabeparameter wird eine SVG Datei erstellt
+        if (svg)
+        {
+            puts("Creating svg file...");
             drawSvg(x, y, size);
+        }
+
+        // Je nach Angabe wird die Zeit ausgegeben
+        printf("Oparation successfully terminated");
+        if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
+            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+
+        puts(".");
     }
-    else if (argc == 3 && strcmp(argv[1], executeOutOfPlace) == 0)
+    else if (argc > 2 && strcmp(argv[1], executeOutOfPlace) == 0)
     {
-        puts("Out-Of-Place Iterativ in C...");
+        printf("Running Out-Of-Place iterativ algorithm in C with degree %d...\n", deg);
         clock_gettime(CLOCK_MONOTONIC, &before);
         peanoInC(deg, x, y);
         clock_gettime(CLOCK_MONOTONIC, &after);
-        printf("C Nanoseconds passed: %ld\n", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-        printf("C Seconds passed: %ld\n", (after.tv_sec - before.tv_sec));
-        if (svg == 1)
+
+        // Je nach Angabeparameter wird eine SVG Datei erstellt
+        if (svg)
+        {
+            puts("Creating svg file...");
             drawSvg(x, y, size);
+        }
+
+        // Je nach Angabe wird die Zeit ausgegeben
+        printf("Oparation successfully terminated");
+        if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
+            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+
+        puts(".");
     }
-    else //execute Rekursive
+    else if (argc > 2 && strcmp(argv[1], executeRecursive) == 0)
     {
         puts("Rekursiv in C...");
     }
