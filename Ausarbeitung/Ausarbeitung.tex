@@ -58,7 +58,7 @@ Diese Observation war der Grundstein unseres iterativen Algorithmus. Anfangs wir
 
 \begin{figure}[ht]
 \centering
-\includegraphics{PeanoFarbcodiert.png}
+\includegraphics[scale=0.4]{PeanoFarbcodiert.png}
 \caption{Peano-Kurve mit n = 1, n = 2}\label{Abb:Peano Lösungsidee}
 \end{figure}
 
@@ -74,21 +74,21 @@ Grundsätzlich lässt sich die Korrektheit einer Kurve, besonders bei der von un
 Wir wollen dennoch unseren Ansatz auf Korrektheit prüfen.
 
 
-Nachdem die Kurve immer wieder die gleichen, teilweise elementaren, Bestandteile verwendet, müssen diese und deren Permutationen richtig berechnet werden. Im speziellen sind das die Kurven mit $n = 1$ und $n = 2$. Aus diesen lässt sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel beschrieben, zum berechnen eine Kurve $n$-ten Grades nur die Kurve des Grads $n-1$ sowie die gespiegelte und invertierte Version dieser benutzen. Bei der als "invertierten Version" betitelten Permutation handelt es sich in diesem Kontext um eine Punktspiegelung im Mittelpunkt der vorhergehenden Kurve, siehe Abb.2, weitere Erläuterungen folgen.	%echt Punktsymetrisch
+Nachdem die Kurve immer wieder die gleichen, teilweise elementaren, Bestandteile verwendet, müssen diese und deren Permutationen richtig berechnet werden. Im speziellen sind das die Kurven mit $n = 1$ und $n = 2$. Aus diesen lässt sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel beschrieben, zum berechnen eine Kurve $n$-ten Grades nur die Kurve des Grads $n - 1$ sowie die gespiegelte und invertierte Version dieser benutzen. Bei der als "invertierten Version" betitelten Permutation handelt es sich in diesem Kontext um eine Punktspiegelung im Mittelpunkt der vorhergehenden Kurve, siehe Abb.2, weitere Erläuterungen folgen.	%echt Punktsymetrisch
 
 \subsection{Induktionsbeweis der Permutationen}
 %\paragraph{Induktionsbasis}
-Beginnen wir mit $n = 1$. Hier ist die Kurve vordefiniert, dementsprechend gibt es nichts zu zeigen. Da auf diesem Muster alle anderen Kurven mit $n>1$ basieren, ist sie in unserem Algorithmus ebenfalls als Basis fest gegeben.
+Beginnen wir mit $n = 1$. Hier ist die Kurve vordefiniert, dementsprechend gibt es nichts zu zeigen. Da auf diesem Muster alle anderen Kurven mit $n > 1$ basieren, ist sie in unserem Algorithmus ebenfalls als Basis fest gegeben.
 Des Weiteren ist die Definition der Kurve mit $n = 2$ für die Berechnung aller weiteren Kurven von Nöten, da man anhand dieser Kurve die Bedingungen der weiteren Konstruktion ableiten kann. Diese Bedingungen sollen im folgenden ebenfalls geprüft werden.
 %Induktionsannahme
 Da die Funktion wie vorher definiert surrjektiv ist, gilt:
 
 \begin{center}
-$\forall n>1 \in \mathbb{N}$, $\exists y \in \mathbb{R}^n$ mit $x \in [0,1]$: $f(x)= y$	%evtl ändern...
+$\forall n > 1 \in \mathbb{N}$, $\exists y \in \mathbb{R}^n$ mit $x \in [0,1]$: $f(x)= y$	%evtl ändern...
 \end{center}
 
 
-Dadurch lassen sich Kurven mit höherem Grad konstruieren. Sei nun $n>1$ und beliebig gewählt.
+Dadurch lassen sich Kurven mit höherem Grad konstruieren. Sei nun $n > 1$ und beliebig gewählt.
 
 %\paragraph{Induktionsschritt}
 Betrachten wir nun Kurven $n$-ten Grades. Hierzu müssen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad n benötigen.	
