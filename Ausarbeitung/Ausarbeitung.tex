@@ -54,17 +54,43 @@ Wir beschreiben nun unseren Ansatz, einen iterativen Algorithmus mit dem Grad $n
 \newpage
 
 \section{L\"osungsansatz}
-Der Aufbau der Peano-Kurve erm\"oglicht es, die Kurve des aktuellen Grades mit einer Variation der gespiegelten und der originalen Kurve des vorherigen Grades zu zeichnen.
-Diese Observation war der Grundstein unseres iterativen Algorithmus. Anfangs wird dabei die Startkurve hardcodiert in einem Integer Array abgespeichert, wobei die Zahlen von 0 bis 3 jeweils einer der vier Richtungen zugeordnet werden. Falls der eingegebene Grad $n > 1$ ist, wird aufsteigend \"uber alle Grade bis inklusive n iteriert, wobei w\"ahrend jedem Schritt die Kurve des vorherigen Grades in der originalen Reihenfolge des ersten Grades entweder im Originalzustand oder gespiegelt acht mal in den Array eingef\"ugt wird so, dass die vollst\"andige Kurve des aktuellen Grades entsteht. 
+
+\subsection{Algorithmus}
+
+Der Aufbau der Peano-Kurve erm\"oglicht es, die Kurve des aktuellen Grades mit einer Variation der originalen Kurve des vorherigen Grades und deren Permutationen zu zeichnen. Wie in Abbildung 2 gezeigt gibt es ingesamt drei Permutationen der Kurve:
+
+\begin{itemize}
+    \item Die Spiegelung, bei der nur die vertikalen Schritte gespiegelt werden.
+    \item Die Invertierung, bei der jeder Schritt in seinen entsprechenden Gegenschritt ge\"andert wird.
+    \item Die gespiegelte Invertierung, bei der beide der vorherigen Schritte \"ubernommen werden.
+\end{itemize}
+
+Diese Observation war der Grundstein unseres iterativen Algorithmus. Anfangs wird dabei die Startkurve hardcodiert in einem Integerarray im Interval $[0;3]$ abgespeichert. Die Zahlen stehen dabei jeweils f\"ur eine der vier Richtungen: 0 f\"ur oben, 1 f\"ur rechts, 2 f\"ur unten und 3 f\"ur links. Beispielsweise w\"urde also die orignale Kurve des ersten Grades wie folgt aussehen $\{0, 0, 1, 2, 2, 1, 0, 0\}$ und dazugeh\"orige Invertierung ist $\{2, 2, 3, 0, 0, 3, 2, 2\}$. 
+Falls der eingegebene Grad $n > 1$ ist, wird startend vom Grad 2 aufsteigend \"uber alle Grade bis inklusive n iteriert, wobei w\"ahrend jedem Schritt die Kurve des vorherigen Grades in der originalen Reihenfolge des ersten Grades entweder im Originalzustand oder permutiert acht mal in den Array eingef\"ugt, sodass die vollst\"andige Kurve des aktuellen Grades entsteht.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[scale=0.4]{PeanoFarbcodiert.png}
+\includegraphics[scale=0.33]{PeanoFarbcodiert.png}
 \caption{Peano-Kurve mit n = 1, n = 2}\label{Abb:Peano L\"osungsidee}
 \end{figure}
 
-Zu beachten ist dabei jedoch, dass durch das Spiegeln und Einf\"ugen von Kurven deren Richtung noch inkorrekt sein k\"onnte, daf\"ur gibt es aber \"ahnlich zur Spiegelungsmethode eine Methode zum Umkehren der Richtung. Nach diesen Schritten sind die neun erstellten Kurven jedoch noch nicht miteinander verbunden. Da sich das Muster der urspr\"unglichen Kurve durch alle Grade wiederholt, kann nach jedem Schritt ein hardcodierter Pfad zur n\"achsten Kurve eingef\"ugt werden.
-Nachdem \"uber alle Grade iteriert wurde, l\"auft der Algorithmus das vollst\"andigen Richtungs-Array durch, ver\"andert dabei bei jedem Schritt je nach Richtungsangabe entweder die x oder y-Koordinate und speichert diese dann in die Ausgabeliste der Peano-Methode.
+Nach diesen Schritten sind die neun erstellten Kurven jedoch noch nicht miteinander verbunden. Da sich das Muster der urspr\"unglichen Kurve durch alle Grade wiederholt, kann nach jedem Schritt ein hardcodierter Verbindungsschritt zur n\"achsten Kurve eingef\"ugt werden.
+Nachdem \"uber alle Grade iteriert wurde, l\"auft der Algorithmus den vollst\"andigen Richtungs-Array durch, ver\"andert dabei bei jedem Schritt je nach Richtungsangabe entweder die x oder y-Koordinate und speichert diese dann in die Ausgabeliste der Peano-Methode.
+
+\subsection{Umgesetzte Optimierungen}
+
+Im urspr\"unglichen Entwurf des Algorithmus wurden die drei verschiedenen Permutationen vor jeder Iteration einmal berechnet und als einzelne Arrays abgespeichert um sie danach wenn sie ben\"otigt werden nur mehr an die jeweiligen Stellen in den gro\ss en Richtungsarray zu kopieren. Da dadurch jedoch ein erh\"ohter Speicheraufwand entsteht haben wir uns daf\"ur entschieden jede Permutation immer neu zu berechnen, wenn sie gebraucht wird und diese direkt in den Array zu speichern. Dies schien f\"ur uns ein sinnvoller Optimierungsansatz zu sein, da jede Permutation wie in Abbildung 2 zu sehen maximal zweimal vorkommt. Allein die Originalkurve wird viermal ben\"otigt und auf diese kann immer sehr schnell zugegriffen werden.
+
+% Ein calleesaved register weniger verwendet
+
+\subsection{M\"ogliche Optimierungen}
+
+SIMD Zeug
+
+
+\subsection{Alternativer L\"osungsansatz}
+
+Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren. Dies w\"urde nat\"urlich sehr viel Rechen- und Speicheraufwand einsparen und damit ingesamt bessere Performanzergebnisse liefern.
 
 \newpage
 
