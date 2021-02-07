@@ -9,9 +9,9 @@
 // Assemblyfunktion
 void peano(unsigned degree, u_int64_t *x, u_int64_t *y);
 
-//----------------------------PEANO ITERATIVE NOT OUT-OF-PLACE----------------------------
+//----------------------------PEANO ITERATIVE OUT-OF-PLACE----------------------------
 
-void arraycopy(int *src, int *dest, int insertStartPosition, int length1) //VERIFY IF THIS WORKS
+void arraycopy(int *src, int *dest, int insertStartPosition, int length1)
 {
     for (int i = 0; i < +length1; i++)
     {
@@ -57,6 +57,7 @@ void calcNext(int prevGrad, int *array)
     u_int64_t currSize = (u_int64_t)pow(3, prevGrad * 2);
     u_int64_t stepSize = currSize - 1;
 
+    // Permutationen abspeichern
     int *pre = (int *)malloc(currSize * sizeof(int));
     int *mir = (int *)malloc(currSize * sizeof(int));
     int *rev = (int *)malloc(currSize * sizeof(int));
@@ -130,14 +131,15 @@ void calcNext(int prevGrad, int *array)
     free(revMir);
 }
 
-void peanoInC(unsigned grad, u_int64_t *x1, u_int64_t *y1)
+void peanoOutOfPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
-    if (grad < 1 || grad > 9) //auch Auf überlauf checken!!
+    if (grad < 1 || grad > 9)
     {
         printf("Error number not valid !");
         return;
     }
 
+    // Grad 1 Kurve hardcodiert
     u_int64_t size = (u_int64_t)pow(3, 2 * grad);
     int *array = (int *)malloc(size * sizeof(int));
     array[0] = 0;
@@ -369,7 +371,7 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
 //----------------------------HELPER FUNCTIONS----------------------------
 
-void getHelp() //Wertebereich des Grads angeben!
+void getHelp() 
 {
     printf("---------------------HELP---------------------\n");
     printf("Dieses Programm enthält unterschiedliche Arten\n");
@@ -460,15 +462,8 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
 
 //-----------------------------------MAIN--------------------------------------
 
-// int checkInput(int agrc, char *argv[])
-// {
-
-// }
-
 int main(int argc, char *argv[])
 {
-    // Mit negativen graden testen
-
     char *pCh;
     unsigned deg = 42;
     char *executeAssembly = "-a";
@@ -479,7 +474,7 @@ int main(int argc, char *argv[])
     bool svg = false;
     bool time = false;
 
-    // Check arguments
+    // Eingabeparameter prüfen
     if (argc > 1)
     {
         if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
@@ -510,7 +505,7 @@ int main(int argc, char *argv[])
                     // Mometan unterstützt das Programm bis zu 5 Eingabeparameter, deshalb wird hier eine Fehlermeldung geworfen
                     if(argc > 5)
                     {
-                        puts("To many arguments. Try again with -h or --help for help\n");
+                        puts("To many arguments. Try again with -h or --help for help");
                         return (1);
                     }
 
@@ -550,10 +545,6 @@ int main(int argc, char *argv[])
         return (1);
     }
 
-    // Avoid warning about unused parameter.    eigentlich unnötig...
-    // (void)argc;
-    // (void)argv;
-
     int size = (int)pow(9, deg);
     u_int64_t *x = (u_int64_t *)malloc(size * sizeof(u_int64_t));
     u_int64_t *y = (u_int64_t *)malloc(size * sizeof(u_int64_t));
@@ -581,11 +572,18 @@ int main(int argc, char *argv[])
             drawSvg(x, y, size);
         }
 
-        // Je nach Angabe wird die Zeit ausgegeben
         printf("Oparation successfully terminated");
         if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
-            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-
+        {
+            if(deg > 7)                                         // Ab Grad 8 ist die Berechnung mit Sekunden sinnvoller wegen overflows  
+            {
+                double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
+                double secAfter = after.tv_sec +1e-9 * after.tv_nsec; 
+                printf(" after %f seconds", secAfter - secBefore);
+            }
+            else 
+                printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+        }                                               
         puts(".");
     }
     else if (argc > 2 && strcmp(argv[1], executeInplace) == 0) //execute Peano in C
@@ -602,18 +600,25 @@ int main(int argc, char *argv[])
             drawSvg(x, y, size);
         }
 
-        // Je nach Angabe wird die Zeit ausgegeben
         printf("Oparation successfully terminated");
         if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
-            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-
+        {
+            if(deg > 7)                                         // Ab Grad 8 ist die Berechnung mit Sekunden sinnvoller wegen overflows  
+            {
+                double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
+                double secAfter = after.tv_sec +1e-9 * after.tv_nsec; 
+                printf(" after %f seconds", secAfter - secBefore);
+            }
+            else 
+                printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+        }                                               
         puts(".");
     }
     else if (argc > 2 && strcmp(argv[1], executeOutOfPlace) == 0)
     {
         printf("Running Out-Of-Place iterativ algorithm in C with degree %d...\n", deg);
         clock_gettime(CLOCK_MONOTONIC, &before);
-        peanoInC(deg, x, y);
+        peanoOutOfPlace(deg, x, y);
         clock_gettime(CLOCK_MONOTONIC, &after);
 
         // Je nach Angabeparameter wird eine SVG Datei erstellt
@@ -623,11 +628,18 @@ int main(int argc, char *argv[])
             drawSvg(x, y, size);
         }
 
-        // Je nach Angabe wird die Zeit ausgegeben
         printf("Oparation successfully terminated");
         if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
-            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-
+        {
+            if(deg > 7)                                         // Ab Grad 8 ist die Berechnung mit Sekunden sinnvoller wegen overflows 
+            {
+                double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
+                double secAfter = after.tv_sec +1e-9 * after.tv_nsec; 
+                printf(" after %f seconds", secAfter - secBefore);
+            }
+            else 
+                printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+        }                                               
         puts(".");
     }
     else if (argc > 2 && strcmp(argv[1], executeRecursive) == 0)
