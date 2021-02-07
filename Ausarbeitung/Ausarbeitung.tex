@@ -93,10 +93,16 @@ Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden
 \section{Korrektheit} % oder Genauigkeit
 
 % Beweisen, dass nichts anderes als die gew\"unschten Permutationen entstehen!!
+%TODO: Kapitel Technische Limitationen hier einfuegen! - Die Vorgehensweise ist wissenschaftlich zu dokumentieren. Insbesondere sollten
+%angemessene Vergleiche und Eingabebereiche gewaehlt und begruendet werden
 
 Die Genauigkeit unseres Algorithmus ist abh\"angig von dem Grad $n$, das die Anzahl an Iterationen bestimmt, wie in den Abb.1 beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus pr\"aziser, je gr\"o\ss er der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert ann\"ahern. Ansonsten ist die Kurve wie oben beschrieben, definiert, weshalb nun die Korrektheit unseres Algorithmus entscheidend ist.
 Grunds\"atzlich l\"asst sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen, indem man ihre graphischen Darstellungen vergleicht. Da das theoretisch aber nicht m\"oglich ist, folgt auch eine Implementierung in Assambler und in C, die wir auch hinsichtlich ihrer Performanz analysieren wollen.
-Wir wollen dennoch unseren Ansatz auf Korrektheit pr\"ufen.
+Dennoch soll der bereits beschriebene Ansatz auf Korrektheit gepr\"uft werden.
+
+
+Da die eigentliche Koordinatenberechnung abh\"angig von der zuvor ermittelten Richtung ist, ist der folgende Beweis prim\"ar auf die Berechnung der Richtungen ausgerichtet.
+Die Koordinatenberechnung findet anschlie\ss end und basierend auf den bisherigen Ergebnissen statt, indem ab\"angig von der Richtung jeweils die X- und die Y-Koordinate eines Z\"ahlers inkrementiert (oder dekrementiert) und abgespeichert wird.
 
 \subsection{Beweis der Permutationen durch Induktion}
 Nachdem die Kurve immer wieder die gleichen, teilweise elementaren, Bestandteile verwendet m\"ussen diese und deren Permutationen richtig berechnet werden. Im Speziellen sind das die Kurven mit $n = 1$ und $n = 2$. Aus diesen l\"asst sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel beschrieben, zum Berechnen einer Kurve $n$-ten Grades nur die Kurve des Grads $n - 1$ sowie die gespiegelte und invertierte Version dieser Kurve benutzen. Bei der als invertierten Version betitelten Permutation handelt es sich in diesem Kontext um eine Punktspiegelung im Mittelpunkt der vorhergehenden Kurve, siehe Abb.2, weitere Erl\"auterungen folgen.	%echt Punktsymetrisch?
@@ -115,23 +121,29 @@ $\forall n > 1 \in \mathbb{N}$, $\exists y \in \mathbb{R}^n$ mit $x \in [0,1]$: 
 Dadurch lassen sich Kurven mit h\"oherem Grad konstruieren. Es sei nun $n > 1$ und $n$ beliebig gew\"ahlt.
 
 \subsubsection{Induktionsschritt}
-Betrachten wir nun Kurven $n$-ten Grades. Hierzu m\"ussen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad n ben\"otigen.	
+Betrachten wir nun Kurven $n$-ten Grades. Hierzu m\"ussen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad n ben\"otigen.
+%natuerlich nur, wenn  wir unseren Algorithm behalten
+Da diese Permutationen stets auf \"ahnliche Art konstruiert werden, n\"amlich durch Addition von 2 zu der gespeicherten Richtung mit anschlie\ss endem \textit{modulo} 4, um die Richtung wieder in den g\"ultigen Bereich abzubilden. Dadurch ist gewehrleistet, dass durch Mehrfachanwendung einer Funktion, die eine solche Permutation generiert, immer nur die Orginale Kurve oder die gew\"unschte Permutation entstehen kann. Dies wird durch den Wertebereich von $[0;3]$ und der \textit{modulo} 4 erreicht, da so die geraden Werte auf den jeweils anderen geraden Wert abgebildet werden, f\"ur die ungerade Zahlen analog.
+Da die Funktionen, die die Permutationen erz\"augen, auf die ganze Kurve des Grades $n = n - 1$ angewand wird, ist sicher gestellt, dass die Permutationen keine anderweitigen Fehler in der Richtgsberechnung besitzten.
 
-%Invertierung - Reverse in Implementierung
-Die invertierte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, im Speziellen von $p_1=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich au\ss er der Reihenfolge der Punkte an der grundlegenden Kurve nichts \"andert. Somit ist die invertierte Permutation induktiv eben so korrekt wie die zugrundeliegende Kurve niedrigeren Grades, siehe auch Abb.2, gr\"une Kurve.
+\textbf{Die Permutationen:}% - Reverse in Implementierung
 
-%Spiegelung - Mirror in Implementierung
-Bei der Spiegelung wird die Kurve an der Y-Achse gespiegelt. Wir ver\"andern also ebenfalls die vertikale Richtung, behalten jedoch weiterhin die horizontale Richtung bei. Dadurch wird die vorausgehende Kurve notwendigerweise ver\"andert. Diese zus\"atzliche Operation ist elementar und hat somit nur direkt auf die Koordinatenberechnung Einfluss, ohne die Kurve anderweitig zu ver\"andern, \"andert also den charakteristischen Verlauf der Kurve nicht. Siehe auch Abb.2, gelbe Kurve.
+Die invertierte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, im Speziellen von $p_1=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich au\ss er der invertierten Reihenfolge der Punkte an der grundlegenden Kurve nichts \"andert. Somit ist die invertierte Permutation induktiv eben so korrekt wie die zugrundeliegende Kurve niedrigeren Grades, siehe auch Abb.2, gr\"une Kurve.
 
-%Kombination von beidem
-Abschlie\ss end bleibt noch die Kombination aus den vorangehenden Permutationen, die ebenfalls f\"ur die Konstruktion der Kurve notwendig ist. 
+%\textbf{Spiegelung:}% - Mirror in Implementierung
+Bei der Spiegelung wird die Kurve an der X-Achse gespiegelt. Wir ver\"andern also ebenfalls die vertikale Richtung, behalten jedoch weiterhin die horizontale Richtung bei. Dadurch wird die vorausgehende Kurve notwendigerweise abge\"andert. Diese zus\"atzliche Operation ist elementar und greift auf die gespeicherte Richtung einer Koordinate direkt zu. Somit hat diese Opertaion nur indirekt auf die Koordinatenberechnung Einfluss, ohne die Kurve anderweitig zu ver\"andern, sie \"andert also den charakteristischen Verlauf der Kurve nicht. Siehe auch Abb.2, gelbe Kurve. %wirklich elementar
 
+%\textbf{Kombination Beider Permutationen:}
+Abschlie\ss end bleibt noch die Kombination aus den vorangehenden Permutationen, die ebenfalls f\"ur die Konstruktion der Kurve notwendig ist. Diese Permutation ist, \"ahnlich zu der vorherigen Permutation, eine Spiegelung an der Y-Achse. Dabei wird die horizontale Richtung gewechselt und die Vertikale beibehalten. Ansonsten verh\"alt es sich analog zur Spiegelung.
+Siehe auch hier Abb.2, blaue Kurve.
 
-%Verbinden der Permutationen
-Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine ebensolche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einf\"ugen, sondern nur die Art der graphischen Darstellung. Dies ist zudem Teil der Definition dieser Kurve. 
+\textbf{Verbinden der Permutationen:}
 
-%Mathematischen sachen be/ver-weisen!
-%Punktsymetrie egal!
+Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine ebensolche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einf\"ugen, sondern nur die Art der graphischen Darstellung. Wir f\"ugen also einen weiteren hardcodiertern Schritt zu den bisherigen Richtungen hinzu. Dies ist zudem Teil der Definition dieser Kurve. 
+
+%TODO: Bild mit grad 4 einfuegen, Relevante Beispiele angeben, die die Funktionalität und Korrektheit demonstrieren und eventuelle Aussagen unterstützen
+
+%TODO: Mathematischen sachen be/ver-weisen!
 
 \newpage
 \section{Performanzanalyse}
@@ -149,7 +161,7 @@ Zum anderen ist es nicht m\"oglich, beliebig viel Speicher zu allokieren, da die
 Um zu ermitteln, wie viel Speicher wir allokieren k\"onnen, haben wir eine For-Schleife  folgenden Typs ausgef\"uhrt:
 
 \begin{lstlisting} %Formatieren! 
-u\_int64\_t *v;
+u_int64_t *v;   %weg?
 for (u\_int64\_t i = 1; v = (u\_int64\_t *) malloc(i); i <<= 1)   
 {     
 print(i);
@@ -157,11 +169,17 @@ free(v);
 }
 \end{lstlisting}
 
-%Assembler 
+Zus\"atzlich evaluierte ein Test, der \"uberpr\"uft, ob der von \textit{malloc} zur\"uckgegebenen Pointer (bei einem $n > 9$) NULL ist, auf unseren Testplatformen ausnahmslos \textit{true}. % also war NUll
 
+%Assembler
 
 \newpage
 \section{Zusammenfassung und Ausblick}
+
+%Idee am ende, keine Zeit zur Umsetztung
+%statt inplace direkt Koordinatenberechnung
+
+%Hilbert vs Peano
 
 
 \newpage
