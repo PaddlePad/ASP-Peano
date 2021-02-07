@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-// Assemblyfunktion
+// Assemblyfunction
 void peano(unsigned degree, u_int64_t *x, u_int64_t *y);
 
 //----------------------------PEANO ITERATIVE OUT-OF-PLACE----------------------------
@@ -19,7 +19,7 @@ void arraycopy(int *src, int *dest, int insertStartPosition, int length1)
     }
 }
 
-void mirror(int *out, int *in, int size, int reverse) // spiegelt up&Down, gibt dircetions zurück, wenn 'reverse' auf 1 gesetzt wird, wird zudem auch reversed
+void mirror(int *out, int *in, int size, int reverse) // switches up&Down, returns dircetions. if 'reverse' is 1, reversed is also executed
 {
     for (int i = 0; i < size; i++)
     {
@@ -42,7 +42,7 @@ void mirror(int *out, int *in, int size, int reverse) // spiegelt up&Down, gibt 
     }
 }
 
-void reverse(int *out, int *in, int size) // spiegelt up&Down, left&right
+void reverse(int *out, int *in, int size) // switches up&Down, left&right
 {
     for (int i = 0; i < size; i++)
     {
@@ -57,11 +57,17 @@ void calcNext(int prevGrad, int *array)
     u_int64_t currSize = (u_int64_t)pow(3, prevGrad * 2);
     u_int64_t stepSize = currSize - 1;
 
-    // Permutationen abspeichern
+    // Saving Permutations 
     int *pre = (int *)malloc(currSize * sizeof(int));
     int *mir = (int *)malloc(currSize * sizeof(int));
     int *rev = (int *)malloc(currSize * sizeof(int));
     int *revMir = (int *)malloc(currSize * sizeof(int));
+
+    if(pre == NULL || mir == NULL || rev == NULL || revMir == NULL)
+    {
+        perror("Please try again with a smaller degree ");
+    }
+
     arraycopy(array, pre, 0, currSize);
     mirror(mir, array, currSize, 0);
     reverse(rev, array, currSize);
@@ -69,59 +75,59 @@ void calcNext(int prevGrad, int *array)
 
     int i = stepSize;
 
-    // Erster Zwischenschritt nach oben
+    // First Step between Permutations upwards
     array[i++] = 0;
 
-    // Erster Schritt: reversed, mirrored
+    // First Step: reversed, mirrored
     arraycopy(revMir, array, i, currSize);
     i += stepSize;
 
-    // Zweiter Zwischenschritt nach oben
+    // Second Step between Permutations upwards
     array[i++] = 0;
 
-    // Zweiter Schritt
+    // Second Step
     arraycopy(pre, array, i, currSize);
     i += stepSize;
 
-    // Dritter Zwischenschritt nach rechts
+    // Third Step between Permutations right
     array[i++] = 1;
 
-    // Dritter Schritt: mirrored
+    // Third Step: mirrored
     arraycopy(mir, array, i, currSize);
     i += stepSize;
 
-    // Vierter Zwischenschritt nach unten
+    // 4th Step between Permutations downwards
     array[i++] = 2;
 
-    // Vierter Schritt: reversed
+    //4th Step: reversed
     arraycopy(rev, array, i, currSize);
     i += stepSize;
 
-    // Fünfter Zwischenschritt nach unten
+    // 5th Step between Permutations downwards
     array[i++] = 2;
 
-    // Fünfter Schritt: mirrored
+    // 5th Step: mirrored
     arraycopy(mir, array, i, currSize);
     i += stepSize;
 
-    // Sechster Zwischenschritt nach rechts
+    // 6th Step between Permutations right
     array[i++] = 1;
 
-    // Sechster Schritt
+    // 6th Step
     arraycopy(pre, array, i, currSize);
     i += stepSize;
 
-    // Siebter Zwischenschritt nach oben
+    // 7thStep between Permutations upwards
     array[i++] = 0;
 
-    // Siebter Schritt: reversed + mirrored
+    // 7th Step: reversed + mirrored
     arraycopy(revMir, array, i, currSize);
     i += stepSize;
 
-    // Achter Zwischenschritt nach oben
+    // 8th Step between Permutations upwards
     array[i++] = 0;
 
-    // Achter Schritt
+    // 8th Step
     arraycopy(pre, array, i, currSize);
 
     currSize = ((int)pow(9, prevGrad) - 1);
@@ -133,15 +139,21 @@ void calcNext(int prevGrad, int *array)
 
 void peanoOutOfPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
-    if (grad < 1 || grad > 9)
+    if (grad < 1)
     {
-        printf("Error number not valid !");
+        perror("Error number not valid !");
         return;
     }
 
-    // Grad 1 Kurve hardcodiert
+    // Curve with Deg. 1 hardcoded:
     u_int64_t size = (u_int64_t)pow(3, 2 * grad);
     int *array = (int *)malloc(size * sizeof(int));
+
+    if(array == NULL)
+    {
+        perror("Couldnt allocate enough memory, please try again with a smaller Degree!\n");
+    }
+
     array[0] = 0;
     array[1] = 0;
     array[2] = 1;
@@ -246,59 +258,60 @@ void reverseMirrorInPlace(int *arr, u_int64_t pos, u_int64_t size)
 int calcNextInplace(int currGrad, int *curr, u_int64_t pos)
 {
     u_int64_t size = (u_int64_t)pow(3, 2 * currGrad);
-    // Erster Zwischenstep
+    
+    // First Step between Permutations upwards
     curr[pos] = 0;
 
-    // Zweiter step
+    // second step
     reverseMirrorInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach oben
+    //Step between Permutations upwards
     curr[pos] = 0;
 
-    // Dritter step
+    // third step
     copyInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach rechts
+    //Step between Permutations rigth
     curr[pos] = 1;
 
-    //Vierter Step
+    //4th Step
     mirrorInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach unten
+    //Step between Permutations downwards
     curr[pos] = 2;
 
-    //Fünfter Step
+    //5th Step
     reverseInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach unten
+    //Step between Permutations downwards
     curr[pos] = 2;
 
-    //Sechster Step
+    //6th Step
     mirrorInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach rechts
+    //Step between Permutations rigth
     curr[pos] = 1;
 
-    //Siebter Step
+    //7th Step
     copyInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach oben
+    //Step between Permutations upwards
     curr[pos] = 0;
 
-    //Achter Step
+    //8th Step
     reverseMirrorInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach oben
+    //Step between Permutations upwards
     curr[pos] = 0;
 
-    //Letzter Step
+    //last Step
     copyInPlace(curr, pos, size);
     pos += size;
     return pos;
@@ -306,7 +319,7 @@ int calcNextInplace(int currGrad, int *curr, u_int64_t pos)
 
 void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
-    if (grad <= 0 || grad > 9) //auch Auf überlauf checken!!
+    if (grad <= 0)
     {
         printf("Error number not valid !");
         return;
@@ -314,8 +327,14 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
     u_int64_t size = (u_int64_t)pow(3, 2 * grad);
 
-    // Richtungsarray allokieren und die Startkurve hardcodiert einfügen
+    // Allocate Directionarray and hardcode first curve
     int *array = (int *)malloc(size * sizeof(int));
+
+    if(array == NULL)
+    {
+        perror("Please try again with a smaller degree ");
+    }
+
     array[1] = 0;
     array[2] = 0;
     array[3] = 1;
@@ -370,71 +389,74 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 //----------------------------PEANO RECURSIVE (TODO)----------------------------
 void calcNextInplaceRecursive(int grad , int currGrad, int *curr, u_int64_t pos)
 {
-    if (currGrad>=grad){
-        return  ;
+    if (currGrad>=grad)
+    {
+        return;
     }
+
     u_int64_t size = (u_int64_t)pow(3, 2 * currGrad);
-    // Erster Zwischenstep
+    
+    // first Zwischenstep
     curr[pos] = 0;
 
-    // Zweiter step
+    // second step
     reverseMirrorInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach oben
+    //Step between Permutations up
     curr[pos] = 0;
 
-    // Dritter step
+    // third step
     copyInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach rechts
+    ////Step between Permutations right
     curr[pos] = 1;
 
-    //Vierter Step
+    //4th Step
     mirrorInPlace(curr, pos, size);
     pos += size;
 
     //Zwischenschritt nach unten
     curr[pos] = 2;
 
-    //Fünfter Step
+    //5th Step
     reverseInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach unten
+    //Step between Permutations down
     curr[pos] = 2;
 
-    //Sechster Step
+    //6th Step
     mirrorInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach rechts
+    ////Step between Permutations right
     curr[pos] = 1;
 
-    //Siebter Step
+    //7th Step
     copyInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach oben
+    //Step between Permutations up
     curr[pos] = 0;
 
-    //Achter Step
+    //8th Step
     reverseMirrorInPlace(curr, pos, size);
     pos += size;
 
-    //Zwischenschritt nach oben
+    //Step between Permutations up
     curr[pos] = 0;
 
-    //Letzter Step
+    //last Step
     copyInPlace(curr, pos, size);
     pos += size;
-   calcNextInplaceRecursive(grad, currGrad+1, curr,pos);
+    calcNextInplaceRecursive(grad, currGrad+1, curr,pos);
 }
 
 void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 {
-    if (grad <= 0 || grad > 9) //auch Auf überlauf checken!!
+    if (grad <= 0)
     {
         printf("Error number not valid !");
         return;
@@ -444,6 +466,12 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
     // Richtungsarray allokieren und die Startkurve hardcodiert einfügen
     int *array = (int *)malloc(size * sizeof(int));
+
+    if(array == NULL)
+    {
+        perror("Please try again with a smaller degree ");
+    }
+
     array[1] = 0;
     array[2] = 0;
     array[3] = 1;
@@ -456,7 +484,6 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     unsigned pos = 9;
 
     calcNextInplaceRecursive(grad,1, array, pos);
-
 
     //printDirections(array, amt);
 
@@ -493,7 +520,7 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 }
 //----------------------------HELPER FUNCTIONS----------------------------
 
-void getHelp() 
+void getHelp() //English?
 {
     printf("---------------------HELP---------------------\n");
     printf("Dieses Programm enthält unterschiedliche Arten\n");
@@ -661,9 +688,9 @@ int main(int argc, char *argv[])
         printf("Invalid degree on position 2 (%s), try an integer ;)\n", argv[2]);
         return (1);
     }
-    if (1 > deg || deg > 9)
+    if (1 > deg)
     {
-        printf("Invalid integer (%d), must be in [1;9].\n", deg);
+        printf("Invalid integer (%d), must be greater than 1.\n", deg);
         return (1);
     }
 
@@ -673,7 +700,7 @@ int main(int argc, char *argv[])
 
     if (x == NULL || y == NULL)
     {
-        puts("It's to fucking big!");
+        perror("Please try again with a smaller degree ");
         return (3);
     }
 
@@ -766,7 +793,7 @@ int main(int argc, char *argv[])
     }
     else if (argc > 2 && strcmp(argv[1], executeRecursive) == 0)
     {
-         printf("Rekursiv in C with degree %d...\n",deg);
+        printf("Rekursiv in C with degree %d...\n",deg);
 
         clock_gettime(CLOCK_MONOTONIC, &before);
         peanoInPlaceRecursive(deg, x, y);
@@ -782,10 +809,17 @@ int main(int argc, char *argv[])
         // Je nach Angabe wird die Zeit ausgegeben
         printf("Oparation successfully terminated");
         if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
-            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-
+        {
+            if(deg > 7)                                         // Ab Grad 8 ist die Berechnung mit Sekunden sinnvoller wegen overflows 
+            {
+                double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
+                double secAfter = after.tv_sec +1e-9 * after.tv_nsec; 
+                printf(" after %f seconds", secAfter - secBefore);
+            }
+            else 
+                printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+        }                                               
         puts(".");
-
     }
 
     free(x);
