@@ -8,33 +8,34 @@
 void reverseInPlace(u_int64_t *x, u_int64_t *y, u_int64_t pos, u_int64_t size)
 {
 
-    for (u_int64_t i = 1; i <= size; i++)
+    for (u_int64_t i = 1; i < size; i++)
     {
         u_int64_t tempy=y[i]-y[i-1];// direction left=-1 / right=1
         u_int64_t tempx=x[i]-x[i-1];// direction up=1 / down =-1
-        y[pos + i] = y[i]-tempy+(int)(size/3);
-        x[pos + i] = x[i]-tempx+(int)(size/3);
+            y[pos + i] = y[pos + i-1] - tempy ;
+            x[pos + i] = x[pos + i-1] - tempx ;
     }
 }
 
 void mirrorInPlace(u_int64_t *x, u_int64_t*y, u_int64_t pos, u_int64_t size)
 {
-    for (u_int64_t i = 1; i <= size; i++)
+    for (u_int64_t i = 1; i < size; i++)
     {
-        
-        int tempy= y[i]-y[i-1];         
-        y[pos + i] = y[i]-tempy+(int)(size/3);
-     
-        x[pos + i] = x[i]+(int)(size/3);
+        u_int64_t tempy=y[i]-y[i-1];// direction left=-1 / right=1
+        u_int64_t tempx=x[i]-x[i-1];// direction up=1 / down =-1        
+            y[pos + i] = y[pos + i-1] - tempy ;
+            x[pos + i] = x[pos + i-1] + tempx ;
     }
 }
 
 void copyInPlace(u_int64_t *x,u_int64_t*y, u_int64_t pos, u_int64_t size)
 {
-    for (u_int64_t i = 1; i <= size; i++)
+    for (u_int64_t i = 1; i < size; i++)
     {
-        x[pos + i] = x[i]+(int)(size/3);
-        y[pos + i] = y[i]+(int)(size/3);
+        u_int64_t tempy=y[i]-y[i-1];// direction left=-1 / right=1
+        u_int64_t tempx=x[i]-x[i-1];// direction up=1 / down =-1
+            y[pos + i] = y[pos + i-1] + tempy ;
+            x[pos + i] = x[pos + i-1] + tempx ;
     }
 }
 
@@ -42,10 +43,10 @@ void reverseMirrorInPlace(u_int64_t *x,u_int64_t*y,  u_int64_t pos, u_int64_t si
 {
     for (u_int64_t i = 1; i < size; i++)
     {
-        
+        u_int64_t tempy=y[i]-y[i-1];// direction left=-1 / right=1
         u_int64_t tempx=x[i]-x[i-1];// direction up=1 / down =-1
-        y[pos + i] = y[i]+(int)(size/3);
-        x[pos + i] = x[i]-tempx+(int)(size/3);
+            y[pos + i] = y[pos + i-1] + tempy ;
+            x[pos + i] = x[pos + i-1] - tempx ;
         }
 }
 int calcNextInplace(int currGrad, u_int64_t *x,u_int64_t*y, u_int64_t pos)
@@ -201,14 +202,15 @@ int main(int argc, char *argv[])
 
     char *pCh;
     unsigned deg = 42;
-   
+       struct timespec before;
+    struct timespec after;
    
     deg = strtoul(argv[1], &pCh, 10);
     
     int size = (int)pow(9, deg);
     u_int64_t *x = (u_int64_t *)malloc(size * sizeof(u_int64_t));
     u_int64_t *y = (u_int64_t *)malloc(size * sizeof(u_int64_t));
-    peanoInPlace(deg, x,y);
+    
 
     if (x == NULL || y == NULL)
     {
@@ -216,7 +218,21 @@ int main(int argc, char *argv[])
         return (3);
     }
 
-    drawSvg(x,y,size);
+  
+    clock_gettime(CLOCK_MONOTONIC, &before);
+        peanoInPlace(deg, x,y);
+         
+        clock_gettime(CLOCK_MONOTONIC, &after);
+ drawSvg(x,y,size);
+        // Je nach Angabeparameter wird eine SVG Datei erstellt
+    
+
+        // Je nach Angabe wird die Zeit ausgegeben
+        printf("Oparation successfully terminated");
+                                                       // Je nach Angabe wird die Zeit ausgegeben
+            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+
+        puts(".");
 
     free(x);
     free(y);

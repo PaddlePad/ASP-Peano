@@ -368,7 +368,129 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 }
 
 //----------------------------PEANO RECURSIVE (TODO)----------------------------
+void calcNextInplaceRecursive(int grad , int currGrad, int *curr, u_int64_t pos)
+{
+    if (currGrad>=grad){
+        return  ;
+    }
+    u_int64_t size = (u_int64_t)pow(3, 2 * currGrad);
+    // Erster Zwischenstep
+    curr[pos] = 0;
 
+    // Zweiter step
+    reverseMirrorInPlace(curr, pos, size);
+    pos += size;
+
+    //Zwischenschritt nach oben
+    curr[pos] = 0;
+
+    // Dritter step
+    copyInPlace(curr, pos, size);
+    pos += size;
+
+    //Zwischenschritt nach rechts
+    curr[pos] = 1;
+
+    //Vierter Step
+    mirrorInPlace(curr, pos, size);
+    pos += size;
+
+    //Zwischenschritt nach unten
+    curr[pos] = 2;
+
+    //Fünfter Step
+    reverseInPlace(curr, pos, size);
+    pos += size;
+
+    //Zwischenschritt nach unten
+    curr[pos] = 2;
+
+    //Sechster Step
+    mirrorInPlace(curr, pos, size);
+    pos += size;
+
+    //Zwischenschritt nach rechts
+    curr[pos] = 1;
+
+    //Siebter Step
+    copyInPlace(curr, pos, size);
+    pos += size;
+
+    //Zwischenschritt nach oben
+    curr[pos] = 0;
+
+    //Achter Step
+    reverseMirrorInPlace(curr, pos, size);
+    pos += size;
+
+    //Zwischenschritt nach oben
+    curr[pos] = 0;
+
+    //Letzter Step
+    copyInPlace(curr, pos, size);
+    pos += size;
+   calcNextInplaceRecursive(grad, currGrad+1, curr,pos);
+}
+
+void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
+{
+    if (grad <= 0 || grad > 9) //auch Auf überlauf checken!!
+    {
+        printf("Error number not valid !");
+        return;
+    }
+
+    u_int64_t size = (u_int64_t)pow(3, 2 * grad);
+
+    // Richtungsarray allokieren und die Startkurve hardcodiert einfügen
+    int *array = (int *)malloc(size * sizeof(int));
+    array[1] = 0;
+    array[2] = 0;
+    array[3] = 1;
+    array[4] = 2;
+    array[5] = 2;
+    array[6] = 1;
+    array[7] = 0;
+    array[8] = 0;
+
+    unsigned pos = 9;
+
+    calcNextInplaceRecursive(grad,1, array, pos);
+
+
+    //printDirections(array, amt);
+
+    u_int64_t x = 1;
+    u_int64_t y = 1;
+    x1[0] = x;
+    y1[0] = y;
+
+    for (u_int64_t i = 1; i < size; i++)
+    {
+        switch (array[i])
+        {
+        case 0: //oben
+            y++;
+            break;
+        case 2: //unten
+            y--;
+            break;
+        case 3: //links
+            x--;
+            break;
+        case 1: //rechts
+            x++;
+            break;
+        default:
+            break;
+        }
+
+        x1[i] = x;
+        y1[i] = y;
+    }
+
+    free(array);
+}
 //----------------------------HELPER FUNCTIONS----------------------------
 
 void getHelp() 
@@ -644,7 +766,26 @@ int main(int argc, char *argv[])
     }
     else if (argc > 2 && strcmp(argv[1], executeRecursive) == 0)
     {
-        puts("Rekursiv in C...");
+         printf("Rekursiv in C with degree %d...\n",deg);
+
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        peanoInPlaceRecursive(deg, x, y);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+
+        // Je nach Angabeparameter wird eine SVG Datei erstellt
+        if (svg)
+        {
+            puts("Creating svg file...");
+            drawSvg(x, y, size);
+        }
+
+        // Je nach Angabe wird die Zeit ausgegeben
+        printf("Oparation successfully terminated");
+        if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
+            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+
+        puts(".");
+
     }
 
     free(x);
