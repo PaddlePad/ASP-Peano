@@ -84,9 +84,11 @@ Im urspr\"unglichen Entwurf des Algorithmus wurden die drei verschiedenen Permut
 
 \subsection{Alternativer L\"osungsansatz}
 
-Wir haben uns bewusst gegen die Nutzung von SIMD-Befehlen entschieden, da der einzige Anwendungspunkt die synchrone Umrechnung der Richtungen in den Permutationsmethoden w\"are.
+Wir haben uns bewusst gegen die Nutzung von SIMD-Befehlen entschieden, da der einzige Anwendungspunkt die synchrone Umrechnung der Richtungen in den Permutationsmethoden zu den Koordinaten w\"are. Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnen wir maximal zwei Koordinaten gleichzeitig verrechnen. Hinzu kommt, dass die Peano-Kurve mit der hier beschriebenen Berechnung maximal zwei Richtungen hintereinander verrechnen kann, da die Kurve danach die Richtung \"andert und man nicht mehr die selbe Berechnung parallel ausf\"uhren kann.
 
-Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren. Dies w\"urde nat\"urlich sehr viel Rechen- und Speicheraufwand einsparen und damit ingesamt bessere Performanzergebnisse liefern.
+So w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz noch zus\"atzlich optimieren lassen.  
+
+Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren. Dies w\"urde nat\"urlich sehr viel Rechen- und Speicheraufwand einsparen und damit ingesamt bessere Performanzergebnisse erzielen.
 
 \newpage
 
@@ -162,8 +164,9 @@ for (u_int64_t i = 1; v = (u_int64_t *) malloc(i); i <<= 1)
 
 Zus\"atzlich evaluierte ein Test, der \"uberpr\"uft, ob der von \textit{malloc} zur\"uckgegebenen Pointer (bei einem $n > 9$) NULL ist, auf unseren Testplatformen ausnahmslos \textit{true}. % also war NUll
 
-Deshalb ist der Wertebereich von $n$ in den Tests im nachfolgenden Kapitel auf $[1;9]$ limitiert.
+Deshalb ist der Wertebereich von $n$ in den Tests im nachfolgenden Kapitel auf $ n \in [1;9]$ limitiert.
 
+Als ein Beispiel f\"ur diesen Algortihmus sei auf Abb.3 verwiesen, welche die erstellte Kurve mit $n = 4$ zeigt. F\"ur ein $n < 4$ werden Bilder erzeugt, die den Kurven in Abb.1 entsprechen. F\"ur $n > 4$ ist die Kurve aufgrund der hohen Dichte in diesem Dokument schwer lesbar darstellbar.
 
 %TODO: Bild mit grad 4 einfuegen, Relevante Beispiele angeben, die die Funktionalität und Korrektheit demonstrieren und eventuelle Aussagen unterstützen
 
