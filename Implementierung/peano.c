@@ -5,6 +5,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <getopt.h>
 
 // Assemblyfunction
 void peano(unsigned degree, u_int64_t *x, u_int64_t *y);
@@ -57,13 +58,13 @@ void calcNext(int prevGrad, int *array)
     u_int64_t currSize = (u_int64_t)pow(3, prevGrad * 2);
     u_int64_t stepSize = currSize - 1;
 
-    // Saving Permutations 
+    // Saving Permutations
     int *pre = (int *)malloc(currSize * sizeof(int));
     int *mir = (int *)malloc(currSize * sizeof(int));
     int *rev = (int *)malloc(currSize * sizeof(int));
     int *revMir = (int *)malloc(currSize * sizeof(int));
 
-    if(pre == NULL || mir == NULL || rev == NULL || revMir == NULL)
+    if (pre == NULL || mir == NULL || rev == NULL || revMir == NULL)
     {
         perror("Please try again with a smaller degree ");
     }
@@ -149,7 +150,7 @@ void peanoOutOfPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     u_int64_t size = (u_int64_t)pow(3, 2 * grad);
     int *array = (int *)malloc(size * sizeof(int));
 
-    if(array == NULL)
+    if (array == NULL)
     {
         perror("Couldnt allocate enough memory, please try again with a smaller Degree!\n");
     }
@@ -258,7 +259,7 @@ void reverseMirrorInPlace(int *arr, u_int64_t pos, u_int64_t size)
 int calcNextInplace(int currGrad, int *curr, u_int64_t pos)
 {
     u_int64_t size = (u_int64_t)pow(3, 2 * currGrad);
-    
+
     // First Step between Permutations upwards
     curr[pos] = 0;
 
@@ -330,7 +331,7 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     // Allocate Directionarray and hardcode first curve
     int *array = (int *)malloc(size * sizeof(int));
 
-    if(array == NULL)
+    if (array == NULL)
     {
         perror("Please try again with a smaller degree ");
     }
@@ -387,15 +388,15 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 }
 
 //----------------------------PEANO RECURSIVE (TODO)----------------------------
-void calcNextInplaceRecursive(int grad , int currGrad, int *curr, u_int64_t pos)
+void calcNextInplaceRecursive(int grad, int currGrad, int *curr, u_int64_t pos)
 {
-    if (currGrad>=grad)
+    if (currGrad >= grad)
     {
         return;
     }
 
     u_int64_t size = (u_int64_t)pow(3, 2 * currGrad);
-    
+
     // first Zwischenstep
     curr[pos] = 0;
 
@@ -451,7 +452,7 @@ void calcNextInplaceRecursive(int grad , int currGrad, int *curr, u_int64_t pos)
     //last Step
     copyInPlace(curr, pos, size);
     pos += size;
-    calcNextInplaceRecursive(grad, currGrad+1, curr,pos);
+    calcNextInplaceRecursive(grad, currGrad + 1, curr, pos);
 }
 
 void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
@@ -467,7 +468,7 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     // Richtungsarray allokieren und die Startkurve hardcodiert einfügen
     int *array = (int *)malloc(size * sizeof(int));
 
-    if(array == NULL)
+    if (array == NULL)
     {
         perror("Please try again with a smaller degree ");
     }
@@ -483,7 +484,7 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
     unsigned pos = 9;
 
-    calcNextInplaceRecursive(grad,1, array, pos);
+    calcNextInplaceRecursive(grad, 1, array, pos);
 
     //printDirections(array, amt);
 
@@ -518,6 +519,7 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
     free(array);
 }
+
 //----------------------------HELPER FUNCTIONS----------------------------
 
 void getHelp() //English?
@@ -605,14 +607,177 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     fprintf(fp, "</svg>\n");
 
     fclose(fp);
+}
 
-    printf("Created new svg file for Grad %d\n", grad);
+enum Algorithm
+{
+    Assembly,
+    InPlace,
+    OutOfPlace,
+    Recursiv,
+    Empty
+};
+
+int runAlgorithm(enum Algorithm alg, int deg, bool svg, bool time)
+{
+    int size = (int)pow(9, deg);
+    u_int64_t *x = (u_int64_t *)malloc(size * sizeof(u_int64_t));
+    u_int64_t *y = (u_int64_t *)malloc(size * sizeof(u_int64_t));
+
+    if (x == NULL || y == NULL)
+    {
+        perror("Please try again with a smaller degree ");
+        return (3);
+    }
+
+    struct timespec before;
+    struct timespec after;
+
+    switch (alg)
+    {
+    case Assembly:
+        printf("Running assembly algorithm with degree %d...\n", deg);
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        peano(deg, x, y);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+        break;
+    case InPlace:
+        printf("Running In-Place iterativ algorithm in C with degree %d...\n", deg);
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        peanoInPlace(deg, x, y);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+        break;
+    case OutOfPlace:
+        printf("Running Out-Of-Place iterativ algorithm in C with degree %d...\n", deg);
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        peanoOutOfPlace(deg, x, y);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+        break;
+    case Recursiv:
+        printf("Running recursive algorithm in C with degree %d...\n", deg);
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        peanoInPlaceRecursive(deg, x, y);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+        break;
+    default:
+        break;
+    }
+
+    printf("Peano calculation successfully terminated");
+    if (time) // Depending on the input arguments the operating time is printed
+    {
+        if (deg > 7) // Upwards from degree 7 we use seconds to avoid overflows
+        {
+            double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
+            double secAfter = after.tv_sec + 1e-9 * after.tv_nsec;
+            printf(" after %f seconds", secAfter - secBefore);
+        }
+        else
+            printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+    }
+    puts(".");
+
+    // Depending on the input arguments an svg file is created
+    if (svg)
+    {
+        puts("Creating svg file...");
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        drawSvg(x, y, size);
+        clock_gettime(CLOCK_MONOTONIC, &after);
+        printf("Svg file successfully created");
+
+        if (time) // With argument -t the operation time to create the svg file is also printed
+        {
+            if (deg > 6)
+            {
+                double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
+                double secAfter = after.tv_sec + 1e-9 * after.tv_nsec;
+                printf(" after %f seconds", secAfter - secBefore);
+            }
+            else
+                printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
+        }
+        puts(".");
+    }
+
+    free(x);
+    free(y);
+
+    return 0;
 }
 
 //-----------------------------------MAIN--------------------------------------
 
 int main(int argc, char *argv[])
 {
+    // int index = 0;
+    // unsigned degree = 0;
+    // enum Algorithm alg = Empty;
+
+    // int mandArgs = -1;
+    // bool t = false;
+    // bool s = false;
+
+    // while ((index = getopt(argc, argv, "ha:i:o:r:ts")) != -1)
+    // {
+    //     switch (index)
+    //     {
+    //     case 'h':       // print help
+    //         getHelp();
+    //         return 0;
+    //     case 'a':       // choose assembly
+    //         mandArgs++;
+    //         alg = Assembly;
+    //         degree = atoi(optarg);
+    //         break;
+    //     case 'i':
+    //         mandArgs++;
+    //         alg = InPlace;
+    //         degree = atoi(optarg);
+    //         break;
+    //     case 'o':
+    //         mandArgs++;
+    //         alg = OutOfPlace;
+    //         degree = atoi(optarg);
+    //         break;
+    //     case 'r':
+    //         mandArgs++;
+    //         alg = Recursiv;
+    //         degree = atoi(optarg);
+    //         break;
+    //     case 't':
+    //         t = true;
+    //         break;
+    //     case 's':
+    //         s = true;
+    //         break;
+    //     default:
+    //         break;
+    //     }
+    // }
+
+    // if (mandArgs < 0)
+    // {
+    //     puts("Need to specify an algorithm by entering either -a, -i, -o or -r followed by an integer greater than 0.");
+    //     return 1;
+    // }
+    // else if (mandArgs > 0)
+    // {
+    //     puts("Can only choose one of the algorithm inputs -a, -i, -o and -r.");
+    //     return 1;
+    // }
+    // if (degree < 1)
+    // {
+    //     printf("Invalid input for degree, try an integer greater than 0.\n");
+    //     return 1;
+    // }
+
+    // printf("Algorithm: %d, Degree: %d, Time: %d, SVG: %d\n", alg, degree, t, s);
+
+    // runAlgorithm(alg, degree, s, t);
+
+    // return 0;
+
     char *pCh;
     unsigned deg = 42;
     char *executeAssembly = "-a";
@@ -652,7 +817,7 @@ int main(int argc, char *argv[])
                 if (argc > 4)
                 {
                     // Mometan unterstützt das Programm bis zu 5 Eingabeparameter, deshalb wird hier eine Fehlermeldung geworfen
-                    if(argc > 5)
+                    if (argc > 5)
                     {
                         puts("To many arguments. Try again with -h or --help for help");
                         return (1);
@@ -694,136 +859,22 @@ int main(int argc, char *argv[])
         return (1);
     }
 
-    int size = (int)pow(9, deg);
-    u_int64_t *x = (u_int64_t *)malloc(size * sizeof(u_int64_t));
-    u_int64_t *y = (u_int64_t *)malloc(size * sizeof(u_int64_t));
 
-    if (x == NULL || y == NULL)
+
+    if (argc > 2 && strcmp(argv[1], executeAssembly) == 0) //Execute assembly algorithm
     {
-        perror("Please try again with a smaller degree ");
-        return (3);
+        return runAlgorithm(Assembly, deg, svg, time);
     }
-
-    struct timespec before;
-    struct timespec after;
-
-    if (argc > 2 && strcmp(argv[1], executeAssembly) == 0) //Execute Assembler
+    else if (argc > 2 && strcmp(argv[1], executeInplace) == 0) //execute inplace algorithm in C
     {
-        printf("Running assembly algorithm with degree %d...\n", deg);
-        clock_gettime(CLOCK_MONOTONIC, &before);
-        peano(deg, x, y);
-        clock_gettime(CLOCK_MONOTONIC, &after);
-
-        // Je nach Angabeparameter wird eine SVG Datei erstellt
-        if (svg)
-        {
-            puts("Creating svg file...");
-            drawSvg(x, y, size);
-        }
-
-        printf("Oparation successfully terminated");
-        if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
-        {
-            if(deg > 7)                                         // Ab Grad 8 ist die Berechnung mit Sekunden sinnvoller wegen overflows  
-            {
-                double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
-                double secAfter = after.tv_sec +1e-9 * after.tv_nsec; 
-                printf(" after %f seconds", secAfter - secBefore);
-            }
-            else 
-                printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-        }                                               
-        puts(".");
+        return runAlgorithm(InPlace, deg, svg, time);
     }
-    else if (argc > 2 && strcmp(argv[1], executeInplace) == 0) //execute Peano in C
+    else if (argc > 2 && strcmp(argv[1], executeOutOfPlace) == 0) // execute out of place algorithm in C
     {
-        printf("Running In-Place iterativ algorithm in C with degree %d...\n", deg);
-        clock_gettime(CLOCK_MONOTONIC, &before);
-        peanoInPlace(deg, x, y);
-        clock_gettime(CLOCK_MONOTONIC, &after);
-       
-        // Je nach Angabeparameter wird eine SVG Datei erstellt
-        if (svg)
-        {
-            puts("Creating svg file...");
-            drawSvg(x, y, size);
-        }
-
-        printf("Oparation successfully terminated");
-        if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
-        {
-            if(deg > 7)                                         // Ab Grad 8 ist die Berechnung mit Sekunden sinnvoller wegen overflows  
-            {
-                double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
-                double secAfter = after.tv_sec +1e-9 * after.tv_nsec; 
-                printf(" after %f seconds", secAfter - secBefore);
-            }
-            else 
-                printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-        }                                               
-        puts(".");
+        return runAlgorithm(OutOfPlace, deg, svg, time);
     }
-    else if (argc > 2 && strcmp(argv[1], executeOutOfPlace) == 0)
+    else if (argc > 2 && strcmp(argv[1], executeRecursive) == 0) // execute recursive algorithm in C
     {
-        printf("Running Out-Of-Place iterativ algorithm in C with degree %d...\n", deg);
-        clock_gettime(CLOCK_MONOTONIC, &before);
-        peanoOutOfPlace(deg, x, y);
-        clock_gettime(CLOCK_MONOTONIC, &after);
-
-        // Je nach Angabeparameter wird eine SVG Datei erstellt
-        if (svg)
-        {
-            puts("Creating svg file...");
-            drawSvg(x, y, size);
-        }
-
-        printf("Oparation successfully terminated");
-        if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
-        {
-            if(deg > 7)                                         // Ab Grad 8 ist die Berechnung mit Sekunden sinnvoller wegen overflows 
-            {
-                double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
-                double secAfter = after.tv_sec +1e-9 * after.tv_nsec; 
-                printf(" after %f seconds", secAfter - secBefore);
-            }
-            else 
-                printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-        }                                               
-        puts(".");
+        return runAlgorithm(Recursiv, deg, svg, time);
     }
-    else if (argc > 2 && strcmp(argv[1], executeRecursive) == 0)
-    {
-        printf("Rekursiv in C with degree %d...\n",deg);
-
-        clock_gettime(CLOCK_MONOTONIC, &before);
-        peanoInPlaceRecursive(deg, x, y);
-        clock_gettime(CLOCK_MONOTONIC, &after);
-
-        // Je nach Angabeparameter wird eine SVG Datei erstellt
-        if (svg)
-        {
-            puts("Creating svg file...");
-            drawSvg(x, y, size);
-        }
-
-        // Je nach Angabe wird die Zeit ausgegeben
-        printf("Oparation successfully terminated");
-        if (time)                                               // Je nach Angabe wird die Zeit ausgegeben
-        {
-            if(deg > 7)                                         // Ab Grad 8 ist die Berechnung mit Sekunden sinnvoller wegen overflows 
-            {
-                double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
-                double secAfter = after.tv_sec +1e-9 * after.tv_nsec; 
-                printf(" after %f seconds", secAfter - secBefore);
-            }
-            else 
-                printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-        }                                               
-        puts(".");
-    }
-
-    free(x);
-    free(y);
-
-    return 0;
 }
