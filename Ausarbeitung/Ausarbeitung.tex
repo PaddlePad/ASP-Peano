@@ -131,7 +131,7 @@ Da die Funktionen, die die Permutationen erz\"augen, auf die ganze Kurve des Gra
 Die invertierte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, im Speziellen von $p_1=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich au\ss er der invertierten Reihenfolge der Punkte an der grundlegenden Kurve nichts \"andert. Somit ist die invertierte Permutation induktiv eben so korrekt wie die zugrundeliegende Kurve niedrigeren Grades, siehe auch Abb.2, gr\"une Kurve.
 
 %\textbf{Spiegelung:}% - Mirror in Implementierung
-Bei der Spiegelung wird die Kurve an der X-Achse gespiegelt. Wir ver\"andern also ebenfalls die vertikale Richtung, behalten jedoch weiterhin die horizontale Richtung bei. Dadurch wird die vorausgehende Kurve notwendigerweise abge\"andert. Diese zus\"atzliche Operation ist elementar und greift auf die gespeicherte Richtung einer Koordinate direkt zu. Somit hat diese Opertaion nur indirekt auf die Koordinatenberechnung Einfluss, ohne die Kurve anderweitig zu ver\"andern, sie \"andert also den charakteristischen Verlauf der Kurve nicht. Siehe auch Abb.2, gelbe Kurve. %wirklich elementar
+Bei der Spiegelung wird die Kurve an der X-Achse gespiegelt. Wir ver\"andern also ebenfalls die vertikale Richtung, behalten jedoch weiterhin die horizontale Richtung bei. Dadurch wird die vorausgehende Kurve notwendigerweise abge\"andert. Diese zus\"atzliche Operation ist elementar und greift auf die gespeicherte Richtung einer Koordinate direkt zu. Somit hat diese Opertaion nur indirekt auf die Koordinatenberechnung Einfluss, ohne die Kurve anderweitig zu ver\"andern. Siehe auch Abb.2, gelbe Kurve. %wirklich elementar
 
 %\textbf{Kombination Beider Permutationen:}
 Abschlie\ss end bleibt noch die Kombination aus den vorangehenden Permutationen, die ebenfalls f\"ur die Konstruktion der Kurve notwendig ist. Diese Permutation ist, \"ahnlich zu der vorherigen Permutation, eine Spiegelung an der Y-Achse. Dabei wird die horizontale Richtung gewechselt und die Vertikale beibehalten. Ansonsten verh\"alt es sich analog zur Spiegelung.
@@ -141,15 +141,6 @@ Siehe auch hier Abb.2, blaue Kurve.
 
 Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine ebensolche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einf\"ugen, sondern nur die Art der graphischen Darstellung. Wir f\"ugen also einen weiteren hardcodiertern Schritt zu den bisherigen Richtungen hinzu. Dies ist zudem Teil der Definition dieser Kurve. 
 
-%TODO: Bild mit grad 4 einfuegen, Relevante Beispiele angeben, die die Funktionalität und Korrektheit demonstrieren und eventuelle Aussagen unterstützen
-
-%TODO: Mathematischen sachen be/ver-weisen!
-
-\newpage
-\section{Performanzanalyse}
-Bevor wir den bereits ausgef\"uhrten Algorithmus hinsichtlich seiner Performanz analysieren, beschreiben wir kurz die Algorithmen, die wir zu den Vergleichen heranziehen.
-
-Als erstes implemenierten wir den bereits erl\"auterten Algorithmus aus dem Kapitel  \textit{L\"osungsansatz} in C. Um die Performanz-Unterschiede zwischen der direkten Berechnung, im Weiteren als Inplace-Variante, und der einmaligen Berechnung und Speicherung der Permutationen, im Folgenden als Out-Of-Place-Variante bezeichnet, zu analysieren erweitern wir die Implementation um einen entsprechenden Algorithmus, welcher eine abgewandelte Form der Inplace-Variante ist. Der Unterschied besteht darin, dass sobald wir eine Kurve mit $n > 2$ berechnen, speichern wir die schon vorher besprochenen Permutationen der Kurve mit Grad $n - 1$.
 
 \subsection{Technische Limitationen} %in C
 Bei dem Testen unseres Programms fallen bei Graden von $n > 6$ bestimmte technische Limitationen unser Rechensysteme auf. 
@@ -162,14 +153,27 @@ Um zu ermitteln, wie viel Speicher wir allokieren k\"onnen, haben wir eine For-S
 
 \begin{lstlisting} %Formatieren! 
 u_int64_t *v;   %weg?
-for (u\_int64\_t i = 1; v = (u\_int64\_t *) malloc(i); i <<= 1)   
+for (u_int64_t i = 1; v = (u_int64_t *) malloc(i); i <<= 1)   
 {     
 print(i);
-free(v); 
+free(v);
 }
 \end{lstlisting}
 
 Zus\"atzlich evaluierte ein Test, der \"uberpr\"uft, ob der von \textit{malloc} zur\"uckgegebenen Pointer (bei einem $n > 9$) NULL ist, auf unseren Testplatformen ausnahmslos \textit{true}. % also war NUll
+
+
+
+%TODO: Bild mit grad 4 einfuegen, Relevante Beispiele angeben, die die Funktionalität und Korrektheit demonstrieren und eventuelle Aussagen unterstützen
+
+%TODO: Mathematischen sachen be/ver-weisen!
+
+\newpage
+\section{Performanzanalyse}
+Bevor wir den bereits ausgef\"uhrten Algorithmus hinsichtlich seiner Performanz analysieren, beschreiben wir kurz die Algorithmen, die wir zu den Vergleichen heranziehen.
+
+Als erstes implemenierten wir den bereits erl\"auterten Algorithmus aus dem Kapitel  \textit{L\"osungsansatz} in C. Um die Performanz-Unterschiede zwischen der direkten Berechnung, im Weiteren als Inplace-Variante, und der einmaligen Berechnung und Speicherung der Permutationen, im Folgenden als Out-Of-Place-Variante bezeichnet, zu analysieren erweitern wir die Implementation um einen entsprechenden Algorithmus, welcher eine abgewandelte Form der Inplace-Variante ist. Der Unterschied besteht darin, dass sobald wir eine Kurve mit $n > 2$ berechnen, speichern wir die schon vorher besprochenen Permutationen der Kurve mit Grad $n - 1$.
+
 
 %Assembler
 
