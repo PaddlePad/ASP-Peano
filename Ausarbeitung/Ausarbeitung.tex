@@ -139,7 +139,7 @@ Siehe auch hier Abb.2, blaue Kurve.
 
 \textbf{Verbinden der Permutationen:}
 
-Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine ebensolche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einf\"ugen, sondern nur die Art der graphischen Darstellung. Wir f\"ugen also einen weiteren hardcodiertern Schritt zu den bisherigen Richtungen hinzu. Dies ist zudem Teil der Definition dieser Kurve. 
+Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine ebensolche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einf\"ugen, sondern nur die Art der graphischen Darstellung. Wir f\"ugen also einen weiteren hardcodiertern Schritt zu den bisherigen Richtungen hinzu, um die Koordinaten sp\"ater korrekt zu berechn. Dies ist zudem Teil der Definition dieser Kurve.  
 
 
 \subsection{Technische Limitationen} %in C
@@ -156,8 +156,7 @@ Um zu ermitteln, wie viel Speicher wir allokieren k\"onnen, haben wir eine For-S
 u_int64_t *v;
 for (u_int64_t i = 1; v = (u_int64_t *) malloc(i); i <<= 1)   
 {     
-print(i);
-free(v);
+    print(i); free(v);
 }
 \end{lstlisting}
 
