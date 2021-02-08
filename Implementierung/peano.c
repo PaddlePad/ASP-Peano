@@ -364,16 +364,16 @@ void peanoInPlace(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     {
         switch (array[i])
         {
-        case 0: //oben
+        case 0: //up
             y++;
             break;
-        case 2: //unten
+        case 2: //down
             y--;
             break;
-        case 3: //links
+        case 3: //left
             x--;
             break;
-        case 1: //rechts
+        case 1: //right
             x++;
             break;
         default:
@@ -397,7 +397,7 @@ void calcNextInplaceRecursive(int grad, int currGrad, int *curr, u_int64_t pos)
 
     u_int64_t size = (u_int64_t)pow(3, 2 * currGrad);
 
-    // first Zwischenstep
+    // first step between Permutation
     curr[pos] = 0;
 
     // second step
@@ -411,7 +411,7 @@ void calcNextInplaceRecursive(int grad, int currGrad, int *curr, u_int64_t pos)
     copyInPlace(curr, pos, size);
     pos += size;
 
-    ////Step between Permutations right
+    //Step between Permutations right
     curr[pos] = 1;
 
     //4th Step
@@ -465,7 +465,7 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
     u_int64_t size = (u_int64_t)pow(3, 2 * grad);
 
-    // Richtungsarray allokieren und die Startkurve hardcodiert einfügen
+    // allocate direction array and hardcode first curve
     int *array = (int *)malloc(size * sizeof(int));
 
     if (array == NULL)
@@ -497,16 +497,16 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
     {
         switch (array[i])
         {
-        case 0: //oben
+        case 0: //up
             y++;
             break;
-        case 2: //unten
+        case 2: //down
             y--;
             break;
-        case 3: //links
+        case 3: //left
             x--;
             break;
-        case 1: //rechts
+        case 1: //right
             x++;
             break;
         default:
@@ -788,7 +788,7 @@ int main(int argc, char *argv[])
     bool svg = false;
     bool time = false;
 
-    // Eingabeparameter prüfen
+    // Check Input
     if (argc > 1)
     {
         if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
@@ -858,8 +858,6 @@ int main(int argc, char *argv[])
         printf("Invalid integer (%d), must be greater than 1.\n", deg);
         return (1);
     }
-
-
 
     if (argc > 2 && strcmp(argv[1], executeAssembly) == 0) //Execute assembly algorithm
     {
