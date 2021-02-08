@@ -123,7 +123,7 @@ Dadurch lassen sich Kurven mit h\"oherem Grad konstruieren. Es sei nun $n > 1$ u
 \subsubsection{Induktionsschritt}
 Betrachten wir nun Kurven $n$-ten Grades. Hierzu m\"ussen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad n ben\"otigen.
 %natuerlich nur, wenn  wir unseren Algorithm behalten
-Da diese Permutationen stets auf \"ahnliche Art konstruiert werden, n\"amlich durch Addition von 2 zu der gespeicherten Richtung mit anschlie\ss endem \textit{modulo} 4, um die Richtung wieder in den g\"ultigen Bereich abzubilden. Dadurch ist gewehrleistet, dass durch Mehrfachanwendung einer Funktion, die eine solche Permutation generiert, immer nur die Orginale Kurve oder die gew\"unschte Permutation entstehen kann. Dies wird durch den Wertebereich von $[0;3]$ und der \textit{modulo} 4 erreicht, da so die geraden Werte auf den jeweils anderen geraden Wert abgebildet werden, f\"ur die ungerade Zahlen analog.
+Da diese Permutationen stets auf \"ahnliche Art konstruiert werden, n\"amlich durch Addition von 2 zu der gespeicherten Richtung mit anschlie\ss endem \textit{modulo} 4, um die Richtung wieder in den g\"ultigen Bereich abzubilden. Dadurch ist gewehrleistet, dass durch Mehrfachanwendung einer Funktion, die eine solche Permutation generiert, immer nur die Orginale Kurve oder die gew\"unschte Permutation entstehen kann. Dies wird durch den Wertebereich von $[0;3]$ und der \textit{modulo} 4 erreicht, da so die geraden Werte auf den jeweils anderen geraden Wert abgebildet werden, f\"ur die ungerade Zahlen analog. Dieser Umstand wird bei dem Erstellen der Permutationen ausgenutzt.
 Da die Funktionen, die die Permutationen erz\"augen, auf die ganze Kurve des Grades $n = n - 1$ angewand wird, ist sicher gestellt, dass die Permutationen keine anderweitigen Fehler in der Richtgsberechnung besitzten.
 
 \textbf{Die Permutationen:}% - Reverse in Implementierung
@@ -147,12 +147,13 @@ Bei dem Testen unseres Programms fallen bei Graden von $n > 6$ bestimmte technis
 
 Zum einen haben wir kein Programm gefunden, dass die generierten .svg Dateien von einer Gr\"o\ss e 43.0 Megabyte (Peano-Kurve mit $n = 7$) \"offnen kann. Mit zunehmendem Grad enth\"alt die .svg Datei logischerweise immer mehr Punkte der Kurve, weshalb die Gr\"o\ss e ebenfalls exponentiell zur Basis 9 steigt. Deshalb m\"ochten wir an dieser Stelle auf das Kapitel \textit{Korrektheit} verweisen, um die Kurve auf selbige zu pr\"ufen.  %selbige gross?
 
-Zum anderen ist es nicht m\"oglich, beliebig viel Speicher zu allokieren, da die von uns benutzte \textit{malloc}-Funktion maximal 17.179.869.184 Bytes auf dem Heap allokieren kann und der Heap zus\"atzlich in seiner Gr\"o\ss e begrenzt ist. Deshalb k\"onnen wir auf unseren Systemen die Funktion mit maximal $n = 9$ ausf\"uhren, da sonst nicht gen\"ugend Speicher allokiert wird. F\"ur $n = 10$ m\"ussten 27.894.275.208 Bytes allokiert werden, wozu wir eben nicht im Stande sind, weshalb wir den Wertebereich von $n$ auf $[1;9]$ limitiert haben.
+Zum anderen ist es nicht m\"oglich, beliebig viel Speicher zu allokieren, da die von uns benutzte \textit{malloc}-Funktion maximal 17.179.869.184 Bytes auf dem Heap unser Testumgebungen allokieren kann und der Heap zus\"atzlich in seiner Gr\"o\ss e auf Seite der Hardware begrenzt ist. Deshalb k\"onnen wir auf unseren Systemen die Funktion mit maximal $n = 9$ ausf\"uhren, da sonst nicht gen\"ugend Speicher allokiert wird. F\"ur $n = 10$ m\"ussten 27.894.275.208 Bytes allokiert werden, wozu wir eben nicht im Stande sind. 
 
 Um zu ermitteln, wie viel Speicher wir allokieren k\"onnen, haben wir eine For-Schleife  folgenden Typs ausgef\"uhrt:
 
 \begin{lstlisting} %Formatieren! 
-u_int64_t *v;   %weg?
+
+u_int64_t *v;
 for (u_int64_t i = 1; v = (u_int64_t *) malloc(i); i <<= 1)   
 {     
 print(i);
@@ -162,6 +163,7 @@ free(v);
 
 Zus\"atzlich evaluierte ein Test, der \"uberpr\"uft, ob der von \textit{malloc} zur\"uckgegebenen Pointer (bei einem $n > 9$) NULL ist, auf unseren Testplatformen ausnahmslos \textit{true}. % also war NUll
 
+Deshalb ist der Wertebereich von $n$ in den Tests im nachfolgenden Kapitel auf $[1;9]$ limitiert.
 
 
 %TODO: Bild mit grad 4 einfuegen, Relevante Beispiele angeben, die die Funktionalität und Korrektheit demonstrieren und eventuelle Aussagen unterstützen
