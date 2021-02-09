@@ -527,7 +527,7 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
 //----------------------------HELPER FUNCTIONS----------------------------
 
-void getHelp() //English?
+void getHelp()
 {
     puts("\n-------------------------------HELP-------------------------------\n");
     puts("This programm offers multiple diffrent algorithms to calculate");
@@ -635,7 +635,9 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     fprintf(fp, "\t<polyline points=\"");
     for (int i = 0; i < size; i++)
     {
-        if (i > 0 && (x[i - 1] == x[i + 1] || y[i - 1] == y[i + 1])) // If the previous and the next point are on the same line the current point can be skipped
+        // If the previous and the next point are on the same line the current point can be skipped
+        // This reduces operation time and memory by ~50% 
+        if (i > 0 && (x[i - 1] == x[i + 1] || y[i - 1] == y[i + 1])) 
             continue;
 
         fprintf(fp, "%ld,%ld ", x[i] * step, pxWidth - y[i] * step);
@@ -754,8 +756,8 @@ int main(int argc, char *argv[])
     enum Algorithm alg = Empty;
 
     int mandArgs = -1;
-    bool t = false;
-    bool s = false;
+    bool time = false;
+    bool svg = false;
 
     while ((index = getopt_long(argc, argv, "ha:i:o:r:ts", long_options, NULL)) != -1)
     {
@@ -786,11 +788,13 @@ int main(int argc, char *argv[])
             degree = atoi(optarg);
             break;
         case 't':
-            t = true;
+            time = true;
             break;
         case 's':
-            s = true;
+            svg = true;
             break;
+        case '?':
+            return 1;
         default:
             break;
         }
@@ -798,7 +802,7 @@ int main(int argc, char *argv[])
 
     if (mandArgs < 0)
     {
-        puts("Specify an algorithm by entering either -a, -i, -o or -r followed by an integer greater than 0.");
+        puts("Specify an algorithm by entering either -a, -i, -o or -r.");
         return 1;
     }
     else if (mandArgs > 0)
@@ -812,7 +816,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    //printf("Algorithm: %d, Degree: %d, Time: %d, SVG: %d\n", alg, degree, t, s);
+    //printf("Algorithm: %d, Degree: %d, Time: %d, SVG: %d\n", alg, degree, time, svg);
 
-    return runAlgorithm(alg, degree, s, t);
+    return runAlgorithm(alg, degree, svg, time);
 }
