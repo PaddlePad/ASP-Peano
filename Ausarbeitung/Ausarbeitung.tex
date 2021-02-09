@@ -20,7 +20,7 @@
 %% mit den richtigen Werten.
 \newcommand{\theGroup}{132} % Beispiel: 42
 \newcommand{\theNumber}{A214} % Beispiel: A123
-\author{Mohammed Attia \and Patrick Zimmermann \and Thomas Torggler}
+\author{Mohammed Attia \and Thomas Torggler \and Patrick Zimmermann}
 \date{Wintersemester 2020/21} % Beispiel: Wintersemester 2019/20
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -122,7 +122,7 @@ Dadurch lassen sich Kurven mit h\"oherem Grad konstruieren. Es sei nun $n > 1$ u
 Betrachten wir nun Kurven $n$-ten Grades. Hierzu m\"ussen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad n ben\"otigen.
 %natuerlich nur, wenn  wir unseren Algorithm behalten
 Da diese Permutationen stets auf \"ahnliche Art konstruiert werden, n\"amlich durch Addition von 2 zu der gespeicherten Richtung mit anschlie\ss endem \textit{modulo} 4, um die Richtung wieder in den g\"ultigen Bereich abzubilden. Dadurch ist gewehrleistet, dass durch Mehrfachanwendung einer Funktion, die eine solche Permutation generiert, immer nur die Orginale Kurve oder die gew\"unschte Permutation entstehen kann. Dies wird durch den Wertebereich von $[0;3]$ und der \textit{modulo} 4 erreicht, da so die geraden Werte auf den jeweils anderen geraden Wert abgebildet werden, f\"ur die ungerade Zahlen analog. Dieser Umstand wird bei dem Erstellen der Permutationen ausgenutzt.
-Da die Funktionen, die die Permutationen erz\"augen, auf die ganze Kurve des Grades $n = n - 1$ angewand wird, ist sicher gestellt, dass die Permutationen keine anderweitigen Fehler in der Richtgsberechnung besitzten.
+Da die Funktionen, die die Permutationen erz\"augen, auf die ganze Kurve des Grades $n = n - 1$ angewand wird, ist sicher gestellt, dass die Permutationen keine anderweitigen Fehler in der Richtungsberechnung besitzten.
 
 \textbf{Die Permutationen:}% - Reverse in Implementierung
 
@@ -186,8 +186,14 @@ Als erstes implemenierten wir den bereits erl\"auterten Algorithmus aus dem Kapi
 \newpage
 \section{Zusammenfassung und Ausblick}
 
+%Zusammenfassung
+
 Betrachtet man die Historie der Raumf\"ullenden Kurven, so f\"allt schnell auf, dass noch weitere Kurven existieren, die \"ahnliche Eigenschaften wie die Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder eine andere Art der Peano-Kurve, die den Raum anders durchl\"auft, zu vergleichen.
-Hinzu kommt die M\"oglichkeit, den hier beschriebenen Algorithmus mit den im Kaptitel \textit{L\"osungsansatz} beschriebenen Alternativen weiter zu optimieren.
+
+% Bild der Hilbert kurve?
+
+Hinzu kommt die M\"oglichkeit, den hier beschriebenen Algorithmus mit den im Kaptitel \textit{L\"osungsansatz} beschriebenen Alternativen weiter zu optimieren. Hier bietet sich insbesondere der Ansatz an, der auf die Richtungsberechnung verzichtet, da dieser einen gro\ss en Performanzgewinn verspricht.
+
 %Idee am ende, keine Zeit zur Umsetztung
 %statt inplace direkt Koordinatenberechnung
 
