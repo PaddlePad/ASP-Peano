@@ -7,6 +7,11 @@
 #include <stdbool.h>
 #include <getopt.h>
 
+struct option long_options[] =
+    {
+        {"help", no_argument, NULL, 'h'},
+        {"svg", no_argument, NULL, 's'}};
+ 
 // Assemblyfunction
 void peano(unsigned degree, u_int64_t *x, u_int64_t *y);
 
@@ -533,7 +538,7 @@ void getHelp() //English?
     puts("\tStart the program with the the following arguments:");
     puts("\t-a <degree>");
     puts("\twhere degree must be an integer greater than zero.");
-    
+
     puts("2) Iterative in-place in C:");
     puts("\tStart the program with the the following arguments:");
     puts("\t-i <degree>");
@@ -548,9 +553,9 @@ void getHelp() //English?
     puts("\tStart the program with the the following arguments:");
     puts("\t-r <degree>");
     puts("\twhere degree must be an integer greater than zero.\n");
-    
-    puts("Optionally you can add an argument -svg which will create");
-    puts("a svg file with the calculated peano curve for visual");
+
+    puts("Optionally you can add an argument --svg (or -s) which will");
+    puts("create a svg file with the calculated peano curve for visual");
     puts("representation and/or an argument -t which will print the");
     puts("time the algorithm needed to successfully terminate.\n");
 
@@ -558,7 +563,6 @@ void getHelp() //English?
     puts("the attributive document \"Ausarbeitung.pdf\".");
 
     puts("------------------------------------------------------------------\n");
-
 
     // printf("---------------------HELP---------------------\n");
     // printf("Dieses Programm enthält unterschiedliche Arten\n");
@@ -631,7 +635,10 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     fprintf(fp, "\t<polyline points=\"");
     for (int i = 0; i < size; i++)
     {
-        fprintf(fp, "%ld,%ld ", x[i] * step, pxWidth - (y[i] * step));
+        if (i > 0 && (x[i - 1] == x[i + 1] || y[i - 1] == y[i + 1])) // If the previous and the next point are on the same line the current point can be skipped
+            continue;
+
+        fprintf(fp, "%ld,%ld ", x[i] * step, pxWidth - y[i] * step);
         if (i > 0 && i % 9 == 0)
             fprintf(fp, "\n\t");
     }
@@ -742,169 +749,70 @@ int runAlgorithm(enum Algorithm alg, int deg, bool svg, bool time)
 
 int main(int argc, char *argv[])
 {
-    // int index = 0;
-    // unsigned degree = 0;
-    // enum Algorithm alg = Empty;
+    int index = 0;
+    unsigned degree = 0;
+    enum Algorithm alg = Empty;
 
-    // int mandArgs = -1;
-    // bool t = false;
-    // bool s = false;
+    int mandArgs = -1;
+    bool t = false;
+    bool s = false;
 
-    // while ((index = getopt(argc, argv, "ha:i:o:r:ts")) != -1)
-    // {
-    //     switch (index)
-    //     {
-    //     case 'h':       // print help
-    //         getHelp();
-    //         return 0;
-    //     case 'a':       // choose assembly
-    //         mandArgs++;
-    //         alg = Assembly;
-    //         degree = atoi(optarg);
-    //         break;
-    //     case 'i':
-    //         mandArgs++;
-    //         alg = InPlace;
-    //         degree = atoi(optarg);
-    //         break;
-    //     case 'o':
-    //         mandArgs++;
-    //         alg = OutOfPlace;
-    //         degree = atoi(optarg);
-    //         break;
-    //     case 'r':
-    //         mandArgs++;
-    //         alg = Recursiv;
-    //         degree = atoi(optarg);
-    //         break;
-    //     case 't':
-    //         t = true;
-    //         break;
-    //     case 's':
-    //         s = true;
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    // }
-
-    // if (mandArgs < 0)
-    // {
-    //     puts("Need to specify an algorithm by entering either -a, -i, -o or -r followed by an integer greater than 0.");
-    //     return 1;
-    // }
-    // else if (mandArgs > 0)
-    // {
-    //     puts("Can only choose one of the algorithm inputs -a, -i, -o and -r.");
-    //     return 1;
-    // }
-    // if (degree < 1)
-    // {
-    //     printf("Invalid input for degree, try an integer greater than 0.\n");
-    //     return 1;
-    // }
-
-    // printf("Algorithm: %d, Degree: %d, Time: %d, SVG: %d\n", alg, degree, t, s);
-
-    // runAlgorithm(alg, degree, s, t);
-
-    // return 0;
-
-    char *pCh;
-    unsigned deg = 42;
-    char *executeAssembly = "-a";
-    char *executeInplace = "-i";
-    char *executeOutOfPlace = "-o";
-    char *executeRecursive = "-r";
-
-    bool svg = false;
-    bool time = false;
-
-    // Check Input
-    if (argc > 1)
+    while ((index = getopt_long(argc, argv, "ha:i:o:r:ts", long_options, NULL)) != -1)
     {
-        if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
+        switch (index)
         {
+        case 'h':
             getHelp();
             return 0;
-        }
-        if (argc > 2)
-        {
-            if (strcmp(argv[1], executeInplace) == 0 || strcmp(argv[1], executeRecursive) == 0 || strcmp(argv[1], executeOutOfPlace) == 0 || strcmp(argv[1], executeAssembly) == 0)
-            {
-                deg = strtoul(argv[2], &pCh, 10);
-            }
-            if (argc > 3)
-            {
-                if (strcmp(argv[3], "-svg") == 0)
-                    svg = true;
-                else if (strcmp(argv[3], "-t") == 0)
-                    time = true;
-                else
-                {
-                    puts("Invalid parameter on position 4, try '-svg' to create an .svg file or '-t' to output the operating time.");
-                    return 1;
-                }
-
-                if (argc > 4)
-                {
-                    // Mometan unterstützt das Programm bis zu 5 Eingabeparameter, deshalb wird hier eine Fehlermeldung geworfen
-                    if (argc > 5)
-                    {
-                        puts("To many arguments. Try again with -h or --help for help");
-                        return (1);
-                    }
-
-                    if (strcmp(argv[4], "-svg") == 0 && !svg)
-                        svg = true;
-                    else if (strcmp(argv[4], "-t") == 0 && !time)
-                        time = true;
-                    else
-                    {
-                        puts("Invalid parameter on position 5, try '-svg' to create an .svg file or '-t' to output the operating time.");
-                        return (1);
-                    }
-                }
-            }
-        }
-        else
-        {
-            puts("Invalid parameter input. Try again with -h or --help for help.");
-            return (1);
+            break;
+        case 'a': // choose assembly
+            mandArgs++;
+            alg = Assembly;
+            degree = atoi(optarg);
+            break;
+        case 'i':
+            mandArgs++;
+            alg = InPlace;
+            degree = atoi(optarg);
+            break;
+        case 'o':
+            mandArgs++;
+            alg = OutOfPlace;
+            degree = atoi(optarg);
+            break;
+        case 'r':
+            mandArgs++;
+            alg = Recursiv;
+            degree = atoi(optarg);
+            break;
+        case 't':
+            t = true;
+            break;
+        case 's':
+            s = true;
+            break;
+        default:
+            break;
         }
     }
-    else
+
+    if (mandArgs < 0)
     {
-        puts("Not enough arguments. Try again with -h or --help for help.");
-        return (1);
+        puts("Specify an algorithm by entering either -a, -i, -o or -r followed by an integer greater than 0.");
+        return 1;
+    }
+    else if (mandArgs > 0)
+    {
+        puts("Can only choose one of the algorithm arguments -a, -i, -o and -r.");
+        return 1;
+    }
+    if (degree < 1)
+    {
+        printf("Invalid input for degree, try an integer greater than 0.\n");
+        return 1;
     }
 
-    // Convert to ulong WITH CHECKING!
-    if ((pCh == argv[1]) || (*pCh != '\0'))
-    {
-        printf("Invalid degree on position 2 (%s), try an integer ;)\n", argv[2]);
-        return (1);
-    }
-    if (1 > deg)
-    {
-        printf("Invalid integer (%d), must be greater than 1.\n", deg);
-        return (1);
-    }
+    //printf("Algorithm: %d, Degree: %d, Time: %d, SVG: %d\n", alg, degree, t, s);
 
-    if (argc > 2 && strcmp(argv[1], executeAssembly) == 0) //Execute assembly algorithm
-    {
-        return runAlgorithm(Assembly, deg, svg, time);
-    }
-    else if (argc > 2 && strcmp(argv[1], executeInplace) == 0) //execute inplace algorithm in C
-    {
-        return runAlgorithm(InPlace, deg, svg, time);
-    }
-    else if (argc > 2 && strcmp(argv[1], executeOutOfPlace) == 0) // execute out of place algorithm in C
-    {
-        return runAlgorithm(OutOfPlace, deg, svg, time);
-    }
-    else if (argc > 2 && strcmp(argv[1], executeRecursive) == 0) // execute recursive algorithm in C
-    {
-        return runAlgorithm(Recursiv, deg, svg, time);
-    }
+    return runAlgorithm(alg, degree, s, t);
 }
