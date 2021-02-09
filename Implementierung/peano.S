@@ -223,6 +223,7 @@ reverse: // rsi = array, size = rcx, offset = r12 für schnellere Vergleiche evt
     //Ziel: out[i] = (in[i] + 2) % 4;
     mov r8, rcx
     shl r8, 3                           //rcx*8
+    
     mov rax, qword ptr[rsi + r8]
     add rax, 2                          //out[i] + 2    für schnellere Vergleiche evtl 2 in al oder so, Videos anschauen zu ptr
     cmp rax, 3
