@@ -84,19 +84,15 @@ Im urspr\"unglichen Entwurf des Algorithmus wurden die drei verschiedenen Permut
 
 \subsection{Alternativer L\"osungsansatz}
 
-Wir haben uns bewusst gegen die Nutzung von SIMD-Befehlen entschieden, da der einzige Anwendungspunkt die synchrone Umrechnung der Richtungen in den Permutationsmethoden zu den Koordinaten w\"are. Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnen wir maximal zwei Koordinaten gleichzeitig verrechnen. Hinzu kommt, dass die Peano-Kurve mit der hier beschriebenen Berechnung maximal zwei Richtungen hintereinander verrechnen kann, da die Kurve danach die Richtung \"andert und man nicht mehr die selbe Berechnung parallel ausf\"uhren kann.
+Wir haben uns bewusst gegen die Nutzung von SIMD-Befehlen entschieden, da der einzige gewinnbringende Anwendungspunkt die synchrone Umrechnung der Richtungen in den Permutationsmethoden zu den Koordinaten w\"are. Die Richtungsberechnung l\"asst sich auch nicht gewinnbringend mit SIMD optimieren. Gesondert zu betrachten ist hier die Funktion, die die invertiere Permutation erzeugt, da sie alle gegebenen Richtungen auf die selbe Art verrechnet. Die Funktionen, die weitere Permutationen generieren, haben in jedem Berechnungsschritt eine Fallunterscheidung, weshalb hier SIMD nicht zu erhebichen Performanzgewinnen f\"uhren w\"urde. Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnten wir generell maximal zwei Koordinaten gleichzeitig verrechnen. Da die Koordinatenberechnung allerdings aufeinander aufbaut, wurde sie hier nicht mit SIMD optimiert. Hinzu kommt, dass die Kurve nach zwei Schritten die Richtung \"andert und man nicht mehr die selbe Berechnungen parallel ausf\"uhren kann. Des Weiteren war es nicht m\"oglich, die Kurve mit einem $n > 9$ zu testen, wie im folgendem Kapitel erl\"autert wird, um das volle Potential von SIMD ausreichend analysieren zu k\"onnen.
 
-So w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz noch zus\"atzlich optimieren lassen.  
+So w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz noch zus\"atzlich mit Hilfe von SIMD-Instruktionen optimieren lassen.  
 
 Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren. Dies w\"urde nat\"urlich sehr viel Rechen- und Speicheraufwand einsparen und damit ingesamt bessere Performanzergebnisse erzielen.
 
 \newpage
 
 \section{Korrektheit} % oder Genauigkeit
-
-% Beweisen, dass nichts anderes als die gew\"unschten Permutationen entstehen!!
-%TODO: Kapitel Technische Limitationen hier einfuegen! - Die Vorgehensweise ist wissenschaftlich zu dokumentieren. Insbesondere sollten
-%angemessene Vergleiche und Eingabebereiche gewaehlt und begruendet werden
 
 Die Genauigkeit unseres Algorithmus ist abh\"angig von dem Grad $n$, das die Anzahl an Iterationen bestimmt, wie in den Abb.1 beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus pr\"aziser, je gr\"o\ss er der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert ann\"ahern. Ansonsten ist die Kurve wie oben beschrieben, definiert, weshalb nun die Korrektheit unseres Algorithmus entscheidend ist.
 Grunds\"atzlich l\"asst sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen, indem man ihre graphischen Darstellungen vergleicht. Da das theoretisch aber nicht m\"oglich ist, folgt auch eine Implementierung in Assambler und in C, die wir auch hinsichtlich ihrer Performanz analysieren wollen.
@@ -169,7 +165,7 @@ Deshalb ist der Wertebereich von $n$ in den Tests im nachfolgenden Kapitel auf $
 Als ein Beispiel f\"ur diesen Algortihmus sei auf Abb.3 verwiesen, welche die erstellte Kurve mit $n = 4$ zeigt. F\"ur ein $n < 4$ werden Bilder erzeugt, die den Kurven in Abb.1 entsprechen. F\"ur $n > 4$ ist die Kurve aufgrund der hohen Dichte in diesem Dokument schwer lesbar darstellbar.
 
 % Relevante Beispiele angeben, die die Funktionalität und Korrektheit demonstrieren und eventuelle Aussagen unterstützen
-
+%echt grosse Bild!
 \begin{figure}[ht]
 \centering
 \includegraphics[scale = 0.2]{peanoGrad4.png}
@@ -190,6 +186,8 @@ Als erstes implemenierten wir den bereits erl\"auterten Algorithmus aus dem Kapi
 \newpage
 \section{Zusammenfassung und Ausblick}
 
+Betrachtet man die Historie der Raumf\"ullenden Kurven, so f\"allt schnell auf, dass noch weitere Kurven existieren, die \"ahnliche Eigenschaften wie die Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder eine andere Art der Peano-Kurve, die den Raum anders durchl\"auft, zu vergleichen.
+Hinzu kommt die M\"oglichkeit, den hier beschriebenen Algorithmus mit den im Kaptitel \textit{L\"osungsansatz} beschriebenen Alternativen weiter zu optimieren.
 %Idee am ende, keine Zeit zur Umsetztung
 %statt inplace direkt Koordinatenberechnung
 
