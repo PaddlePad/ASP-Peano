@@ -524,45 +524,77 @@ void peanoInPlaceRecursive(unsigned grad, u_int64_t *x1, u_int64_t *y1)
 
 void getHelp() //English?
 {
-    printf("---------------------HELP---------------------\n");
-    printf("Dieses Programm enthält unterschiedliche Arten\n");
-    printf("eine Peano-Kurve als .svg Datei ausgeben zu \n");
-    printf("lassen. In dieser Implementierung benötigt \n");
-    printf("die Kurve den Parameter <Grad>. Dieser gibt \n");
-    printf("die Anzahl an Iterationen an. Für weiter\n");
-    printf("Informationen (zur Peano-Kurve) lesen Sie \n");
-    printf("bitte \"Ausarbeitung.pdf\".\n\n");
+    puts("\n-------------------------------HELP-------------------------------\n");
+    puts("This programm offers multiple diffrent algorithms to calculate");
+    puts("the peano curve for any entered degree greater than zero.\n");
 
-    printf("1.) Die Peano Kurve iterativ in-place in C). \n");
-    printf("\tDazu das Programm mit den Argumenten: \n");
-    printf("\t-i <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
-    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
+    puts("\t\t~~~~~~~~~~Algorithms~~~~~~~~~~\n");
+    puts("1) Iterative in Assembly:");
+    puts("\tStart the program with the the following arguments:");
+    puts("\t-a <degree>");
+    puts("\twhere degree must be an integer greater than zero.");
+    
+    puts("2) Iterative in-place in C:");
+    puts("\tStart the program with the the following arguments:");
+    puts("\t-i <degree>");
+    puts("\twhere degree must be an integer greater than zero.");
 
-    printf("2.) Die Peano Kurve iterativ out-of-place in C). \n");
-    printf("\tDazu das Programm mit den Argumenten: \n");
-    printf("\t-o <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
-    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
+    puts("3) Iterative out-of-place in C:");
+    puts("\tStart the program with the the following arguments:");
+    puts("\t-o <degree>");
+    puts("\twhere degree must be an integer greater than zero.");
 
-    printf("3.) Die Peano Kurve iterativ in Assembler. \n");
-    printf("\tDazu das Programm mit den Argumenten: \n");
-    printf("\t-a <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
-    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n");
+    puts("4) Recursive in C:");
+    puts("\tStart the program with the the following arguments:");
+    puts("\t-r <degree>");
+    puts("\twhere degree must be an integer greater than zero.\n");
+    
+    puts("Optionally you can add an argument -svg which will create");
+    puts("a svg file with the calculated peano curve for visual");
+    puts("representation and/or an argument -t which will print the");
+    puts("time the algorithm needed to successfully terminate.\n");
 
-    printf("4.) Die Peano Kurve rekursiv in C. \n");
-    printf("\tDazu das Programm mit den Argumenten: \n");
-    printf("\t-r <Grad> \n");
-    printf("\tstarten, wobei <Grad> eine Ganze positive Zahl\n");
-    printf("\tzwischen 1 und 9 (eingeschlossen) ist.\n\n");
+    puts("For more detailed information about the peano curve please read");
+    puts("the attributive document \"Ausarbeitung.pdf\".");
 
-    printf("Zusäztlich kann ein Argument -svg hinzugefügt\n");
-    printf("werden um eine SVG-Datei mit der gezeichneten Kurve\n");
-    printf("zu erstellen und ein Argument -t um die gemessene Zeit\n");
-    printf("für den ausgewählten Algorithmus auszugeben.\n");
+    puts("------------------------------------------------------------------\n");
 
-    printf("----------------------------------------------\n");
+
+    // printf("---------------------HELP---------------------\n");
+    // printf("Dieses Programm enthält unterschiedliche Arten\n");
+    // printf("eine Peano-Kurve als .svg Datei ausgeben zu \n");
+    // printf("lassen. In dieser Implementierung benötigt \n");
+    // printf("die Kurve den Parameter <Grad>. Dieser gibt \n");
+    // printf("die Anzahl an Iterationen an. Für weiter\n");
+    // printf("Informationen (zur Peano-Kurve) lesen Sie \n");
+    // printf("bitte \"Ausarbeitung.pdf\".\n\n");
+
+    // printf("1.) Die Peano Kurve iterativ in-place in C). \n");
+    // printf("\tDazu das Programm mit den Argumenten: \n");
+    // printf("\t-i <Grad> \n");
+    // printf("\tstarten, wobei <Grad> eine positive Ganzzahl sein muss.\n");
+
+    // printf("2.) Die Peano Kurve iterativ out-of-place in C). \n");
+    // printf("\tDazu das Programm mit den Argumenten: \n");
+    // printf("\t-o <Grad> \n");
+    // printf("\tstarten, wobei <Grad> eine positive Ganzzahl sein muss.\n");
+
+    // printf("3.) Die Peano Kurve iterativ in Assembler. \n");
+    // printf("\tDazu das Programm mit den Argumenten: \n");
+    // printf("\t-a <Grad> \n");
+    // printf("\tstarten, wobei <Grad> eine positive Ganzzahl sein muss.\n");
+
+    // printf("4.) Die Peano Kurve rekursiv in C. \n");
+    // printf("\tDazu das Programm mit den Argumenten: \n");
+    // printf("\t-r <Grad> \n");
+    // printf("\tstarten, wobei <Grad> eine positive Ganzzahl sein muss.\n");
+
+    // printf("\nZusäztlich kann ein Argument -svg hinzugefügt\n");
+    // printf("werden um eine SVG-Datei mit der gezeichneten Kurve\n");
+    // printf("zu erstellen und ein Argument -t um die gemessene Zeit\n");
+    // printf("für den ausgewählten Algorithmus auszugeben.\n");
+
+    // printf("----------------------------------------------\n");
 }
 
 void printCoordinates(u_int64_t *x, u_int64_t *y, u_int64_t len)
