@@ -8,7 +8,7 @@
 
 //BENUTZTE REGISTER:
 //Parameter:    rdi, rsi, rdx
-//Callersaved:  rcx, rax, 
+//Callersaved:  rcx, rax, xmm0, xmm1, xmm2
 //Calleesaved:  rbp, r13, r12
 
 // Directions: 0 = up , 1 = right , 2 = down , 3 = left
@@ -37,6 +37,14 @@ peano: // rdi = grad, rsi x*, rdx* y
     cmp rdi, rax                  //wenn grad = 1, koord berechnen und fertig
     jle .LKoordinatenCalc
     mov r13, rbp                    //imm 1 oder rbp?
+
+    inc rax                         // rax = 2
+    movq xmm0, rax
+    pshufd xmm0, xmm0, 0b01000100   //2 in upper half and lower half of xmm0, also 000000000000010 000000000000010
+    inc rax                         //rax = 3
+    movq xmm2, rax
+    pshufd xmm2, xmm2, 0b01000100   //für später in xmm2: 000000000000011 000000000000011
+    //einmal vor programmstart, da sonst xmm0/2 nicht genutzt
 
 .LoopCalcNext:  //currGrad = r13, Zielgrad
     cmp r13, rdi
@@ -163,7 +171,7 @@ calcNext: //rsi curr array pointer, currGrad = r8
 
     //Fünfter Step
     mov rcx, r10 
-    call reverse
+    call reverseSIMD
     add r12, r11
 
     //Verbindungsschritt nach Unten
@@ -216,6 +224,24 @@ normalInsert: // rsi = array, size = rcx, offset = r12  Normales einfügen der S
 
 .LEndInsert: ret
 
+normalInsertSIMD: // rsi = array, size = rcx, offset = r12  Normales einfügen der Schleife
+    cmp rcx, 0                              //ende der Schleife
+    jle .LEndInsertSIMD                         // eventuell durch je austauschen
+
+    mov r8, rcx                             //r8 = rcx
+    dec r8
+    shl r8, 3                               //mul rcx, 8
+
+    movupd xmm1, [rsi + r8]            //qword ptr[rsi + rcx * 8]
+    add r8, r12                             //dann: rcx * 8 + r12
+    movupd [rsi + r8], xmm1            //wert von array in anderen Bereich schreiben, ptr[rsi + rcx * 8 + r12]
+    
+    dec rcx
+    dec rcx
+    jmp normalInsertSIMD
+
+.LEndInsertSIMD: ret
+
 reverse: // rsi = array, size = rcx, offset = r12 für schnellere Vergleiche evtl 0 in al oder so
     cmp rcx, 0          //ende der Schleife
     jle .LEndReverse    // optimierung auf equal check
@@ -238,6 +264,28 @@ reverse: // rsi = array, size = rcx, offset = r12 für schnellere Vergleiche evt
 
 .LEndReverse:
 ret   
+
+reverseSIMD: // rsi = array, size = rcx, offset = r12, instructions from SSE 2.x
+    cmp rcx, 0                          //ende der Schleife
+    jle .LEndReverseSIMD                // optimierung auf equal check
+
+    //Ziel: out[i] = (in[i] + 2) % 4;
+    mov r8, rcx
+    dec r8
+    shl r8, 3                           //rcx*8
+    //aligned?
+    movupd xmm1, [rsi + r8]             //move 2x64Bit into xmm1, vorher movupd
+    paddq xmm1, xmm0                    //out[i] + 2
+    pand xmm1, xmm2                     //(out[i] + 2) % 4, da die oberen bits nicht gebraucht werden
+
+.LoopReverseSIMD:    
+    add r8, r12                         //rcx * 8 + r12
+    movupd [rsi + r8], xmm1             //wert von in in out schreiben, vorher qword ptr[rsi + r8]
+    dec rcx
+    dec rcx                             //weil ja 2 auf einmal
+    jmp reverseSIMD
+
+.LEndReverseSIMD: ret   
 
 mirror: //  rsi = array, size = rcx, offset = r12 //für schnellere Vergleiche evtl 0 in al oder so, wie oben
     cmp rcx, 0          //ende der Schleife

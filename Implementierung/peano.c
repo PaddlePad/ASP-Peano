@@ -8,9 +8,10 @@
 #include <getopt.h>
 
 struct option long_options[] =
-    {
-        {"help", no_argument, NULL, 'h'},
-        {"svg", no_argument, NULL, 's'}};
+{
+    {"help", no_argument, NULL, 'h'},
+    {"svg", no_argument, NULL, 's'}
+};
  
 // Assemblyfunction
 void peano(unsigned degree, u_int64_t *x, u_int64_t *y);
@@ -563,42 +564,6 @@ void getHelp()
     puts("the attributive document \"Ausarbeitung.pdf\".");
 
     puts("------------------------------------------------------------------\n");
-
-    // printf("---------------------HELP---------------------\n");
-    // printf("Dieses Programm enthält unterschiedliche Arten\n");
-    // printf("eine Peano-Kurve als .svg Datei ausgeben zu \n");
-    // printf("lassen. In dieser Implementierung benötigt \n");
-    // printf("die Kurve den Parameter <Grad>. Dieser gibt \n");
-    // printf("die Anzahl an Iterationen an. Für weiter\n");
-    // printf("Informationen (zur Peano-Kurve) lesen Sie \n");
-    // printf("bitte \"Ausarbeitung.pdf\".\n\n");
-
-    // printf("1.) Die Peano Kurve iterativ in-place in C). \n");
-    // printf("\tDazu das Programm mit den Argumenten: \n");
-    // printf("\t-i <Grad> \n");
-    // printf("\tstarten, wobei <Grad> eine positive Ganzzahl sein muss.\n");
-
-    // printf("2.) Die Peano Kurve iterativ out-of-place in C). \n");
-    // printf("\tDazu das Programm mit den Argumenten: \n");
-    // printf("\t-o <Grad> \n");
-    // printf("\tstarten, wobei <Grad> eine positive Ganzzahl sein muss.\n");
-
-    // printf("3.) Die Peano Kurve iterativ in Assembler. \n");
-    // printf("\tDazu das Programm mit den Argumenten: \n");
-    // printf("\t-a <Grad> \n");
-    // printf("\tstarten, wobei <Grad> eine positive Ganzzahl sein muss.\n");
-
-    // printf("4.) Die Peano Kurve rekursiv in C. \n");
-    // printf("\tDazu das Programm mit den Argumenten: \n");
-    // printf("\t-r <Grad> \n");
-    // printf("\tstarten, wobei <Grad> eine positive Ganzzahl sein muss.\n");
-
-    // printf("\nZusäztlich kann ein Argument -svg hinzugefügt\n");
-    // printf("werden um eine SVG-Datei mit der gezeichneten Kurve\n");
-    // printf("zu erstellen und ein Argument -t um die gemessene Zeit\n");
-    // printf("für den ausgewählten Algorithmus auszugeben.\n");
-
-    // printf("----------------------------------------------\n");
 }
 
 void printCoordinates(u_int64_t *x, u_int64_t *y, u_int64_t len)
@@ -609,11 +574,16 @@ void printCoordinates(u_int64_t *x, u_int64_t *y, u_int64_t len)
     }
 }
 
-void printDirections(int *dir, u_int64_t len)
+void printDirections(u_int64_t *dir, u_int64_t len)
 {
     for (u_int64_t i = 0; i < len; i++)
     {
-        printf("Direction: %d \n", dir[i]);
+        printf("Direction: %ld \n", dir[i]);
+        if (i % 9 == 0)
+        {
+            printf("\n");
+        }
+        
     }
     puts("\n");
 }
