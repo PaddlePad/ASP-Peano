@@ -729,6 +729,12 @@ int main(int argc, char *argv[])
     bool time = false;
     bool svg = false;
 
+    if(argc == 1)
+    {
+        puts("Not enough arguments, try -h or --help for help");
+        return 0;
+    }
+
     while ((index = getopt_long(argc, argv, "ha:i:o:r:ts", long_options, NULL)) != -1)
     {
         switch (index)
