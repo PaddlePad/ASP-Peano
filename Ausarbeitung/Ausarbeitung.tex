@@ -49,7 +49,8 @@ In einem Iterationsschritt l\"asst sich eines der 9 Quadrate in weitere 9 Quadra
 Im Folgenden definieren wir $n \in \mathbb{N}$ als Grad der Kurve.
 Wir beschreiben nun unseren Ansatz, einen iterativen Algorithmus mit dem Grad $n$ als Eingabe zu finden, um die eben beschriebene Peano-Kurve darzustellen. Die hierbei generierten Punkte werden in ihrer Reihenfolge ausgegeben. Anders als in der beschriebenen mathematischen Definition werden wir jedoch nicht nur nach $[0;1]$, sondern nach $\mathbb{N}$ abbilden.
 
-%Ergebnis hier einf\"ugen!! dann ist auch das Format besser
+%Ergebnis hier einf\"ugen!!
+%TODO: Teil 2 der Theoretischen Aufgabe
 
 \newpage
 
@@ -105,11 +106,11 @@ Die Koordinatenberechnung findet anschlie\ss end und basierend auf den bisherige
 \subsection{Beweis der Permutationen durch Induktion} \label{Beweis der Permutationen durch Induktion}
 Nachdem die Kurve immer wieder die gleichen, teilweise elementaren, Bestandteile verwendet m\"ussen diese und deren Permutationen richtig berechnet werden. Im Speziellen sind das die Kurven mit $n = 1$ und $n = 2$. Aus diesen l\"asst sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel beschrieben, zum Berechnen einer Kurve $n$-ten Grades nur die Kurve des Grads $n - 1$ sowie die gespiegelte und invertierte Version dieser Kurve benutzen. Bei der als invertierten Version betitelten Permutation handelt es sich in diesem Kontext um eine Punktspiegelung im Mittelpunkt der vorhergehenden Kurve, siehe \ref{Abb:Peano L\"osungsidee}, weitere Erl\"auterungen folgen.	%echt Punktsymetrisch?
 
-\subsubsection{Induktionsbasis}
+\subsubsection{Induktionsbasis} \label{Induktionsbasis}
 Beginnen wir mit $n = 1$. Hier ist die Kurve vordefiniert, dementsprechend gibt es nichts zu zeigen. Da auf diesem Muster alle anderen Kurven mit $n > 1$ basieren, ist sie in unserem Algorithmus ebenfalls als Basis vorgegeben.
 Des Weiteren ist die Definition der Kurve mit $n = 2$ f\"ur die Berechnung aller weiteren Kurven n\"otig, da man anhand dieser Kurve alle notwendigen Bedingungen der Konstruktion weiterer Kurven ableiten kann. Deshalb nehmen wir sie also auch als definiert an \cite{aufgabenstellung}. Diese Bedingungen sollen im folgenden ebenfalls gepr\"uft werden.
 
-\subsubsection{Induktionsannahme}
+\subsubsection{Induktionsannahme} \label{Induktionsannahme}
 Da die Funktion wie vorher definiert surrjektiv ist, gilt:
 
 \begin{center}
@@ -118,14 +119,13 @@ $\forall n > 1 \in \mathbb{N}$, $\exists y \in \mathbb{R}^n$ mit $x \in [0,1]$: 
 
 Dadurch lassen sich Kurven mit h\"oherem Grad konstruieren. Es sei nun $n > 1$ und $n$ beliebig gew\"ahlt.
 
-\subsubsection{Induktionsschritt}
+\subsubsection{Induktionsschritt} \label{Induktionsschritt}
 Betrachten wir nun Kurven $n$-ten Grades. Hierzu m\"ussen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad n ben\"otigen.
-%natuerlich nur, wenn  wir unseren Algorithm behalten
 Da diese Permutationen stets auf \"ahnliche Art konstruiert werden, n\"amlich durch Addition von 2 zu der gespeicherten Richtung mit anschlie\ss endem \textit{modulo} 4, um die Richtung wieder in den g\"ultigen Bereich abzubilden. Dadurch ist gewehrleistet, dass durch Mehrfachanwendung einer Funktion, die eine solche Permutation generiert, immer nur die Orginale Kurve oder die gew\"unschte Permutation entstehen kann. Dies wird durch den Wertebereich von $[0;3]$ und der \textit{modulo} 4 erreicht, da so die geraden Werte auf den jeweils anderen geraden Wert abgebildet werden, f\"ur die ungerade Zahlen analog. Dieser Umstand wird bei dem Erstellen der Permutationen ausgenutzt.
 Da die Funktionen, die die Permutationen erz\"augen, auf die ganze Kurve des Grades $n = n - 1$ angewand wird, ist sicher gestellt, dass die Permutationen keine anderweitigen Fehler in der Richtungsberechnung besitzten.
+Die ben\"otigten Permutationen werden sowie die Art sie zu verbinden ist abgeleitet aus den Kurven der Induktionsbasis, \ref{Induktionsbasis}. Das Ergebnis ist in \ref{Abb:Peano L\"osungsidee} dargestellt.
 
-\textbf{Die Permutationen:}% - Reverse in Implementierung
-
+\textbf{Die Permutationen: }% - Reverse in Implementierung
 Die invertierte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, im Speziellen von $p_1=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich au\ss er der invertierten Reihenfolge der Punkte an der grundlegenden Kurve nichts \"andert. Somit ist die invertierte Permutation induktiv eben so korrekt wie die zugrundeliegende Kurve niedrigeren Grades, siehe auch \ref{Abb:Peano L\"osungsidee}, gr\"une Kurve.
 
 %\textbf{Spiegelung:}% - Mirror in Implementierung
@@ -135,8 +135,7 @@ Bei der Spiegelung wird die Kurve an der X-Achse gespiegelt. Wir ver\"andern als
 Abschlie\ss end bleibt noch die Kombination aus den vorangehenden Permutationen, die ebenfalls f\"ur die Konstruktion der Kurve notwendig ist. Diese Permutation ist, \"ahnlich zu der vorherigen Permutation, eine Spiegelung an der Y-Achse. Dabei wird die horizontale Richtung gewechselt und die Vertikale beibehalten. Ansonsten verh\"alt es sich analog zur Spiegelung.
 Siehe auch hier \ref{Abb:Peano L\"osungsidee}, blaue Kurve.
 
-\textbf{Verbinden der Permutationen:}
-
+\textbf{Verbinden der Permutationen: }
 Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine ebensolche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einf\"ugen, sondern nur die Art der graphischen Darstellung. Wir f\"ugen also einen weiteren hardcodiertern Schritt zu den bisherigen Richtungen hinzu, um die Koordinaten sp\"ater korrekt zu berechn. Dies ist zudem Teil der Definition dieser Kurve.  
 
 
@@ -164,8 +163,6 @@ Deshalb ist der Wertebereich von $n$ in den Tests im nachfolgenden Kapitel auf $
 
 Als ein Beispiel f\"ur diesen Algortihmus sei auf \ref{Abb:Generierte Kurve Grad 4} verwiesen, welche die erstellte Kurve mit $n = 4$ zeigt. F\"ur ein $n < 4$ werden Bilder erzeugt, die den Kurven in \ref{Abb:Peano} entsprechen. F\"ur $n > 4$ ist die Kurve aufgrund der hohen Dichte in diesem Dokument schwer lesbar darstellbar.
 
-% Relevante Beispiele angeben, die die Funktionalität und Korrektheit demonstrieren und eventuelle Aussagen unterstützen
-%echt grosse Bild!
 \begin{figure}[ht]
 \centering
 \includegraphics[scale = 0.2]{peanoGrad4.png}
@@ -173,28 +170,32 @@ Als ein Beispiel f\"ur diesen Algortihmus sei auf \ref{Abb:Generierte Kurve Grad
 \end{figure}
 
 %TODO: Mathematischen sachen be/ver-weisen!
-
+% Korrektheit bewerten!
 \newpage
 \section{Performanzanalyse} \label{Performanzanalyse}
 Bevor wir den bereits ausgef\"uhrten Algorithmus hinsichtlich seiner Performanz analysieren, beschreiben wir kurz die Algorithmen, die wir zu den Vergleichen heranziehen.
 
-Als erstes implemenierten wir den bereits erl\"auterten Algorithmus aus dem Kapitel \ref{L\"osungsansatz} in C. Um die Performanz-Unterschiede zwischen der direkten Berechnung, im Weiteren als Inplace-Variante, und der einmaligen Berechnung und Speicherung der Permutationen, im Folgenden als Out-Of-Place-Variante bezeichnet, zu analysieren erweitern wir die Implementation um einen entsprechenden Algorithmus, welcher eine abgewandelte Form der Inplace-Variante ist. Der Unterschied besteht darin, dass sobald wir eine Kurve mit $n > 2$ berechnen, speichern wir die schon vorher besprochenen Permutationen der Kurve mit Grad $n - 1$.
+Als erstes implemenierten wir den bereits erl\"auterten Algorithmus aus dem Kapitel \ref{L\"osungsansatz} in C. Um die Performanz-Unterschiede zwischen der direkten Berechnung, im Weiteren als Inplace-Variante, und der einmaligen Berechnung und Speicherung der Permutationen, im Folgenden als Out-Of-Place-Variante bezeichnet, zu analysieren erweitern wir die Implementation um einen entsprechenden Algorithmus, welcher eine abgewandelte Form der Inplace-Variante ist. Der Unterschied besteht darin, dass sobald wir eine Kurve mit $n > 2$ berechnen, speichern wir die schon vorher besprochenen Permutationen der Kurve mit Grad $n - 1$. 
 
+Da wir uns Eingangs auf einen iterativen Ansatz festgelegt haben, ist es zudem interessant zu sehen, in wie fern sich der Unterschied zwischen einem iterativen und einem rekursiven Algorithmus auswirkt. Deshalb wurde auch ein Algorithmus implementiert, der rekursiv die Richtungen berechnet. Aus Zeitgr\"unden k\"onnen wir jedoch nur die Implementierungen in C vergleichen. 
 
 %Assembler
 
+Bei der Assemblerimplementierung beschr\"anken wir uns auf Instruktionen der x86-64-Architektur bis einschlie\ss lich der SSE4.2-Erweiterung.
+
 \newpage
 \section{Zusammenfassung und Ausblick} \label{Zusammenfassung und Ausblick}
-
 %Zusammenfassung
 
+
+% Ausblick:
 %Hilbert vs Peano
-Betrachtet man die Historie der Raumf\"ullenden Kurven, so f\"allt schnell auf, dass noch weitere Kurven existieren, die \"ahnliche Eigenschaften wie die Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder eine andere Art der Peano-Kurve, die den Raum anders durchl\"auft, zu vergleichen.
+Betrachtet man die Historie der Raumf\"ullenden Kurven so f\"allt schnell auf, dass noch weitere Kurven existieren, die \"ahnliche Eigenschaften wie die Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder eine andere Art der Peano-Kurve, welche den Raum auf andere Weise durchl\"auft, zu vergleichen.
 
 % Bild der Hilbert kurve?
 
 Hinzu kommt die M\"oglichkeit, den hier beschriebenen Algorithmus mit den im Kaptitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen weiter zu optimieren. Hier bietet sich insbesondere der Ansatz an, der auf die Richtungsberechnung verzichtet, da dieser einen gro\ss en Performanzgewinn verspricht.
-
+Es w\"are wahrscheinlich sinnvoller gewesen, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel Rechenzeit gespart werden w\"urde.
 %Idee am ende, keine Zeit zur Umsetztung, statt inplace direkt Koordinatenberechnung
 
 \newpage
