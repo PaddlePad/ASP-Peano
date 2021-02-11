@@ -81,13 +81,18 @@ Nachdem \"uber alle Grade iteriert wurde oder der eingegebene Grad $n = 1$ ist, 
 
 Im urspr\"unglichen Entwurf des Algorithmus wurden die drei verschiedenen Permutationen vor jeder Iteration einmal berechnet und als einzelne Arrays abgespeichert um sie danach wenn sie ben\"otigt werden nur mehr an die jeweiligen Stellen in den gro\ss en Richtungsarray zu kopieren. Da dadurch jedoch ein erh\"ohter Speicheraufwand entsteht haben wir uns daf\"ur entschieden jede Permutation immer neu zu berechnen, wenn sie gebraucht wird und diese direkt in den Array zu speichern. Dies schien f\"ur uns ein sinnvoller Optimierungsansatz zu sein, da jede Permutation wie in \ref{Abb:Peano L\"osungsidee} zu sehen maximal zweimal vorkommt. Allein die Originalkurve wird dreimal ben\"otigt und auf diese kann immer sehr schnell zugegriffen werden, indem man auf die Werte an den Adressen von $0$ bis $9^{(m - 1)} - 2$ im Richtungsarray zugreift. 
 
+%SIMD
+
+Da wir mir zunehmendem $n$ 
+
 % Ein calleesaved register weniger verwendet
 
 \subsection{Alternativer L\"osungsansatz} \label{Alternativer L\"osungsansatz}
 
-Wir haben uns bewusst gegen die Nutzung von SIMD-Befehlen entschieden, da der einzige gewinnbringende Anwendungspunkt die synchrone Umrechnung der Richtungen in den Permutationsmethoden zu den Koordinaten w\"are. Die Richtungsberechnung l\"asst sich auch nicht gewinnbringend mit SIMD optimieren. Gesondert zu betrachten ist hier die Funktion, die die invertiere Permutation erzeugt, da sie alle gegebenen Richtungen auf die selbe Art verrechnet. Die Funktionen, die weitere Permutationen generieren, haben in jedem Berechnungsschritt eine Fallunterscheidung, weshalb hier SIMD nicht zu erhebichen Performanzgewinnen f\"uhren w\"urde. Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnten wir generell maximal zwei Koordinaten gleichzeitig verrechnen. Da die Koordinatenberechnung allerdings aufeinander aufbaut, wurde sie hier nicht mit SIMD optimiert. Hinzu kommt, dass die Kurve nach zwei Schritten die Richtung \"andert und man nicht mehr die selbe Berechnungen parallel ausf\"uhren kann. Des Weiteren war es nicht m\"oglich, die Kurve mit einem $n > 9$ zu testen, wie im folgendem Kapitel erl\"autert wird, um das volle Potential von SIMD ausreichend analysieren zu k\"onnen.
+Wir haben uns bewusst weitgehend gegen die Nutzung von SIMD-Befehlen entschieden, der einzige noch gewinnbringende Anwendungspunkt w\"are die parallele Umrechnung der Richtungen zu den Koordinaten. Die Richtungsberechnung l\"asst sich im Rahmen dieser Arbeit auch nicht mehr gewinnbringend mit SIMD optimieren, da die Funktionen, die weitere Permutationen generieren, in jedem Berechnungsschritt eine Fallunterscheidung, weshalb hier SIMD nicht zu erhebichen Performanzgewinnen f\"uhren w\"urde. 
+Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnten wir generell maximal zwei Koordinaten gleichzeitig verrechnen. Da die Koordinatenberechnung allerdings aufeinander aufbaut, wurde sie hier nicht mit SIMD optimiert. Hinzu kommt, dass die Kurve nach zwei Schritten die Richtung \"andert und man nicht mehr die selbe Berechnungen parallel ausf\"uhren kann. Des Weiteren war es nicht m\"oglich, die Kurve mit einem $n > 9$ zu testen, wie im folgendem Kapitel erl\"autert wird, um das volle Potential von SIMD ausreichend analysieren zu k\"onnen.
 
-Dennoch w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz zus\"atzlich noch mit Hilfe von SIMD-Instruktionen optimieren lassen.  
+Dennoch w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz zus\"atzlich noch mit Hilfe von SIMD-Instruktionen weiter optimieren lassen.  
 
 Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren. Dies w\"urde nat\"urlich sehr viel Rechen- und Speicheraufwand einsparen und damit ingesamt bessere Performanzergebnisse erzielen.
 
@@ -181,7 +186,7 @@ Da wir uns Eingangs auf einen iterativen Ansatz festgelegt haben, ist es zudem i
 
 %Assembler
 
-Bei der Assemblerimplementierung beschr\"anken wir uns auf Instruktionen der x86-64-Architektur bis einschlie\ss lich der SSE4.2-Erweiterung.
+Bei der Assemblerimplementierung beschr\"anken wir uns auf Instruktionen der x86-64-Architektur bis einschlie\ss lich der SSE4.2-Erweiterung~\cite{intel2020man}.
 
 \newpage
 \section{Zusammenfassung und Ausblick} \label{Zusammenfassung und Ausblick}
