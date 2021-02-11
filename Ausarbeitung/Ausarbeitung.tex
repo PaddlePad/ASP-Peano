@@ -35,7 +35,7 @@
 
 Raumf\"ullende Kurven bilden eine Br\"ucke zwischen Kunst und mathematischer Geometrie. In der Mathematik werden sie gemeinhin benutzt um ein $n$-dimensionales Problem in ein Eindimensionales zu konvertieren. Eine solche Kurve beschreibt grunds\"atzlich einen linearen Pfad durch $n$-dimensionale R\"aume. Giuseppe Peano war der Erste, der eine solche Kurve 1890 definierte.
 
-Um einen n-dimensionalen Raum in die Dimension n-1 zu konvertieren, l\"asst sich eine stetig surrjektive Funktion $f(x)$ erstellen, so dass gilt: $\forall x \in \mathbb{R}^{n-1} \quad \exists y \in \mathbb{R}^n$. F\"ur einen Beweis siehe (QUELLE?). Hier wollen wir uns auf die sogenannten Peano-Kurven beschr\"anken. F\"ur eine solche Kurve definieren wir ein Intervall $I = [0;1]$, sowie  $f: I \rightarrow I^2 $. Dann ist die Peano-Kurve: $\lim\limits_{x \to \infty}f(x)$, mit $x \in I$. Sie \{ entspricht dem Grenzwert einer Folge von Funktionen f(x) und \} l\"asst sich mit der Bedingung, dass sich die Kurve nicht \"uberschneiden darf, folgendermaßen konstruieren:
+Um einen n-dimensionalen Raum in die Dimension n-1 zu konvertieren, l\"asst sich eine stetig surrjektive Funktion $f(x)$ erstellen, so dass gilt: $\forall x \in \mathbb{R}^{n-1} \quad \exists y \in \mathbb{R}^n$. F\"ur einen Beweis der Stetigkeit einer Peano-Kurve siehe~\cite{stetigkeitsBeweis}. Hier wollen wir uns auf die sogenannten Peano-Kurven beschr\"anken. F\"ur eine solche Kurve definieren wir ein Intervall $I = [0;1]$, sowie  $f: I \rightarrow I^2 $. Dann ist die Peano-Kurve: $\lim\limits_{x \to \infty}f(x)$, mit $x \in I$. Sie \{ entspricht dem Grenzwert einer Folge von Funktionen f(x) und \} l\"asst sich mit der Bedingung, dass sich die Kurve nicht \"uberschneiden darf, folgendermaßen konstruieren:
 
 Man unterteile eine Fl\"ache in 9 Quadrate. Jedes dieser Quadrate soll nun durch eine Kurve durchlaufen werden. Dadurch durchl\"auft die Kurve die Quadrate in Form eines „S“.
 In einem Iterationsschritt l\"asst sich eines der 9 Quadrate in weitere 9 Quadrate Unterteilen, die wiederum auf dieselbe Art verbunden werden, wie in \ref{Abb:Peano} gezeigt.
@@ -48,7 +48,7 @@ In einem Iterationsschritt l\"asst sich eines der 9 Quadrate in weitere 9 Quadra
 
 Im Folgenden definieren wir $n \in \mathbb{N}$ als Grad der Kurve.
 Wir beschreiben nun unseren Ansatz, einen iterativen Algorithmus mit dem Grad $n$ als Eingabe zu finden, um die eben beschriebene Peano-Kurve darzustellen. Die hierbei generierten Punkte werden in ihrer Reihenfolge ausgegeben. Anders als in der beschriebenen mathematischen Definition werden wir jedoch nicht nur nach $[0;1]$, sondern nach $\mathbb{N}$ abbilden.
-
+Die Korrektheit des hier gew\"ahlten Ansatzes wird gezeigt und in C und in Assembler implementiert und hinsichtlich seiner Performanz analysiert. Dabei ist zu erkennen, dass . . .
 %Ergebnis hier einf\"ugen!!
 %TODO: Teil 2 der Theoretischen Aufgabe
 
@@ -82,15 +82,14 @@ Nachdem \"uber alle Grade iteriert wurde oder der eingegebene Grad $n = 1$ ist, 
 Im urspr\"unglichen Entwurf des Algorithmus wurden die drei verschiedenen Permutationen vor jeder Iteration einmal berechnet und als einzelne Arrays abgespeichert um sie danach wenn sie ben\"otigt werden nur mehr an die jeweiligen Stellen in den gro\ss en Richtungsarray zu kopieren. Da dadurch jedoch ein erh\"ohter Speicheraufwand entsteht haben wir uns daf\"ur entschieden jede Permutation immer neu zu berechnen, wenn sie gebraucht wird und diese direkt in den Array zu speichern. Dies schien f\"ur uns ein sinnvoller Optimierungsansatz zu sein, da jede Permutation wie in \ref{Abb:Peano L\"osungsidee} zu sehen maximal zweimal vorkommt. Allein die Originalkurve wird dreimal ben\"otigt und auf diese kann immer sehr schnell zugegriffen werden, indem man auf die Werte an den Adressen von $0$ bis $9^{(m - 1)} - 2$ im Richtungsarray zugreift. 
 
 %SIMD
-
-Da wir mir zunehmendem $n$ 
+Bei der Assemblerimplementierung beschr\"anken wir uns auf Instruktionen der x86-64-Architektur bis einschlie\ss lich der SSE4.2-Erweiterung~\cite{intel2020man}. Hier haben wir die Funktionen, die die invertierte Permutation erstellt, sowie die Funktion, die die Orginalkurve an die ben\"otigte Stelle des Arrays schreibt, mit SIMD-Befehlen optimiert. 
 
 % Ein calleesaved register weniger verwendet
 
 \subsection{Alternativer L\"osungsansatz} \label{Alternativer L\"osungsansatz}
 
-Wir haben uns bewusst weitgehend gegen die Nutzung von SIMD-Befehlen entschieden, der einzige noch gewinnbringende Anwendungspunkt w\"are die parallele Umrechnung der Richtungen zu den Koordinaten. Die Richtungsberechnung l\"asst sich im Rahmen dieser Arbeit auch nicht mehr gewinnbringend mit SIMD optimieren, da die Funktionen, die weitere Permutationen generieren, in jedem Berechnungsschritt eine Fallunterscheidung, weshalb hier SIMD nicht zu erhebichen Performanzgewinnen f\"uhren w\"urde. 
-Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnten wir generell maximal zwei Koordinaten gleichzeitig verrechnen. Da die Koordinatenberechnung allerdings aufeinander aufbaut, wurde sie hier nicht mit SIMD optimiert. Hinzu kommt, dass die Kurve nach zwei Schritten die Richtung \"andert und man nicht mehr die selbe Berechnungen parallel ausf\"uhren kann. Des Weiteren war es nicht m\"oglich, die Kurve mit einem $n > 9$ zu testen, wie im folgendem Kapitel erl\"autert wird, um das volle Potential von SIMD ausreichend analysieren zu k\"onnen.
+Abgesehen von den eben beschriebenen Optimierungen wurde bewusst weitgehend auf die Nutzung von SIMD-Befehlen verzichtet, der einzige noch gewinnbringende Anwendungspunkt w\"are die parallele Umrechnung der Richtungen zu den Koordinaten. Die Richtungsberechnung l\"asst sich im Rahmen dieser Arbeit auch nicht mehr gewinnbringend mit SIMD optimieren, da die Funktionen, die weitere Permutationen generieren, in jedem Berechnungsschritt eine Fallunterscheidung besitzten, weshalb hier SIMD nicht zu erhebichen Performanzgewinnen f\"uhren w\"urde. 
+Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnten wir generell maximal zwei Koordinaten gleichzeitig verrechnen. Da die Koordinatenberechnung allerdings aufeinander aufbaut, wurde sie hier nicht mit SIMD optimiert. Hinzu kommt, dass die Kurve nach zwei Schritten die Richtung \"andert und man nicht mehr die selbe Berechnungen parallel ausf\"uhren kann. Des Weiteren war es nicht m\"oglich, die Kurve mit einem $n > 9$ zu testen, wie im folgendem Kapitel erl\"autert wird.
 
 Dennoch w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz zus\"atzlich noch mit Hilfe von SIMD-Instruktionen weiter optimieren lassen.  
 
@@ -186,7 +185,6 @@ Da wir uns Eingangs auf einen iterativen Ansatz festgelegt haben, ist es zudem i
 
 %Assembler
 
-Bei der Assemblerimplementierung beschr\"anken wir uns auf Instruktionen der x86-64-Architektur bis einschlie\ss lich der SSE4.2-Erweiterung~\cite{intel2020man}.
 
 \newpage
 \section{Zusammenfassung und Ausblick} \label{Zusammenfassung und Ausblick}
