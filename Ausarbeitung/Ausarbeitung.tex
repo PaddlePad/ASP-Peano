@@ -194,6 +194,13 @@ Die Laufzeittests der verschiedenen Algorithmen wurden auf einem System mit eine
 Wie bereits im Kapitel \ref{Technische Limitationen} beschrieben, war es nur m\"oglich bis Grad 9 zu testen.
 F\"ur jeden Algorithmus wurden f\"ur jeden Grad 20 Durchl\"aufe aufgezeichnet und deren Durchschnitt berechnet. Die Ergebnisse dieser Berechnung k\"onnen folgendem Diagramm entnommen werden:
 
+\begin{figure}[ht]
+\centering
+\includegraphics[scale = 0.65]{diagramm1bis3.png}
+\caption{Diagramm: Grade 1 bis 3}\label{Abb: Diagramm Performanz}
+\captionsetup[figure]{font=small,labelfont=small}
+\end{figure}
+
 
 Zus\"atzlich wird in der folgenden Tabelle dokumentiert um wie viel Prozent der Assembler Algorithmus schneller bzw. langsamer rechnet als die Vergleichsalgorithmen:
 
@@ -201,6 +208,7 @@ Zus\"atzlich wird in der folgenden Tabelle dokumentiert um wie viel Prozent der 
 \centering
 \includegraphics[scale = 0.65]{zeitmessungenProzent.png}
 \caption{Prozentueller Performanzvergleich (Zeitangabe in Nanosekunden)}\label{Abb: Tabelle Performanz}
+\captionsetup[figure]{font=small,labelfont=small}
 \end{figure}
 
 Hier ist zu erkennen, dass SIMD-Befehle bei den Graden eins bis drei zu deutlichen Zeitverbesserungen von bis zu \"uber 28\% f\"uhren, jedoch bei den Graden f\"unf bis sieben kleinere Zeiteinbusen mit sich bringen. Bei den letzten zwei Graden acht und neun verbessert die Nutzung von SIMD-Befehlen den Algorithmus wieder, jedoch schafft er es nicht die Zeiten des rekursiven Algorithmus zu schlagen.
@@ -214,18 +222,16 @@ In der realen Welt sind die Daten, die man sammelt meistens nicht linear, nicht 
 Der Nachteil der vorgeschlagenen Struktur liegt in ihrer relativen Komplexit\"at. Beipielsweise ist in unserer Implementierung bei Grad $n > 9$ die Speicherallokation nicht mehr m\"oglich, wie wir im Kapitel \ref{Technische Limitationen} erl\"autert haben.
 
 %Ausblick Mo
-Eine verbesserte Variante des Algorithmus haben wir in C implementiert, die das selben Konzept umsetzt aber dabei das auf das Richtungsarray verzichtet und direkt mit den Koordinaten arbeitet. Mit der neuen Implementierung kann man die Speicherverwendung optimieren und die somit \"uberfl\"ussigen Schritte beim Iterieren \"uber das Array einsparen. Wie man auf der Abbildung X sieht, hat die neue Variante den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm) . Wir haben diesen Algorithmus nicht als Hauptalgorithmus verwendet da, es un\"ubersichtlicher als die Verwendung von dem Richtungs Array. 
+Eine verbesserte Variante des Algorithmus haben wir in C implementiert, die das selben Konzept umsetzt aber dabei das auf das Richtungsarray verzichtet und direkt mit den Koordinaten arbeitet. Mit der neuen Implementierung kann man die Speicherverwendung optimieren und die somit \"uberfl\"ussigen Schritte beim Iterieren \"uber das Array einsparen. Wie man auf der Abbildung X sieht, hat die neue Variante den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm) . Wir haben diesen Algorithmus nicht als Hauptalgorithmus verwendet da, es un\"ubersichtlicher als die Verwendung von dem Richtungsarray. 
 
+Hinzu kommt die M\"oglichkeit, den hier beschriebenen Algorithmus mit den im Kapitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen weiter zu optimieren. Hier bietet sich insbesondere der Ansatz an, der auf die Richtungsberechnung verzichtet, da dieser einen gro\ss en Performanzgewinn verspricht.
+
+Abschlie\ss end ist zu bemerken, dass es wahrscheinlich sinnvoller gewesen w\"are, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel unn\"otige Rechenzeit gespart werden w\"urde.
 
 % Ausblick: Patrick
 %Hilbert vs Peano
-Betrachtet man die Historie der Raumf\"ullenden Kurven, so f\"allt schnell auf, dass noch weitere Kurven existieren, die vergleichbare Eigenschaften zu der Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder eine andere Art der Peano-Kurve, welche den Raum auf andere Weise durchl\"auft, zu vergleichen. %maas, raumKurven
+Betrachtet man die Historie der Raumf\"ullenden Kurven, so f\"allt schnell auf, dass noch weitere Kurven existieren, die vergleichbare Eigenschaften zu der Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder anderen Arten der Peano-Kurve ~\cite{raumKurven}, welche den Raum auf andere Weise durchl\"auft, zu vergleichen.
 
-% Bild der Hilbert kurve?
-
-Hinzu kommt die M\"oglichkeit, den hier beschriebenen Algorithmus mit den im Kaptitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen weiter zu optimieren. Hier bietet sich insbesondere der Ansatz an, der auf die Richtungsberechnung verzichtet, da dieser einen gro\ss en Performanzgewinn verspricht.
-
-Abschlie\ss end ist zu bemerken, dass es wahrscheinlich sinnvoller gewesen w\"are, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel unn\"otige Rechenzeit gespart werden w\"urde.
 
 %Idee am ende, keine Zeit zur Umsetztung, statt inplace direkt Koordinatenberechnung
 
