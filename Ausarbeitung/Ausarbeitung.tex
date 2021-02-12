@@ -192,9 +192,15 @@ F\"ur jeden Algorithmus wurden f\"ur die Grade zwischen inklusive eins bis neun 
 \newpage
 \section{Zusammenfassung und Ausblick} \label{Zusammenfassung und Ausblick}
 %Zusammenfassung
+In der realen Welt sind die Daten die man sammelt meistens nicht linear, nicht station\"ar und mehrdimensional. Beispiele f\"ur solche Daten sind Matrizen, Bilder, Tabellen und Rechengitter, die sich aus der Diskretisierung von ergeben partielle Differentialgleichungen. Dateioperationen wie Matrixmultiplikationen, Lade/Speicher Operationen sowie das Aktualisieren und Partitionieren von Datens\"atzen k\"onnen vereinfacht werden, wenn wir eine effiziente Methode zum Durchsuchen der Daten w\"ahlen. Die Verwendung dieser komplexen  Daten in unseren Programm k\"onnen sehr teuer sein und inkrementieren die Speicherverwendung exponentiel. Deshalb brauchen wir Kompressions-Algorithmen um unsere Programme optimieren zu k\"onnen. Eine m\"oglichkeit w\"are die Nutzung der Peano-Kurve bzw. raumf\"ullenden Kurven. Diese Kurve f\"uhrt eine Transformation von einem n-dimensionalen Raum in die Dimension n-1, der zu einer wesentlichen Komprimierung der Informationen f\"uhrt und einen Teil der r\"aumlichen Daten beibeh\"alt.
+
+Der Nachteil der vorgeschlagenen Struktur liegt in ihrer relativen Komplexit\"at. z-B wie in unserer Implementierung bei einem Grad $n > 9$  ist die Speicherallokation nicht mehr m\"oglich wie wir im Teil (X) besprochen haben.
+
+%Ausblick Mo
+Eine verbesserte Variante der Algorithmus haben wir in C implementiert, die den selben Konzept umsetzt aber entfernt das Richtungs Array und arbeitet direkt mit dem Koordinaten. Dank der neue Implementierung kann man die Speicherverwendung optimieren, und noch die extra Steps von der durchgang der Arrays ersparen. Wie man auf der Abbildung X sieht , die neue Variante hat den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm) . Wir haben dieses algorithmus nicht als haupt algorithmus verwendet da, es un\"ubersichtlicher als die Verwendung von dem Richtungs Array. 
 
 
-% Ausblick:
+% Ausblick: Patrick
 %Hilbert vs Peano
 Betrachtet man die Historie der Raumf\"ullenden Kurven so f\"allt schnell auf, dass noch weitere Kurven existieren, die vergleichbare Eigenschaften wie die Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder eine andere Art der Peano-Kurve, welche den Raum auf andere Weise durchl\"auft, zu vergleichen. %maas, raumKurven
 
@@ -203,7 +209,6 @@ Betrachtet man die Historie der Raumf\"ullenden Kurven so f\"allt schnell auf, d
 Hinzu kommt die M\"oglichkeit, den hier beschriebenen Algorithmus mit den im Kaptitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen weiter zu optimieren. Hier bietet sich insbesondere der Ansatz an, der auf die Richtungsberechnung verzichtet, da dieser einen gro\ss en Performanzgewinn verspricht.
 
 Abschlie\ss end ist zu bemerken, dass es w\"are wahrscheinlich sinnvoller gewesen w\"are, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel dann unn\"otige Rechenzeit gespart werden w\"urde.
-
 
 %Idee am ende, keine Zeit zur Umsetztung, statt inplace direkt Koordinatenberechnung
 
