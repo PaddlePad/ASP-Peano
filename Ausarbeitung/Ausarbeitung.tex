@@ -47,16 +47,13 @@ In einem Iterationsschritt l\"asst sich eines der 9 Quadrate in weitere 9 Quadra
 \caption{Peano-Kurve mit $n = \{1, 2, 3\}$, ~\cite{aufgabenstellung}}\label{Abb:Peano}
 \end{figure}
 
-%TODO Image processing
+In Realit\"at sind gesammelte Daten meistens nicht linear, nicht station\"ar und mehrdimensional. Beispiele f\"ur solche Daten sind Matrizen, Bilder, Tabellen und Rechengitter, die sich aus der Diskretisierung von partiellen Differentialgleichungen ergeben. Dateioperationen wie Matrixmultiplikationen, Lade- und Speicheroperationen sowie das Aktualisieren und Partitionieren von Datens\"atzen k\"onnen vereinfacht werden, wenn eine effiziente Methode zum Durchsuchen der Daten gew\"ahlt wird. Die Verwendung dieser komplexen Daten kann zeitlich sehr teuer sein und erh\"ohen die Speicherverwendung exponentiell. Deshalb brauchen wir Kompressions-Algorithmen um unsere Programme optimieren zu k\"onnen. In solchen F\"allen bietet sich die Nutzung der Peano-Kurve oder anderer raumf\"ullenden Kurven an. Eine Transformation eines n-dimensionalen Raumes in die Dimension n-1, f\"uhrt zu einer wesentlichen Komprimierung der Informationen und beh\"alt einen Teil der r\"aumlichen Daten bei. Eine m\"ogliche Anwendung dieses Konzepts ist das Feld des Image Processings bei dem Raumf\"ullende Kurven f\"ur Bild- und Farbkompressionen verwendet werden~\cite{imageProcessing}.
 
+Der Nachteil der vorgeschlagenen Struktur liegt in ihrer relativen Komplexit\"at. Beipielsweise ist in unserer Implementierung bei Grad $n > 9$ die Speicherallokation nicht mehr m\"oglich, wie sp\"ater im Kapitel \ref{Technische Limitationen} erl\"autert wird.
 
 Im Folgenden definieren wir $n \in \mathbb{N}$ als Grad der Kurve.
 Wir beschreiben nun unseren Ansatz, einen iterativen Algorithmus mit dem Grad $n$ als Eingabe zu finden, um die eben beschriebene Peano-Kurve darzustellen. Die hierbei generierten Punkte werden in ihrer Reihenfolge ausgegeben. Anders als in der beschriebenen mathematischen Definition werden wir jedoch nicht nur nach $[0;1]$, sondern nach $\mathbb{N}$ abbilden.
-Die Korrektheit des hier gew\"ahlten Ansatzes wird gezeigt, in C und in Assembler implementiert und hinsichtlich ihrer Performanz analysiert. Dabei ist zu erkennen, dass . . .
-%Ergebnis hier einf\"ugen!!
-%TODO: Teil 2 der Theoretischen Aufgabe
-
-\newpage
+Die Korrektheit des hier gew\"ahlten Ansatzes wird gezeigt, in C und in Assembler implementiert und hinsichtlich ihrer Performanz analysiert. Dabei ist zu erkennen, dass eine rekursive Implementierung wahrscheinlich bessere Ergebnisse erziehlt h\"atte und eine Optimierung mit SIMD-Instruktionen die Performanz nur bedingt erh\"oht.
 
 \section{L\"osungsansatz} \label{L\"osungsansatz}
 
@@ -100,8 +97,6 @@ Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnten wir generell maxim
 Dennoch w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz zus\"atzlich noch mit Hilfe von SIMD-Instruktionen weiter optimieren lassen.  
 
 Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren. Dies w\"urde nat\"urlich sehr viel Rechenaufwand einsparen und damit ingesamt bessere Performanzergebnisse erzielen.
-
-\newpage
 
 \section{Korrektheit} \label{Korrektheit} % oder Genauigkeit
 
@@ -178,13 +173,10 @@ Als ein Beispiel der erstellten .svg Datei f\"ur diesen Algortihmus sei auf Abbi
 \caption{Generierte Peano-Kurve mit $n = 4$}\label{Abb:Generierte Kurve Grad 4}
 \end{figure}
 
-%TODO: Mathematischen sachen be/ver-weisen!
-% Korrektheit bewerten!
-\newpage
 \section{Performanzanalyse} \label{Performanzanalyse}
 Bevor der bereits ausgef\"uhrten Algorithmus hinsichtlich seiner Performanz analysiert wird, werden kurz die Algorithmen die verglichen werden, beschrieben.
 
-Als erstes wurde der bereits erl\"auterten Algorithmus aus Kapitel \ref{L\"osungsansatz} in C implementiert. Um die Performanz-Unterschiede zwischen der direkten Berechnung, im Weiteren als Inplace-Variante, und der einmaligen Berechnung und Speicherung der Permutationen, im Folgenden als Out-Of-Place-Variante bezeichnet, zu analysieren erweitern wir die Implementierung um einen entsprechenden Algorithmus, welcher eine abgewandelte Form der Inplace-Variante ist. Der Unterschied besteht darin, dass sobald wir eine Kurve mit $n > 2$ berechnen, speichern wir die schon vorher besprochenen Permutationen der Kurve mit Grad $n - 1$. 
+Als erstes wurde der bereits erl\"auterten Algorithmus aus Kapitel \ref{L\"osungsansatz} in C implementiert. Um die Performanz-Unterschiede zwischen der direkten Berechnung, im Weiteren als In-Place-Variante, und der einmaligen Berechnung und Speicherung der Permutationen, im Folgenden als Out-Of-Place-Variante bezeichnet, zu analysieren erweitern wir die Implementierung um einen entsprechenden Algorithmus, welcher eine abgewandelte Form der In-Place-Variante ist. Der Unterschied besteht darin, dass sobald wir eine Kurve mit $n > 2$ berechnen, speichern wir die schon vorher besprochenen Permutationen der Kurve mit Grad $n - 1$. 
 
 Da wir uns Eingangs auf einen iterativen Ansatz festgelegt haben, ist es zudem interessant zu sehen, inwiefern sich der Unterschied zwischen einem iterativen und einem rekursiven Algorithmus auswirkt. Deshalb wurde auch ein Algorithmus implementiert, der rekursiv die Richtungen berechnet. Aus Zeitgr\"unden k\"onnen wir jedoch die Implementierungen nur in C vergleichen. 
 
@@ -201,8 +193,8 @@ F\"ur jeden Algorithmus wurden f\"ur jeden Grad 20 Durchl\"aufe aufgezeichnet un
 \captionsetup[figure]{font=small,labelfont=small}
 \end{figure}
 
-
-Zus\"atzlich wird in der folgenden Tabelle dokumentiert um wie viel Prozent der Assembler Algorithmus schneller bzw. langsamer rechnet als die Vergleichsalgorithmen:
+Zus\"atzlich wird in Abbildung \ref{Abb: Tabelle Performanz} dokumentiert um wie viel Prozent der Assembler Algorithmus schneller bzw. langsamer rechnet als die Vergleichsalgorithmen. Hier ist zu erkennen, dass SIMD-Befehle bei den Graden eins bis drei zu deutlichen Zeitverbesserungen von bis zu \"uber 28\% f\"uhren, jedoch bei den Graden f\"unf bis sieben kleinere Zeiteinbusen mit sich bringen. Bei den letzten zwei Graden acht und neun verbessert die Nutzung von SIMD-Befehlen den Algorithmus wieder, jedoch schafft er es nicht die Zeiten des rekursiven Algorithmus zu schlagen.
+Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade $n > 9$ am besten eignen w\"urde oder ob die Verwendung von SIMD-Befehlen bei jedem Grad von Vorteil ist. Es kann jedoch behauptet werden, dass die iterativen Algorithmen, In-Place sowie Out-Of-Place, nicht die beste Wahl w\"aren.
 
 \begin{figure}[ht]
 \centering
@@ -211,27 +203,18 @@ Zus\"atzlich wird in der folgenden Tabelle dokumentiert um wie viel Prozent der 
 \captionsetup[figure]{font=small,labelfont=small}
 \end{figure}
 
-Hier ist zu erkennen, dass SIMD-Befehle bei den Graden eins bis drei zu deutlichen Zeitverbesserungen von bis zu \"uber 28\% f\"uhren, jedoch bei den Graden f\"unf bis sieben kleinere Zeiteinbusen mit sich bringen. Bei den letzten zwei Graden acht und neun verbessert die Nutzung von SIMD-Befehlen den Algorithmus wieder, jedoch schafft er es nicht die Zeiten des rekursiven Algorithmus zu schlagen.
-Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade $n > 9$ am besten eignen w\"urde oder ob die Verwendung von SIMD-Befehlen bei jedem Grad von Vorteil ist. Es kann jedoch behauptet werden, dass die iterativen Algorithmen, in-place sowie out-of-place, nicht die beste Wahl w\"aren.
-
 \newpage
 \section{Zusammenfassung und Ausblick} \label{Zusammenfassung und Ausblick}
 %Zusammenfassung
-In der realen Welt sind die Daten, die man sammelt meistens nicht linear, nicht station\"ar und mehrdimensional. Beispiele f\"ur solche Daten sind Matrizen, Bilder, Tabellen und Rechengitter, die sich aus der Diskretisierung von  partiellen Differentialgleichungen ergeben. Dateioperationen wie Matrixmultiplikationen, Lade- und Speicheroperationen sowie das Aktualisieren und Partitionieren von Datens\"atzen k\"onnen vereinfacht werden, wenn eine effiziente Methode zum Durchsuchen der Daten gew\"ahlt wird. Die Verwendung dieser komplexen Daten in unserem Programm k\"onnen sehr teuer sein und erh\"ohen die Speicherverwendung exponentiell. Deshalb brauchen wir Kompressions-Algorithmen um unsere Programme optimieren zu k\"onnen. Eine M\"oglichkeit w\"are die Nutzung der Peano-Kurve oder anderer raumf\"ullenden Kurven. Diese Kurve f\"uhrt eine Transformation von einem n-dimensionalen Raum in die Dimension n-1 aus, der zu einer wesentlichen Komprimierung der Informationen f\"uhrt und einen Teil der r\"aumlichen Daten beibeh\"alt.
-
-Der Nachteil der vorgeschlagenen Struktur liegt in ihrer relativen Komplexit\"at. Beipielsweise ist in unserer Implementierung bei Grad $n > 9$ die Speicherallokation nicht mehr m\"oglich, wie wir im Kapitel \ref{Technische Limitationen} erl\"autert haben.
+Es l\"asst sich also feststellen, dass eine rekursive Implementierung gegen\"uber einem iterativer Ansatz vorzuziehen ist, da in unserer Implementierung der rekursive Algorithmus in den Testf\"allen bis Grad 9 mit Ausnahme $n = 1$ immer besser abgeschnitten hat \ref{Abb: Tabelle Performanz}. Zu erwarten war, dass eine manuelle Optimierung des Assemblercodes zu besseren Performanzergebnissen f\"uhrt. Jedoch sind die bisherig implementierten SIMD-Instruktionen bei h\"ohren Graden nicht so performanzsteigernd wie eingangs erhofft wenngleich verst\"andlich, da nicht alle m\"oglichen SIMD-Optimierungen durchgef\"uhrt wurden. Weitere M\"oglichkeiten die Performanz zu erh\"ohen w\"aren Speicheroptimierungen, Multithreading, ein 16-Bit Alignment der SIMD-Instruktionen oder die im Kapitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen.
 
 %Ausblick Mo
-Eine verbesserte Variante des Algorithmus haben wir in C implementiert, die das selben Konzept umsetzt aber dabei das auf das Richtungsarray verzichtet und direkt mit den Koordinaten arbeitet. Mit der neuen Implementierung kann man die Speicherverwendung optimieren und die somit \"uberfl\"ussigen Schritte beim Iterieren \"uber das Array einsparen. Wie man auf der Abbildung X sieht, hat die neue Variante den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm) . Wir haben diesen Algorithmus nicht als Hauptalgorithmus verwendet da, es un\"ubersichtlicher als die Verwendung von dem Richtungsarray. 
+Ein verbesserter Ansatz des Algorithmus w\"are beispielsweise durch ein Verzicht auf das Richtungsarray zu erreichen. Einen solchen Algorithmus haben wir in C implementiert, dieser verfolgt das selbe Konzept aber arbeitet direkt mit den Koordinaten. Damit l\"asst sich die Speicherverwendung optimieren und die \"uberfl\"ussigen Schritte beim Iterieren \"uber das Array werden eingespart. Wie man auf der Abbildung X sehen kann, hat die neue Variante den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm).
 
-Hinzu kommt die M\"oglichkeit, den hier beschriebenen Algorithmus mit den im Kapitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen weiter zu optimieren. Hier bietet sich insbesondere der Ansatz an, der auf die Richtungsberechnung verzichtet, da dieser einen gro\ss en Performanzgewinn verspricht.
+R\"uckblickend ist zu bemerken, dass es wahrscheinlich sinnvoller gewesen w\"are, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel unn\"otige Rechenzeit gespart werden w\"urde.
 
-Abschlie\ss end ist zu bemerken, dass es wahrscheinlich sinnvoller gewesen w\"are, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel unn\"otige Rechenzeit gespart werden w\"urde.
-
-% Ausblick: Patrick
 %Hilbert vs Peano
 Betrachtet man die Historie der Raumf\"ullenden Kurven, so f\"allt schnell auf, dass noch weitere Kurven existieren, die vergleichbare Eigenschaften zu der Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder anderen Arten der Peano-Kurve ~\cite{raumKurven}, welche den Raum auf andere Weise durchl\"auft, zu vergleichen.
-
 
 %Idee am ende, keine Zeit zur Umsetztung, statt inplace direkt Koordinatenberechnung
 
