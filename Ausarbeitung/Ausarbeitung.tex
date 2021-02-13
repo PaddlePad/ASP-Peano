@@ -48,9 +48,9 @@ In einem Iterationsschritt l\"asst sich eines der 9 Quadrate in weitere 9 Quadra
 \caption{Peano-Kurve mit $n = \{1, 2, 3\}$, ~\cite{aufgabenstellung}}\label{Abb:Peano}
 \end{figure}
 
-In Realit\"at sind gesammelte Daten meistens nicht linear, nicht station\"ar und mehrdimensional. Beispiele f\"ur solche Daten sind Matrizen, Bilder, Tabellen und Rechengitter, die sich aus der Diskretisierung von partiellen Differentialgleichungen ergeben. Dateioperationen wie Matrixmultiplikationen, Lade- und Speicheroperationen sowie das Aktualisieren und Partitionieren von Datens\"atzen k\"onnen vereinfacht werden, wenn eine effiziente Methode zum Durchsuchen der Daten gew\"ahlt wird. Die Verwendung dieser komplexen Daten kann zeitlich sehr teuer sein und erh\"ohen die Speicherverwendung exponentiell. Deshalb brauchen wir Kompressions-Algorithmen um unsere Programme optimieren zu k\"onnen. In solchen F\"allen bietet sich die Nutzung der Peano-Kurve oder anderer raumf\"ullenden Kurven an. Eine Transformation eines n-dimensionalen Raumes in die Dimension n-1, f\"uhrt zu einer wesentlichen Komprimierung der Informationen und beh\"alt einen Teil der r\"aumlichen Daten bei. Eine m\"ogliche Anwendung dieses Konzepts ist das Feld des Image Processings bei dem Raumf\"ullende Kurven f\"ur Bild- und Farbkompressionen verwendet werden~\cite{imageProcessing}.
+In der Realit\"at sind gesammelte Daten meistens nicht linear, nicht station\"ar und mehrdimensional. Beispiele f\"ur solche Daten sind Matrizen, Bilder, Tabellen und Rechengitter, die sich aus der Diskretisierung von partiellen Differentialgleichungen ergeben. Dateioperationen wie Matrixmultiplikationen, Lade- und Speicheroperationen sowie das Aktualisieren und Partitionieren von Datens\"atzen k\"onnen vereinfacht werden, wenn eine effiziente Methode zum Durchsuchen der Daten gew\"ahlt wird. Die Verwendung dieser komplexen Daten kann zeitlich sehr teuer sein und erh\"ohen die Speicherverwendung exponentiell. Deshalb werden Kompressions-Algorithmen gebraucht, um unsere Programme zu optimieren. In solchen F\"allen bietet sich die Nutzung der Peano-Kurve oder anderer raumf\"ullender Kurven an. Eine Transformation eines n-dimensionalen Raumes in die Dimension n-1 f\"uhrt zu einer wesentlichen Komprimierung der Informationen und beh\"alt einen Teil der r\"aumlichen Daten bei. Eine m\"ogliche Anwendung dieses Konzepts ist das Feld des Image Processings bei dem raumf\"ullende Kurven f\"ur Bild- und Farbkompressionen verwendet werden~\cite{imageProcessing}.
 
-Der Nachteil der vorgeschlagenen Struktur liegt in ihrer relativen Komplexit\"at. Beipielsweise ist in unserer Implementierung bei Grad $n > 9$ die Speicherallokation nicht mehr m\"oglich, wie sp\"ater im Kapitel \ref{Technische Limitationen} erl\"autert wird.
+Der Nachteil der vorgeschlagenen Struktur liegt in ihrer relativen Komplexit\"at. Beispielsweise ist in unserer Implementierung bei Grad $n > 9$ die Speicherallokation nicht mehr m\"oglich, wie sp\"ater in Kapitel \ref{Technische Limitationen} erl\"autert wird.
 
 Im Folgenden definieren wir $n \in \mathbb{N}$ als Grad der Kurve.
 Wir beschreiben nun unseren Ansatz, einen iterativen Algorithmus mit dem Grad $n$ als Eingabe zu finden, um die eben beschriebene Peano-Kurve darzustellen. Die hierbei generierten Punkte werden in ihrer Reihenfolge ausgegeben. Anders als in der beschriebenen mathematischen Definition werden wir jedoch nicht nur nach $[0;1]$, sondern nach $\mathbb{N}$ abbilden.
@@ -60,7 +60,7 @@ Die Korrektheit des hier gew\"ahlten Ansatzes wird gezeigt, in C und in Assemble
 
 \subsection{Algorithmus} \label{Algorithmus}
 
-Der Aufbau der Peano-Kurve erm\"oglicht es, die Kurve des aktuellen Grades mit einer Variation der originalen Kurve des vorherigen Grades und deren Permutationen zu zeichnen. Wie in Abbildung \ref{Abb:Peano L\"osungsidee} gezeigt gibt es ingesamt drei Permutationen der Kurve:
+Der Aufbau der Peano-Kurve erm\"oglicht es, die Kurve des aktuellen Grades mit einer Variation der originalen Kurve des vorherigen Grades und deren Permutationen zu zeichnen. Wie in Abbildung \ref{Abb:Peano L\"osungsidee} gezeigt, gibt es ingesamt drei Permutationen der Kurve:
 
 \begin{itemize}
     \item Die Invertierung, bei der jeder Schritt auf seinen entsprechenden Komplement abgebildet wird.
@@ -68,8 +68,8 @@ Der Aufbau der Peano-Kurve erm\"oglicht es, die Kurve des aktuellen Grades mit e
     \item Die gespiegelte Invertierung, bei der die vorherigen Permuationen kombiniert werden.
 \end{itemize}
 
-Diese Observation war der Grundstein des hier beschriebenen iterativen Algorithmus. Anfangs wird dabei die Startkurve hartcodiert in einem Integerarray mit Werten im Interval $[0;3]$ abgespeichert wobei jede Zahl eine Richtungen repr\"asentiert: 0 f\"ur Oben, 1 f\"ur Rechts, 2 f\"ur Unten und 3 f\"ur Links. Die orignale Kurve des ersten Grades und und deren Invertierung sehen wie folgt aus: $\{0, 0, 1, 2, 2, 1, 0, 0\}$ bzw. $\{2, 2, 3, 0, 0, 3, 2, 2\}$. 
-Falls $n > 1$ ist, wird startend vom Grad 2 aufsteigend \"uber alle Grade $m \leq n$ iteriert. Bei jeder Iteration wird abwechselnd ein Verbindungschritt entsprechend eines Schritts entlang der Kurve $n = 1$ hartcodiert in den Array geschrieben und danach die entsprechende Permutation der Kurve des vorherigen Grades $m - 1$ berechnet und eingef\"ugt. Dieser Vorgang wird f\"ur die acht fehlenden Teilkurven des aktuellen Grades $m$ ausgef\"uhrt, bis die vollst\"andige Kurve entsteht.
+Diese Observation war der Grundstein des hier beschriebenen iterativen Algorithmus. Anfangs wird die Startkurve hartcodiert in einem Integerarray mit Werten im Interval $[0;3]$ abgespeichert, wobei jede Zahl eine Richtungen repr\"asentiert: 0 f\"ur oben, 1 f\"ur rechts, 2 f\"ur unten und 3 f\"ur links. Die orignale Kurve des ersten Grades und deren Invertierung sehen wie folgt aus: $\{0, 0, 1, 2, 2, 1, 0, 0\}$ bzw. $\{2, 2, 3, 0, 0, 3, 2, 2\}$. 
+Falls $n > 1$ ist, wird ausgehend von Grad 2 aufsteigend \"uber alle Grade $m \leq n$ iteriert. Bei jeder Iteration wird abwechselnd ein Verbindungschritt entsprechend eines Schritts entlang der Kurve $n = 1$ hartcodiert in den Array geschrieben und danach die entsprechende Permutation der Kurve des vorherigen Grades $m - 1$ berechnet und eingef\"ugt. Dieser Vorgang wird f\"ur die acht fehlenden Teilkurven des aktuellen Grades $m$ ausgef\"uhrt, bis die vollst\"andige Kurve entsteht.
 
 \begin{figure}[ht]
 \centering
@@ -78,39 +78,39 @@ Falls $n > 1$ ist, wird startend vom Grad 2 aufsteigend \"uber alle Grade $m \le
 \captionsetup[figure]{font=small,labelfont=small}
 \end{figure}
 
-Nachdem \"uber alle Grade iteriert wurde l\"auft der Algorithmus den vollst\"andigen Richtungsarray ab, ver\"andert dabei bei jedem Schritt je nach Richtungsangabe entweder die X oder Y-Koordinate und speichert diese dann in die Ausgabeliste der Peano-Methode.
+Nachdem \"uber alle Grade iteriert wurde, l\"auft der Algorithmus den vollst\"andigen Richtungsarray ab, ver\"andert dabei bei jedem Schritt je nach Richtungsangabe entweder die X oder Y-Koordinate und speichert diese dann in die Ausgabeliste der Peano-Methode.
 
 \subsection{Umgesetzte Optimierungen} \label{Umgesetzte Optimierungen}
 
-Im urspr\"unglichen Entwurf des Algorithmus wurden die drei Permutationen vor jeder Iteration einmal berechnet und als einzelne Arrays abgespeichert um sie danach, wenn sie ben\"otigt werden, nur mehr an die jeweiligen Stellen des Richtungsarrays zu kopieren. Da dadurch jedoch ein erh\"ohter Speicheraufwand entsteht, haben wir uns daf\"ur entschieden jede Permutation immer neu zu berechnen, wenn sie gebraucht wird und diese direkt in den Array zu speichern. Dies schien f\"ur uns ein sinnvoller Optimierungsansatz zu sein, da jede Permutation wie in Abbildung \ref{Abb:Peano L\"osungsidee} zu sehen maximal zweimal vorkommt. Allein die Originalkurve wird dreimal ben\"otigt und auf diese kann immer sehr schnell zugegriffen werden, indem man auf die Werte an den Adressen von $0$ bis $9^{(m - 1)} - 2$ im Richtungsarray zugreift. 
+Im urspr\"unglichen Entwurf des Algorithmus wurden die drei Permutationen vor jeder Iteration einmal berechnet und als einzelne Arrays abgespeichert, um sie danach, wenn sie ben\"otigt werden, nur noch an die jeweiligen Stellen des Richtungsarrays zu kopieren. Da dadurch ein erh\"ohter Speicheraufwand entsteht, haben wir uns daf\"ur entschieden jede Permutation immer neu zu berechnen, wenn sie gebraucht wird und diese direkt in den Array zu speichern. Dies schien ein sinnvoller Optimierungsansatz zu sein, da jede Permutation, wie in Abbildung \ref{Abb:Peano L\"osungsidee} zu sehen, maximal zweimal vorkommt. Allein die Originalkurve wird dreimal ben\"otigt und auf diese kann sehr schnell zugegriffen werden, indem man auf die Werte an den Adressen von $0$ bis $9^{(m - 1)} - 2$ im Richtungsarray zugreift. 
 
 %SIMD
-Bei der Assemblerimplementierung beschr\"anken wir uns auf Instruktionen der x86-64-Architektur bis einschlie\ss lich der SSE4.2-Erweiterung~\cite{intel2020man}. Hier haben wir die Funktionen, die die invertierte Permutation erstellt, sowie die Funktion, die die Orginalkurve an die ben\"otigte Stelle des Arrays schreibt, mit SIMD-Befehlen optimiert. 
+Bei der Assemblerimplementierung beschr\"anken wir uns auf Instruktionen der x86-64-Architektur bis einschlie\ss lich der SSE4.2-Erweiterung~\cite{intel2020man}. Hier haben wir beide Funktionen, die die invertierte Permutation erstellt sowie die Funktion, die die Orginalkurve an die ben\"otigte Stelle des Arrays schreibt, mit SIMD-Befehlen optimiert. 
 
 % Ein calleesaved register weniger verwendet
 
 \subsection{Alternativer L\"osungsansatz} \label{Alternativer L\"osungsansatz}
 
-Abgesehen von den eben beschriebenen Optimierungen wurde bewusst weitgehend auf die Nutzung von SIMD-Befehlen verzichtet, der einzige noch gewinnbringende Anwendungspunkt w\"are die parallele Umrechnung der Richtungen zu den Koordinaten. Die Richtungsberechnung l\"asst sich im Rahmen dieser Arbeit auch nicht mehr gewinnbringend mit SIMD optimieren, da die Funktionen, die weitere Permutationen generieren, in jedem Berechnungsschritt eine Fallunterscheidung besitzten, weshalb hier SIMD nicht zu erhebichen Performanzgewinnen f\"uhren w\"urde. 
+Abgesehen von den eben beschriebenen Optimierungen wurde weitgehend bewusst auf die Nutzung von SIMD-Befehlen verzichtet. Der einzige noch gewinnbringende Anwendungspunkt w\"are die parallele Umrechnung der Richtungen zu den Koordinaten. Die Richtungsberechnung l\"asst sich im Rahmen dieser Arbeit auch nicht mehr gewinnbringend mit SIMD optimieren, da die Funktionen, die weitere Permutationen generieren, in jedem Berechnungsschritt eine Fallunterscheidung beinhaltet, weshalb hier SIMD nicht zu erheblichen Performanzgewinnen f\"uhren w\"urde. 
 
-Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnten wir generell maximal zwei Koordinaten gleichzeitig verrechnen. Da die Koordinatenberechnung allerdings aufeinander aufbaut, wurde sie hier nicht mit SIMD optimiert. Hinzu kommt, dass die Kurve nach zwei Schritten die Richtung \"andert und man nicht mehr dieselbe Berechnung parallel ausf\"uhren kann.
+Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnten wir damit generell maximal zwei Koordinaten gleichzeitig verrechnen. Da die Koordinatenberechnung allerdings aufeinander aufbaut, wurde sie hier nicht mit SIMD optimiert. Hinzu kommt, dass die Kurve nach zwei Schritten die Richtung \"andert und man dieselbe Berechnung nicht mehr parallel ausf\"uhren kann.
 
-Dennoch w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz zus\"atzlich noch mit Hilfe von SIMD-Instruktionen weiter optimieren lassen.  
+Dennoch w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz zus\"atzlich mit Hilfe von SIMD-Instruktionen weiter optimieren lassen.  
 
-Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren. Dies w\"urde nat\"urlich sehr viel Rechenaufwand einsparen und damit ingesamt bessere Performanzergebnisse erzielen.
+Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden, den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren. Dies w\"urde nat\"urlich sehr viel Rechenaufwand einsparen und damit ingesamt bessere Performanzergebnisse erzielen.
 
 \section{Korrektheit} \label{Korrektheit} % oder Genauigkeit
 
-Die Genauigkeit unseres Algorithmus ist abh\"angig von dem Grad $n$, der die Anzahl an Iterationen bestimmt, wie in Abbildung \ref{Abb:Peano} beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus pr\"aziser, je gr\"o\ss er der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert ann\"ahern. Ansonsten ist die Kurve wie oben beschrieben, definiert, weshalb nun die Korrektheit unseres Algorithmus entscheidend ist.
+Die Genauigkeit unseres Algorithmus ist abh\"angig von dem Grad $n$, der die Anzahl an Iterationen bestimmt, wie in Abbildung \ref{Abb:Peano} beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus pr\"aziser, je gr\"o\ss er der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert ann\"ahern. Ansonsten ist die Kurve wie oben beschrieben, definiert, weshalb die Korrektheit unseres Algorithmus entscheidend ist.
 Grunds\"atzlich l\"asst sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen, indem man ihre graphischen Darstellungen vergleicht. Da das theoretisch aber nicht m\"oglich ist, folgt auch eine Implementierung in Assembler und in C, die wir auch hinsichtlich ihrer Performanz analysieren wollen.
 Dennoch soll der bereits beschriebene Ansatz auf Korrektheit gepr\"uft werden.
 
 
 Da die eigentliche Koordinatenberechnung abh\"angig von der zuvor ermittelten Richtung ist, ist der folgende Beweis prim\"ar auf die Berechnung der Richtungen ausgerichtet.
-Die Koordinatenberechnung findet anschlie\ss end und basierend auf den bisherigen Ergebnissen statt, indem ab\"angig von der Richtung jeweils die X- und die Y-Koordinate eines Z\"ahlers inkrementiert bzw. dekrementiert und abgespeichert wird.
+Die Koordinatenberechnung findet anschlie\ss end und basierend auf den bisherigen Ergebnissen statt, indem ab\"angig von der Richtung jeweils die X- und die Y-Koordinate eines Z\"ahlers inkrementiert bzw. dekrementiert und abgespeichert werden.
 
 \subsection{Beweis der Permutationen durch Induktion} \label{Beweis der Permutationen durch Induktion}
-Nachdem die Kurve immer wieder die gleichen, teilweise elementaren, Bestandteile verwendet, m\"ussen diese und deren Permutationen richtig berechnet werden. Im Speziellen sind das die Kurven mit $n = 1$ und $n = 2$. Aus diesen l\"asst sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel \ref{Algorithmus} beschrieben, zum Berechnen einer Kurve $n$-ten Grades nur die Kurve des Grads $n - 1$ sowie die gespiegelte und invertierte Version dieser Kurve benutzen.
+Nachdem die Kurve immer wieder die gleichen, teilweise elementaren Bestandteile verwendet, m\"ussen diese und deren Permutationen richtig berechnet werden. Im Speziellen sind das die Kurven mit $n = 1$ und $n = 2$. Aus diesen l\"asst sich induktiv die Korrektheit beweisen, da wir, wie im vorherigen Kapitel \ref{Algorithmus} beschrieben, zum Berechnen einer Kurve $n$-ten Grades nur die Kurve des Grads $n - 1$ sowie die gespiegelte und invertierte Version dieser Kurve benutzen.
 
 \subsubsection{Induktionsbasis} \label{Induktionsbasis}
 Beginnen wir mit $n = 1$. Hier ist die Kurve vordefiniert, dementsprechend gibt es nichts zu zeigen. Da auf diesem Muster alle anderen Kurven mit $n > 1$ basieren, ist sie in unserem Algorithmus ebenfalls als Basis vorgegeben.
@@ -127,7 +127,7 @@ Dadurch lassen sich Kurven mit h\"oherem Grad konstruieren. Es sei nun $n > 1$ u
 
 \subsubsection{Induktionsschritt} \label{Induktionsschritt}
 Betrachten wir nun Kurven $n$-ten Grades. Hierzu m\"ussen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad $n$ ben\"otigen.
-Da diese Permutationen stets auf \"ahnliche Art konstruiert werden, n\"amlich durch Addition von 2 zu der gespeicherten Richtung mit anschlie\ss endem \textit{modulo} 4, um die Richtung wieder in den g\"ultigen Bereich abzubilden. Dadurch ist gewehrleistet, dass durch Mehrfachanwendung einer Funktion, die eine solche Permutation generiert, immer nur die Orginale Kurve oder die gew\"unschte Permutation entstehen kann. Dies wird durch den Wertebereich von $[0;3]$ und \textit{modulo} 4 erreicht, da so die geraden Werte auf den jeweils anderen geraden Wert abgebildet werden, f\"ur die ungerade Zahlen analog. Dieser Umstand wird bei dem Erstellen der Permutationen ausgenutzt.
+Da diese Permutationen stets auf \"ahnliche Art konstruiert werden, n\"amlich durch Addition von 2 zu der gespeicherten Richtung mit anschlie\ss endem \textit{modulo} 4, um die Richtung wieder in den g\"ultigen Bereich abzubilden, ist gewehrleistet, dass durch Mehrfachanwendung einer Funktion, die eine solche Permutation generiert, immer nur die Orginale Kurve oder die gew\"unschte Permutation entstehen kann. Dies wird durch den Wertebereich von $[0;3]$ und \textit{modulo} 4 erreicht, da so die geraden Werte auf den jeweils anderen geraden Wert abgebildet werden, f\"ur die ungerade Zahlen analog. Dieser Umstand wird bei dem Erstellen der Permutationen ausgenutzt.
 Da die Funktionen, die die Permutationen erzeugen, auf die gesamte Kurve des Grades $n = n - 1$ angewand wird, ist sichergestellt, dass die Permutationen keine anderweitigen Fehler in der Richtungsberechnung besitzten. Ergebnis ist in Abbildung \ref{Abb:Peano L\"osungsidee} dargestellt.
 
 \textbf{Die Permutationen: }% - Reverse in Implementierung
@@ -209,17 +209,16 @@ Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade
 Es l\"asst sich also feststellen, dass eine rekursive Implementierung gegen\"uber einem iterativer Ansatz vorzuziehen ist, da in unserer Implementierung der rekursive Algorithmus in den Testf\"allen bis Grad 9 mit Ausnahme $n = 1$ immer besser abgeschnitten hat, vergleiche Abbildung \ref{Abb: Tabelle Performanz}. Zu erwarten war, dass eine manuelle Optimierung des Assemblercodes zu besseren Performanzergebnissen f\"uhrt. Jedoch sind die bisherig implementierten SIMD-Instruktionen bei h\"ohren Graden nicht so performanzsteigernd wie eingangs erhofft wenngleich verst\"andlich, da nicht alle m\"oglichen SIMD-Optimierungen durchgef\"uhrt wurden. Weitere M\"oglichkeiten die Performanz zu erh\"ohen w\"aren Speicheroptimierungen, Multithreading, ein 16-Bit Alignment der SIMD-Instruktionen oder die im Kapitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen.
 
 %Ausblick Mo
-Ein verbesserter Ansatz des Algorithmus w\"are beispielsweise durch ein Verzicht auf das Richtungsarray zu erreichen. Einen solchen Algorithmus haben wir in C implementiert, dieser verfolgt das selbe Konzept aber arbeitet direkt mit den Koordinaten. Damit l\"asst sich die Speicherverwendung optimieren und die \"uberfl\"ussigen Schritte beim Iterieren \"uber das Array werden eingespart. Wie man auf der Abbildung X sehen kann, hat die neue Variante den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm).
+Ein verbesserter Ansatz des Algorithmus w\"are beispielsweise durch ein Verzicht auf das Richtungsarray zu erreichen. Einen solchen Algorithmus haben wir in C implementiert, dieser verfolgt das selbe Konzept aber arbeitet direkt mit den Koordinaten. Damit l\"asst sich die Speicherverwendung optimieren und die \"uberfl\"ussigen Schritte beim Iterieren \"uber das Array werden eingespart. Wie man auf der Abbildung \ref{Abb: Tabelle Performanz} sehen kann, hat die neue Variante den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm).
 
 R\"uckblickend ist zu bemerken, dass es wahrscheinlich sinnvoller gewesen w\"are, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel unn\"otige Rechenzeit gespart werden w\"urde.
 
 %Hilbert vs Peano
 Betrachtet man die Historie der Raumf\"ullenden Kurven, so f\"allt schnell auf, dass noch weitere Kurven existieren, die vergleichbare Eigenschaften zu der Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder anderen Arten der Peano-Kurve ~\cite{raumKurven}, welche den Raum auf andere Weise durchl\"auft, zu vergleichen.
 
-%Idee am ende, keine Zeit zur Umsetztung, statt inplace direkt Koordinatenberechnung
 
 \newpage
-% TODO: Fuegen Sie Ihre Quellen der Datei Ausarbeitung.bib hinzu        !!!!
+% TODO: Fuegen Sie Ihre Quellen der Datei Ausarbeitung.bib hinzu
 % Referenzieren Sie diese dann mit \cite{}.
 % Beispiel: CR2 ist ein Register der x86-Architektur~\cite{intel2017man}.
 \bibliographystyle{plain}
