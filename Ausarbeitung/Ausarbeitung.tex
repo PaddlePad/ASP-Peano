@@ -36,7 +36,7 @@
 
 Raumf\"ullende Kurven bilden eine Br\"ucke zwischen Kunst und mathematischer Geometrie. In der Mathematik werden sie gemeinhin benutzt um ein $n$-dimensionales Problem in ein Eindimensionales zu konvertieren. Eine solche Kurve beschreibt grunds\"atzlich einen linearen Pfad durch $n$-dimensionale R\"aume. Giuseppe Peano war der Erste, der eine solche Kurve 1890 definierte.
 
-Um einen n-dimensionalen Raum in die Dimension n-1 zu konvertieren, l\"asst sich eine stetig, surjektive Funktion $f(x)$ erstellen, so dass gilt: $\forall x \in \mathbb{R}^{n-1} \quad \exists y \in \mathbb{R}^n$. F\"ur einen Beweis der Stetigkeit einer Peano-Kurve siehe~\cite{stetigkeitsBeweis}, f\"ur einen Beweis der Surjektivit\"at solcher Funktionen und tiefere mathematische Definitionen sei auf ~\cite{surjektivBeweis} verwiesen. Hier wollen wir uns auf die sogenannten Peano-Kurven beschr\"anken. F\"ur eine solche Kurve definieren wir ein Intervall $I = [0;1]$, sowie  $f: I \rightarrow I^2 $. Dann ist die Peano-Kurve: $\lim\limits_{x \to \infty}f(x)$, mit $x \in I$. Sie entspricht also dem Grenzwert einer Folge von Funktionen f(x) und l\"asst sich mit der Bedingung, dass sich die Kurve nicht \"uberschneiden darf, folgenderma\ss en konstruieren:
+Um einen n-dimensionalen Raum in die Dimension n-1 zu konvertieren, l\"asst sich eine stetig, surjektive Funktion $f(x)$ erstellen, so dass gilt: $\forall x \in \mathbb{R}^{n-1} \quad \exists y \in \mathbb{R}^n$. F\"ur einen Beweis der Stetigkeit einer Peano-Kurve siehe~\cite{stetigkeitsBeweis}, f\"ur einen Beweis der Surjektivit\"at solcher Funktionen und tiefere mathematische Definitionen sei auf ~\cite{surjektivBeweis} verwiesen. Hier wollen wir uns auf die sogenannten Peano-Kurven beschr\"anken. F\"ur eine solche Kurve definieren wir ein Intervall $I = [0;1]$, sowie  $f: I \rightarrow I^2 $. Dann ist die Peano-Kurve: $\lim\limits_{x \to \infty}f(x)$, mit $x \in I$. Sie entspricht also dem Grenzwert einer Folge von Funktionen $f(x)$ und l\"asst sich mit der Bedingung, dass sich die Kurve nicht \"uberschneiden darf, folgenderma\ss en konstruieren:
 
 Man unterteile eine Fl\"ache in 9 Quadrate. Jedes dieser Quadrate soll nun von einer Kurve in Form eines 'S' durchlaufen werden.
 In einem Iterationsschritt l\"asst sich eines der 9 Quadrate in weitere 9 Quadrate Unterteilen, die wiederum auf dieselbe Art verbunden werden, wie in Abbildung \ref{Abb:Peano} gezeigt.
@@ -184,17 +184,17 @@ Da wir uns Eingangs auf einen iterativen Ansatz festgelegt haben, ist es zudem i
 
 Die Laufzeittests der verschiedenen Algorithmen wurden auf einem System mit einem Intel Core i7-7700K Prozessor mit einer Taktfrequenz von 4.20GHz, 16 GB Arbeitsspeicher und auf einem Linux Mint 20 64-bit Betriebsssystem mit Linux Kernel 5.4.0-26-generic durchgef\"uhrt. Kompiliert wurde dabei mit GCC 9.3.0 mit Option -03.
 Wie bereits im Kapitel \ref{Technische Limitationen} beschrieben, war es nur m\"oglich bis Grad 9 zu testen.
-F\"ur jeden Algorithmus wurden f\"ur jeden Grad 20 Durchl\"aufe aufgezeichnet und deren Durchschnitt berechnet. Die Ergebnisse dieser Berechnung k\"onnen folgendem Diagramm entnommen werden:
+F\"ur jeden Algorithmus wurden f\"ur jeden Grad 20 Durchl\"aufe aufgezeichnet und deren Durchschnitt berechnet. Um das exponentielle Wachstum der Ergebnisse sinnvoll darzustellen werden in der folgendenen Grafik zuerst die Grade 4, 5 und 6 und anschlie\ss end Grad 6 mit 7 und 8 verglichen .
 
 \begin{figure}[ht]
 \centering
-\includegraphics[scale = 0.65]{diagramm1bis3.png}
-\caption{Diagramm: Grade 1 bis 3}\label{Abb: Diagramm Performanz}
+\includegraphics[scale = 0.5]{diagrammeVertikal.png}
+\caption{Grafischer Vergleich der Grade 4 bis 8}\label{Abb: Diagramm Performanz}
 \captionsetup[figure]{font=small,labelfont=small}
 \end{figure}
 
-Zus\"atzlich wird in Abbildung \ref{Abb: Tabelle Performanz} dokumentiert um wie viel Prozent der Assembler Algorithmus schneller bzw. langsamer rechnet als die Vergleichsalgorithmen. Hier ist zu erkennen, dass SIMD-Befehle bei den Graden eins bis drei zu deutlichen Zeitverbesserungen von bis zu \"uber 28\% f\"uhren, jedoch bei den Graden f\"unf bis sieben kleinere Zeiteinbusen mit sich bringen. Bei den letzten zwei Graden acht und neun verbessert die Nutzung von SIMD-Befehlen den Algorithmus wieder, jedoch schafft er es nicht die Zeiten des rekursiven Algorithmus zu schlagen.
-Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade $n > 9$ am besten eignen w\"urde oder ob die Verwendung von SIMD-Befehlen bei jedem Grad von Vorteil ist. Es kann jedoch behauptet werden, dass die iterativen Algorithmen, In-Place sowie Out-Of-Place, nicht die beste Wahl w\"aren.
+Zus\"atzlich wird in Abbildung \ref{Abb: Tabelle Performanz} der prozentuelle Zeitunterschied zwischen der SIMD-Optimierten Assemblerimplementierung und den Vergleichsalgorithmen dokumentiert. Hier ist zu erkennen, dass SIMD-Befehle bei den Graden eins bis drei zu deutlichen Zeitverbesserungen von bis zu \"uber 28\% f\"uhren, jedoch bei den Graden f\"unf bis sieben kleinere Zeiteinbusen mit sich bringen. Bei den letzten zwei Graden acht und neun verbessert die Nutzung von SIMD-Befehlen den Algorithmus wieder, jedoch schafft er es nicht die Zeiten des rekursiven Algorithmus zu schlagen.
+Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade $n > 9$ am besten eignen w\"urde oder ob die Verwendung von SIMD-Befehlen bei jedem Grad von Vorteil ist. Es kann jedoch behauptet werden, dass die iterativen Algorithmen in C, In-Place sowie Out-Of-Place, nicht die beste Wahl w\"aren.
 
 \begin{figure}[ht]
 \centering
@@ -203,7 +203,6 @@ Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade
 \captionsetup[figure]{font=small,labelfont=small}
 \end{figure}
 
-\newpage
 \section{Zusammenfassung und Ausblick} \label{Zusammenfassung und Ausblick}
 %Zusammenfassung
 Es l\"asst sich also feststellen, dass eine rekursive Implementierung gegen\"uber einem iterativer Ansatz vorzuziehen ist, da in unserer Implementierung der rekursive Algorithmus in den Testf\"allen bis Grad 9 mit Ausnahme $n = 1$ immer besser abgeschnitten hat, vergleiche Abbildung \ref{Abb: Tabelle Performanz}. Zu erwarten war, dass eine manuelle Optimierung des Assemblercodes zu besseren Performanzergebnissen f\"uhrt. Jedoch sind die bisherig implementierten SIMD-Instruktionen bei h\"ohren Graden nicht so performanzsteigernd wie eingangs erhofft wenngleich verst\"andlich, da nicht alle m\"oglichen SIMD-Optimierungen durchgef\"uhrt wurden. Weitere M\"oglichkeiten die Performanz zu erh\"ohen w\"aren Speicheroptimierungen, Multithreading, ein 16-Bit Alignment der SIMD-Instruktionen oder die im Kapitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen.
