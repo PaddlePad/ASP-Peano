@@ -177,7 +177,7 @@ void drawSvg(u_int64_t *x, u_int64_t *y, int size)
     int step = pxWidth / (int)sqrt(size);
     pxWidth += step; // pixel offset
 
-    FILE *fp = fopen("peano5.svg", "w+");
+    FILE *fp = fopen("peanoRecursiveV2.svg", "w+");
 
     fprintf(fp, "<?xml version=\"1.0\"?>\n");
     fprintf(fp, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
@@ -230,11 +230,19 @@ int main(int argc, char *argv[])
     
 
         // Je nach Angabe wird die Zeit ausgegeben
-        printf("Oparation successfully terminated");
-                                                       // Je nach Angabe wird die Zeit ausgegeben
+      printf("Peano calculation successfully terminated");
+    if (time) // Depending on the input arguments the operating time is printed
+    {
+        if (deg > 7) // Upwards from degree 7 we use seconds to avoid overflows
+        {
+            double secBefore = before.tv_sec + 1e-9 * before.tv_nsec;
+            double secAfter = after.tv_sec + 1e-9 * after.tv_nsec;
+            printf(" after %f seconds", secAfter - secBefore);
+        }
+        else
             printf(" after %ld nanoseconds", (u_int64_t)after.tv_nsec - (u_int64_t)before.tv_nsec);
-
-        puts(".");
+    }
+    puts(".");
 
     free(x);
     free(y);
