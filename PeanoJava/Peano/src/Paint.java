@@ -45,19 +45,19 @@ public class Paint extends JFrame {
 			currY = BORDER_OFFSET;
 		}
 		
-		Graphics2D curve = (Graphics2D)g;
-		curve.setStroke(new BasicStroke(2));
-		curve.setColor(Color.BLACK);
-		
-		for (int i = 1; i < field.length; i++) {
-			
-			int xFrom = BORDER_OFFSET + offset + (field[i - 1].getX() - 1) * quadLen;
-			int yFrom = BORDER_OFFSET + reorient(offset + (field[i - 1].getY() - 1) * quadLen);
-			int xTo = BORDER_OFFSET + offset + (field[i].getX() - 1) * quadLen;
-			int yTo = BORDER_OFFSET + reorient(offset + (field[i].getY() - 1) * quadLen);
-			
-			curve.drawLine(xFrom, yFrom, xTo, yTo);
-		}
+//		Graphics2D curve = (Graphics2D)g;
+//		curve.setStroke(new BasicStroke(2));
+//		curve.setColor(Color.red);
+//		
+//		for (int i = 1; i < field.length; i++) {
+//			
+//			int xFrom = BORDER_OFFSET + offset + (field[i - 1].getX() - 1) * quadLen;
+//			int yFrom = BORDER_OFFSET + reorient(offset + (field[i - 1].getY() - 1) * quadLen);
+//			int xTo = BORDER_OFFSET + offset + (field[i].getX() - 1) * quadLen;
+//			int yTo = BORDER_OFFSET + reorient(offset + (field[i].getY() - 1) * quadLen);
+//			
+//			curve.drawLine(xFrom, yFrom, xTo, yTo);
+//		}
 	}
 	
 	private int reorient(int y)
