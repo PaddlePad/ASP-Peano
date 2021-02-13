@@ -97,14 +97,13 @@ Da wir 64-Bit gro\ss e Koordinatenstellen benutzen, k\"onnten wir damit generell
 
 Dennoch w\"urde sich der Algorithmus in einem alternativen L\"osungsansatz zus\"atzlich mit Hilfe von SIMD-Instruktionen weiter optimieren lassen.  
 
-Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden, den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren. Dies w\"urde nat\"urlich sehr viel Rechenaufwand einsparen und damit ingesamt bessere Performanzergebnisse erzielen.
+Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden, den Richtungsarray auszulassen und die gesamte Koordinatenberechnung direkt durchzuf\"uhren.
 
 \section{Korrektheit} \label{Korrektheit} % oder Genauigkeit
 
 Die Genauigkeit unseres Algorithmus ist abh\"angig von dem Grad $n$, der die Anzahl an Iterationen bestimmt, wie in Abbildung \ref{Abb:Peano} beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus pr\"aziser, je gr\"o\ss er der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert ann\"ahern. Ansonsten ist die Kurve wie oben beschrieben, definiert, weshalb die Korrektheit unseres Algorithmus entscheidend ist.
 Grunds\"atzlich l\"asst sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen, indem man ihre graphischen Darstellungen vergleicht. Da das theoretisch aber nicht m\"oglich ist, folgt auch eine Implementierung in Assembler und in C, die wir auch hinsichtlich ihrer Performanz analysieren wollen.
 Dennoch soll der bereits beschriebene Ansatz auf Korrektheit gepr\"uft werden.
-
 
 Da die eigentliche Koordinatenberechnung abh\"angig von der zuvor ermittelten Richtung ist, ist der folgende Beweis prim\"ar auf die Berechnung der Richtungen ausgerichtet.
 Die Koordinatenberechnung findet anschlie\ss end und basierend auf den bisherigen Ergebnissen statt, indem ab\"angig von der Richtung jeweils die X- und die Y-Koordinate eines Z\"ahlers inkrementiert bzw. dekrementiert und abgespeichert werden.
@@ -143,7 +142,6 @@ Siehe auch hier Abbildung \ref{Abb:Peano L\"osungsidee}, blaue Kurve.
 \textbf{Verbinden der Permutationen: }
 Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine ebensolche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einf\"ugen, sondern nur die Art der graphischen Darstellung ver\"andern. Wir f\"ugen also einen weiteren hartcodiertern Schritt zu den bisherigen Richtungen hinzu, um die Koordinaten sp\"ater korrekt zu berechnen. Dies ist zudem Teil der Definition dieser Kurve.  
 
-
 \subsection{Technische Limitationen} \label{Technische Limitationen} %in C
 Bei dem Testen unseres Programms fallen bei Graden von $n > 6$ bestimmte technische Limitationen unser Rechensysteme auf. 
 
@@ -156,10 +154,8 @@ Um zu ermitteln, wie viel Speicher wir allokieren k\"onnen, haben wir eine For-S
 \begin{lstlisting} %Formatieren! 
 
 u_int64_t *v;
-for (u_int64_t i = 1; v = (u_int64_t *) malloc(i); i <<= 1)   
-{     
-    print(i); free(v);
-}
+for (u_int64_t i = 1; v = (u_int64_t *) malloc(i); i <<= 1)
+{   print(i);   free(v);  }
 \end{lstlisting}
 
 Zus\"atzlich evaluierte ein Test, der \"uberpr\"uft, ob der von \textit{malloc} zur\"uckgegebenen Pointer bei $n > 9$ NULL ist, auf unseren Testplatformen ausnahmslos zu \textit{true}. % also war NUll
@@ -185,22 +181,24 @@ Da wir uns Eingangs auf einen iterativen Ansatz festgelegt haben, ist es zudem i
 
 Die Laufzeittests der verschiedenen Algorithmen wurden auf einem System mit einem Intel Core i7-7700K Prozessor mit einer Taktfrequenz von 4.20GHz, 16 GB Arbeitsspeicher und auf einem Linux Mint 20 64-bit Betriebsssystem mit Linux Kernel 5.4.0-26-generic durchgef\"uhrt. Kompiliert wurde dabei mit GCC 9.3.0 mit Option -03.
 Wie bereits im Kapitel \ref{Technische Limitationen} beschrieben, war es nur m\"oglich bis Grad 9 zu testen.
-F\"ur jeden Algorithmus wurden f\"ur jeden Grad 20 Durchl\"aufe aufgezeichnet und deren Durchschnitt berechnet. Um das exponentielle Wachstum der Ergebnisse sinnvoll darzustellen werden in der folgendenen Grafik zuerst die Grade 4, 5 und 6 und anschlie\ss end Grad 6 mit 7 und 8 verglichen .
+F\"ur jeden Algorithmus wurden f\"ur jeden Grad 20 Durchl\"aufe aufgezeichnet und deren Durchschnitt berechnet. 
 
-\begin{figure}[ht]
-\centering
-\includegraphics[scale = 0.45]{diagrammeVertikal.png}
-\caption{Grafischer Vergleich der Grade 4 bis 8}\label{Abb: Diagramm Performanz}
-\captionsetup[figure]{font=small,labelfont=small}
-\end{figure}
-
-Zus\"atzlich wird in Abbildung \ref{Abb: Tabelle Performanz} der prozentuelle Zeitunterschied zwischen der SIMD-Optimierten Assemblerimplementierung und den Vergleichsalgorithmen dokumentiert. Hier ist zu erkennen, dass SIMD-Befehle bei den Graden eins bis drei zu deutlichen Zeitverbesserungen von bis zu \"uber 28\% f\"uhren, jedoch bei den Graden f\"unf bis sieben kleinere Zeiteinbusen mit sich bringen. Bei den letzten zwei Graden acht und neun verbessert die Nutzung von SIMD-Befehlen den Algorithmus wieder, jedoch schafft er es nicht die Zeiten des rekursiven Algorithmus zu schlagen.
+In Abbildung \ref{Abb: Tabelle Performanz} wird der prozentuelle Zeitunterschied zwischen der SIMD-Optimierten Assemblerimplementierung und den Vergleichsalgorithmen dokumentiert. Hier ist zu erkennen, dass SIMD-Befehle bei den Graden eins bis drei zu deutlichen Zeitverbesserungen von bis zu \"uber 28\% f\"uhren, jedoch bei den Graden f\"unf bis sieben kleinere Zeiteinbusen mit sich bringen. Bei den letzten zwei Graden acht und neun verbessert die Nutzung von SIMD-Befehlen den Algorithmus wieder, jedoch schafft er es nicht die Zeiten des rekursiven Algorithmus zu schlagen.
 Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade $n > 9$ am besten eignen w\"urde oder ob die Verwendung von SIMD-Befehlen bei jedem Grad von Vorteil ist. Es kann jedoch behauptet werden, dass die iterativen Algorithmen in C, In-Place sowie Out-Of-Place, nicht die beste Wahl w\"aren.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[scale = 0.65]{zeitmessungenProzent.png}
+\includegraphics[scale = 0.53]{zeitmessungenProzent.png}
 \caption{Prozentueller Performanzvergleich (Zeitangabe in Nanosekunden)} \label{Abb: Tabelle Performanz}
+\captionsetup[figure]{font=small,labelfont=small}
+\end{figure}
+
+Zudem zeigt die folgende Abbildung \ref{Abb: Diagramm Performanz} ein Balkendiagramm. Um das exponentielle Wachstum der Ergebnisse sinnvoll darzustellen werden zuerst die Grade 4, 5 und 6 und anschlie\ss end Grad 6 mit 7 und 8 verglichen.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale = 0.65]{diagrammeVertikal.png}
+\caption{Grafischer Vergleich der Grade 4 bis 8}\label{Abb: Diagramm Performanz}
 \captionsetup[figure]{font=small,labelfont=small}
 \end{figure}
 
@@ -209,9 +207,9 @@ Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade
 Es l\"asst sich also feststellen, dass eine rekursive Implementierung gegen\"uber einem iterativer Ansatz vorzuziehen ist, da in unserer Implementierung der rekursive Algorithmus in den Testf\"allen bis Grad 9 mit Ausnahme $n = 1$ immer besser abgeschnitten hat, vergleiche Abbildung \ref{Abb: Tabelle Performanz}. Zu erwarten war, dass eine manuelle Optimierung des Assemblercodes zu besseren Performanzergebnissen f\"uhrt. Jedoch sind die bisherig implementierten SIMD-Instruktionen bei h\"ohren Graden nicht so performanzsteigernd wie eingangs erhofft wenngleich verst\"andlich, da nicht alle m\"oglichen SIMD-Optimierungen durchgef\"uhrt wurden. Weitere M\"oglichkeiten die Performanz zu erh\"ohen w\"aren Speicheroptimierungen, Multithreading, ein 16-Bit Alignment der SIMD-Instruktionen oder die im Kapitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen.
 
 %Ausblick Mo
-Ein verbesserter Ansatz des Algorithmus w\"are beispielsweise durch ein Verzicht auf das Richtungsarray zu erreichen. Einen solchen Algorithmus haben wir in C implementiert, dieser verfolgt das selbe Konzept aber arbeitet direkt mit den Koordinaten. Damit l\"asst sich die Speicherverwendung optimieren und die \"uberfl\"ussigen Schritte beim Iterieren \"uber das Array werden eingespart. Wie man auf der Abbildung \ref{Abb: Tabelle Performanz} sehen kann, hat die neue Variante den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm).
+%Ein verbesserter Ansatz des Algorithmus w\"are beispielsweise durch ein Verzicht auf das Richtungsarray zu erreichen. Einen solchen Algorithmus haben wir in C implementiert, dieser verfolgt das selbe Konzept aber arbeitet direkt mit den Koordinaten. Damit l\"asst sich die Speicherverwendung optimieren und die \"uberfl\"ussigen Schritte beim Iterieren \"uber das Array werden eingespart. Wie man auf der Abbildung \ref{Abb: Tabelle Performanz} sehen kann, hat die neue Variante den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm).
 
-R\"uckblickend ist zu bemerken, dass es wahrscheinlich sinnvoller gewesen w\"are, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel unn\"otige Rechenzeit gespart werden w\"urde.
+%R\"uckblickend ist zu bemerken, dass es wahrscheinlich sinnvoller gewesen w\"are, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel unn\"otige Rechenzeit gespart werden w\"urde.
 
 %Hilbert vs Peano
 Betrachtet man die Historie der Raumf\"ullenden Kurven, so f\"allt schnell auf, dass noch weitere Kurven existieren, die vergleichbare Eigenschaften zu der Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder anderen Arten der Peano-Kurve ~\cite{raumKurven}, welche den Raum auf andere Weise durchl\"auft, zu vergleichen.
