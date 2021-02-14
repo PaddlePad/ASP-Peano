@@ -11,7 +11,7 @@
 \usepackage{amsthm}
 \usepackage{listings}
 
-\usepackage{amsmath}	%eins von beidem?
+\usepackage{amsmath}
 \usepackage{mathtools}
 
 \usepackage{index}
@@ -101,7 +101,7 @@ Alternativ haben wir gegen Ende der Bearbeitungszeit eine M\"oglichkeit gefunden
 
 \section{Korrektheit} \label{Korrektheit} % oder Genauigkeit
 
-Die Genauigkeit unseres Algorithmus ist abh\"angig von dem Grad $n$, der die Anzahl an Iterationen bestimmt, wie in Abbildung \ref{Abb:Peano} beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus pr\"aziser, je gr\"o\ss er der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert ann\"ahern. Ansonsten ist die Kurve wie oben beschrieben, definiert, weshalb die Korrektheit unseres Algorithmus entscheidend ist.
+Die Genauigkeit unseres Algorithmus ist abh\"angig von dem Grad $n$, der die Anzahl an Iterationen bestimmt, wie in Abbildung \ref{Abb:Peano} beschrieben. Das geht auch aus der beschriebenen mathematischen Definition hervor, da die Peano-Kurve an sich ein Grenzwert ist. Somit wird der Algorithmus pr\"aziser, je gr\"o\ss er der Grad der Kurve ist, da die Punkte auf der Kurve sich ebenfalls einem Grenzwert ann\"ahern. Ansonsten ist die Kurve, wie oben beschrieben, definiert, weshalb die Korrektheit unseres Algorithmus entscheidend ist.
 Grunds\"atzlich l\"asst sich die Korrektheit einer Kurve, besonders bei der von uns behandelten, nachweisen, indem man ihre graphischen Darstellungen vergleicht. Da das theoretisch aber nicht m\"oglich ist, folgt auch eine Implementierung in Assembler und in C, die wir auch hinsichtlich ihrer Performanz analysieren wollen.
 Dennoch soll der bereits beschriebene Ansatz auf Korrektheit gepr\"uft werden.
 
@@ -113,10 +113,10 @@ Nachdem die Kurve immer wieder die gleichen, teilweise elementaren Bestandteile 
 
 \subsubsection{Induktionsbasis} \label{Induktionsbasis}
 Beginnen wir mit $n = 1$. Hier ist die Kurve vordefiniert, dementsprechend gibt es nichts zu zeigen. Da auf diesem Muster alle anderen Kurven mit $n > 1$ basieren, ist sie in unserem Algorithmus ebenfalls als Basis vorgegeben.
-Des Weiteren ist die Definition der Kurve mit $n = 2$ f\"ur die Berechnung aller weiteren Kurven n\"otig, da man anhand dieser Kurve alle notwendigen Bedingungen der Konstruktion weiterer Kurven ableiten kann. Deshalb nehmen wir sie also auch als definiert an \ref{Abb:Peano}. Diese Bedingungen sollen im folgenden ebenfalls gepr\"uft werden.
+Des Weiteren ist die Definition der Kurve mit $n = 2$ f\"ur die Berechnung aller weiteren Kurven n\"otig, da man anhand dieser Kurve alle notwendigen Bedingungen der Konstruktion weiterer Kurven ableiten kann. Deshalb nehmen wir sie auch als definiert an \ref{Abb:Peano}. Diese Bedingungen sollen im folgenden ebenfalls gepr\"uft werden.
 
 \subsubsection{Induktionsannahme} \label{Induktionsannahme}
-Da die Funktion wie vorher definiert surjektiv und stetig ist, gilt:
+Da die Funktion surjektiv und stetig ist, gilt:
 
 \begin{center}
 $\forall n > 1 \in \mathbb{N}$ und $\forall y \in \mathbb{R}^n$ gilt: $\exists x \in [0,1]$ so, dass $f(x)= y$
@@ -126,14 +126,14 @@ Dadurch lassen sich Kurven mit h\"oherem Grad konstruieren. Es sei nun $n > 1$ u
 
 \subsubsection{Induktionsschritt} \label{Induktionsschritt}
 Betrachten wir nun Kurven $n$-ten Grades. Hierzu m\"ussen wir die Permutationen der vorhergehenden Kurve untersuchen, die wir zur Konstruktion der Kurve mit Grad $n$ ben\"otigen.
-Da diese Permutationen stets auf \"ahnliche Art konstruiert werden, n\"amlich durch Addition von 2 zu der gespeicherten Richtung mit anschlie\ss endem \textit{modulo} 4, um die Richtung wieder in den g\"ultigen Bereich abzubilden, ist gewehrleistet, dass durch Mehrfachanwendung einer Funktion, die eine solche Permutation generiert, immer nur die Orginale Kurve oder die gew\"unschte Permutation entstehen kann. Dies wird durch den Wertebereich von $[0;3]$ und \textit{modulo} 4 erreicht, da so die geraden Werte auf den jeweils anderen geraden Wert abgebildet werden, f\"ur die ungerade Zahlen analog. Dieser Umstand wird bei dem Erstellen der Permutationen ausgenutzt.
-Da die Funktionen, die die Permutationen erzeugen, auf die gesamte Kurve des Grades $n = n - 1$ angewand wird, ist sichergestellt, dass die Permutationen keine anderweitigen Fehler in der Richtungsberechnung besitzten. Ergebnis ist in Abbildung \ref{Abb:Peano L\"osungsidee} dargestellt.
+Diese Permutationen werden stets auf \"ahnliche Art konstruiert, n\"amlich durch Addition von 2 zu der gespeicherten Richtung mit anschlie\ss endem \textit{modulo} 4, um die Richtung wieder in den g\"ultigen Bereich abzubilden. So ist gew\"ahrleistet, dass durch Mehrfachanwendung einer Funktion, die eine solche Permutation generiert, immer nur die orginale Kurve oder die gew\"unschte Permutation entstehen kann. Dies wird durch den Wertebereich von $[0;3]$ und \textit{modulo} 4 erreicht, da so die geraden Werte auf den jeweils anderen geraden Wert abgebildet werden, f\"ur die ungeraden Zahlen analog. Dieser Umstand wird bei dem Erstellen der Permutationen ausgenutzt.
+Da die Funktionen, die die Permutationen erzeugen, auf die gesamte Kurve des Grades $n = n - 1$ angewand werden, ist sichergestellt, dass die Permutationen keine anderweitigen Fehler in der Richtungsberechnung aufweisen. Ein Ergebnis ist in Abbildung \ref{Abb:Peano L\"osungsidee} dargestellt.
 
 \textbf{Die Permutationen: }% - Reverse in Implementierung
-Die invertierte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, im Speziellen von $p_1=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich au\ss er der invertierten Reihenfolge der Punkte an der grundlegenden Kurve nichts \"andert. Somit ist die invertierte Permutation induktiv eben so korrekt wie die zugrundeliegende Kurve niedrigeren Grades, siehe auch Abbildung \ref{Abb:Peano L\"osungsidee}, gr\"une Kurve.
+Die invertierte Permutation ist im Kern nichts anderes als die normale Peano-Kurve mit anderer Reihenfolge der Koordinatenberechnung, im Speziellen von $p_1=(1,1)$ nach $p_2 = (0,0)$. Dies hat zur Folge, dass sich au\ss er der invertierten Reihenfolge der Punkte an der grundlegenden Kurve nichts \"andert. Somit ist die invertierte Permutation induktiv ebenso korrekt wie die zugrundeliegende Kurve niedrigeren Grades, siehe auch Abbildung \ref{Abb:Peano L\"osungsidee}, gr\"une Kurve.
 
 %\textbf{Spiegelung:}% - Mirror in Implementierung
-Bei der Spiegelung wird die Kurve an der X-Achse gespiegelt. Wir ver\"andern also die vertikale Richtung, behalten jedoch weiterhin die horizontale Richtung bei. Dadurch wird die vorausgehende Kurve notwendigerweise abge\"andert. Diese zus\"atzliche Operation ist elementar und greift auf die gespeicherte Richtung einer Koordinate direkt zu. Somit hat diese Operation nur indirekt auf die Koordinatenberechnung Einfluss, ohne die Kurve anderweitig zu ver\"andern. Siehe auch Abbildung \ref{Abb:Peano L\"osungsidee}, gelbe Kurve. %wirklich elementar
+Bei der Spiegelung wird die Kurve an der X-Achse gespiegelt. Wir ver\"andern also die vertikale Richtung, behalten jedoch weiterhin die horizontale Richtung bei. Dadurch wird die vorausgehende Kurve notwendigerweise ge\"andert. Diese zus\"atzliche Operation ist elementar und greift auf die gespeicherte Richtung einer Koordinate direkt zu. Somit hat diese Operation nur indirekt auf die Koordinatenberechnung Einfluss, ohne die Kurve anderweitig zu ver\"andern. Siehe auch Abbildung \ref{Abb:Peano L\"osungsidee}, gelbe Kurve. 
 
 %\textbf{Kombination Beider Permutationen:}
 Abschlie\ss end bleibt noch die Kombination aus den vorangehenden Permutationen, die ebenfalls f\"ur die Konstruktion der Kurve notwendig ist. Diese Permutation ist, \"ahnlich zu der vorherigen Permutation, eine Spiegelung an der Y-Achse. Dabei wird die horizontale Richtung gewechselt und die Vertikale beibehalten. Ansonsten verh\"alt es sich analog zur Spiegelung.
@@ -143,11 +143,11 @@ Siehe auch hier Abbildung \ref{Abb:Peano L\"osungsidee}, blaue Kurve.
 Die unterschiedlichen Permutationen der Peano-Kurve werden durch eine ebensolche Kurve mit $n = 1$ verbunden. Dadurch bleiben alle Eigenschaften der Kurve erhalten, da wir keine weiteren Punkte in die Kurve einf\"ugen, sondern nur die Art der graphischen Darstellung ver\"andern. Wir f\"ugen also einen weiteren hartcodiertern Schritt zu den bisherigen Richtungen hinzu, um die Koordinaten sp\"ater korrekt zu berechnen. Dies ist zudem Teil der Definition dieser Kurve.  
 
 \subsection{Technische Limitationen} \label{Technische Limitationen} %in C
-Bei dem Testen unseres Programms fallen bei Graden von $n > 6$ bestimmte technische Limitationen unser Rechensysteme auf. 
+Bei dem Testen unseres Programms fallen bei Graden von $n > 6$ bestimmte technische Limitationen der verwendeten Rechensysteme auf. 
 
-Zum einen haben wir kein Programm gefunden, dass die generierten .svg Dateien von einer Gr\"o\ss e 21,8 Megabyte (Peano-Kurve mit $n = 7$) \"offnen kann. Mit zunehmendem Grad enth\"alt die .svg Datei logischerweise immer mehr Punkte der Kurve, weshalb die Gr\"o\ss e ebenfalls exponentiell zur Basis 9 steigt. Deshalb m\"ochten wir an dieser Stelle auf das Kapitel \ref{Korrektheit} verweisen, um die Kurve auf selbige zu pr\"ufen.  %selbige gross?
+Zum einen fanden wir kein Programm, dass die generierten .svg Dateien von einer Gr\"o\ss e 21,8 Megabyte (Peano-Kurve mit $n = 7$) \"offnen kann. Mit zunehmendem Grad enth\"alt die .svg Datei logischerweise immer mehr Punkte der Kurve, weshalb die Gr\"o\ss e ebenfalls exponentiell zur Basis 9 steigt. Deshalb verweisen wir an dieser Stelle auf das Kapitel \ref{Korrektheit}, um die Kurve auf Korrektheit zu pr\"ufen. 
 
-Zum anderen ist es nicht m\"oglich, beliebig viel Speicher zu allokieren, da die von uns benutzte \textit{malloc}-Funktion maximal 17.179.869.184 Bytes auf dem Heap unser Testumgebungen allokieren kann und der Heap zus\"atzlich in seiner Gr\"o\ss e auf Seite der Hardware begrenzt ist. Deshalb k\"onnen wir auf unseren Systemen die Funktion mit maximal $n = 9$ ausf\"uhren, da sonst nicht gen\"ugend Speicher allokiert wird. F\"ur $n = 10$ m\"ussten 27.894.275.208 Bytes allokiert werden, wozu wir nicht im Stande sind. 
+Zum anderen ist es nicht m\"oglich, beliebig viel Speicher zu allokieren, da die von uns benutzte \textit{malloc}-Funktion maximal 17.179.869.184 Bytes auf dem Heap unser Test-umgebungen allokieren kann und der Heap zus\"atzlich in seiner Gr\"o\ss e auf Seite der Hardware begrenzt ist. Deshalb k\"onnen wir auf unseren Systemen die Funktion mit maximal $n = 9$ ausf\"uhren, da bereits bei $n = 10$ nicht gen\"ugend Speicher allokiert wird. F\"ur $n = 10$ m\"ussten 27.894.275.208 Bytes allokiert werden. 
 
 Um zu ermitteln, wie viel Speicher wir allokieren k\"onnen, haben wir eine For-Schleife folgenden Typs ausgef\"uhrt:
 
@@ -158,11 +158,11 @@ for (u_int64_t i = 1; v = (u_int64_t *) malloc(i); i <<= 1)
 {   print(i);   free(v);  }
 \end{lstlisting}
 
-Zus\"atzlich evaluierte ein Test, der \"uberpr\"uft, ob der von \textit{malloc} zur\"uckgegebenen Pointer bei $n > 9$ NULL ist, auf unseren Testplatformen ausnahmslos zu \textit{true}. % also war NUll
+Zus\"atzlich evaluierte ein Test, der \"uberpr\"uft, ob der von \textit{malloc} zur\"uckgegebene Pointer bei $n > 9$ NULL ist, auf unseren Testplatformen ausnahmslos zu \textit{true}. % also war NUll
 
 Deshalb ist der Wertebereich von $n$ in den Tests im nachfolgenden Kapitel auf $ n \in [1;9]$ limitiert.
 
-Als ein Beispiel der erstellten .svg Datei f\"ur diesen Algortihmus sei auf Abbildung \ref{Abb:Generierte Kurve Grad 4} verwiesen, welche die erstellte Kurve mit $n = 4$ zeigt. F\"ur $n < 4$ werden Bilder erzeugt, die den Kurven in Abbildung \ref{Abb:Peano} entsprechen. F\"ur $n > 4$ ist die Kurve aufgrund der hohen Dichte in diesem Dokument schwer lesbar darstellbar.
+Als ein Beispiel der erstellten .svg Datei f\"ur diesen Algortihmus sei auf Abbildung \ref{Abb:Generierte Kurve Grad 4} verwiesen, welche die erstellte Kurve mit $n = 4$ zeigt. F\"ur $n < 4$ werden Bilder erzeugt, die den Kurven in Abbildung \ref{Abb:Peano} entsprechen. F\"ur $n > 4$ ist die Kurve aufgrund der hohen Dichte in diesem Dokument schwer darstellbar.
 
 \begin{figure}[ht]
 \centering
@@ -171,11 +171,11 @@ Als ein Beispiel der erstellten .svg Datei f\"ur diesen Algortihmus sei auf Abbi
 \end{figure}
 
 \section{Performanzanalyse} \label{Performanzanalyse}
-Bevor der bereits ausgef\"uhrten Algorithmus hinsichtlich seiner Performanz analysiert wird, werden kurz die Algorithmen die verglichen werden, beschrieben.
+Bevor der bereits ausgef\"uhrte Algorithmus hinsichtlich seiner Performanz analysiert wird, werden kurz die zu vergleichenden Algorithmen beschrieben.
 
-Als erstes wurde der bereits erl\"auterten Algorithmus aus Kapitel \ref{L\"osungsansatz} in C implementiert. Um die Performanz-Unterschiede zwischen der direkten Berechnung, im Weiteren als In-Place-Variante, und der einmaligen Berechnung und Speicherung der Permutationen, im Folgenden als Out-Of-Place-Variante bezeichnet, zu analysieren erweitern wir die Implementierung um einen entsprechenden Algorithmus, welcher eine abgewandelte Form der In-Place-Variante ist. Der Unterschied besteht darin, dass sobald wir eine Kurve mit $n > 2$ berechnen, speichern wir die schon vorher besprochenen Permutationen der Kurve mit Grad $n - 1$. 
+Als erstes wurde der bereits erl\"auterten Algorithmus aus Kapitel \ref{L\"osungsansatz} in C implementiert. Um die Performanz-Unterschiede zwischen der direkten Berechnung (In-Place-Variante) und der einmaligen Berechnung und Speicherung der Permutationen (Out-Of-Place-Variante), zu analysieren, erweitern wir die Implementierung um einen entsprechenden Algorithmus. Dieser Out-Of-Place-Algorithmus ist eine abgewandelte Form der In-Place-Variante. Der Unterschied besteht darin, dass sobald eine Kurve mit $n > 2$ berechnet wird, die schon vorher besprochenen Permutationen der Kurve mit Grad $n - 1$ gespeichert werden. 
 
-Da wir uns Eingangs auf einen iterativen Ansatz festgelegt haben, ist es zudem interessant zu sehen, inwiefern sich der Unterschied zwischen einem iterativen und einem rekursiven Algorithmus auswirkt. Deshalb wurde auch ein Algorithmus implementiert, der rekursiv die Richtungen berechnet. Aus Zeitgr\"unden k\"onnen wir jedoch die Implementierungen nur in C vergleichen. 
+Da wir uns eingangs auf einen iterativen Ansatz festgelegt haben, ist es zudem interessant zu sehen, inwiefern sich der Unterschied zwischen einem iterativen und einem rekursiven Algorithmus auswirkt. Deshalb wurde auch ein Algorithmus implementiert, der rekursiv die Richtungen berechnet. Aus Zeitgr\"unden k\"onnen wir jedoch die Implementierungen nur in C vergleichen. 
 
 \subsection{Dokumentation}
 
@@ -183,8 +183,8 @@ Die Laufzeittests der verschiedenen Algorithmen wurden auf einem System mit eine
 Wie bereits im Kapitel \ref{Technische Limitationen} beschrieben, war es nur m\"oglich bis Grad 9 zu testen.
 F\"ur jeden Algorithmus wurden f\"ur jeden Grad 20 Durchl\"aufe aufgezeichnet und deren Durchschnitt berechnet. 
 
-In Abbildung \ref{Abb: Tabelle Performanz} wird der prozentuelle Zeitunterschied zwischen der SIMD-Optimierten Assemblerimplementierung und den Vergleichsalgorithmen dokumentiert. Hier ist zu erkennen, dass SIMD-Befehle bei den Graden eins bis drei zu deutlichen Zeitverbesserungen von bis zu \"uber 28\% f\"uhren, jedoch bei den Graden f\"unf bis sieben kleinere Zeiteinbusen mit sich bringen. Bei den letzten zwei Graden acht und neun verbessert die Nutzung von SIMD-Befehlen den Algorithmus wieder, jedoch schafft er es nicht die Zeiten des rekursiven Algorithmus zu schlagen.
-Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade $n > 9$ am besten eignen w\"urde oder ob die Verwendung von SIMD-Befehlen bei jedem Grad von Vorteil ist. Es kann jedoch behauptet werden, dass die iterativen Algorithmen in C, In-Place sowie Out-Of-Place, nicht die beste Wahl w\"aren.
+In Abbildung \ref{Abb: Tabelle Performanz} wird der prozentuelle Zeitunterschied zwischen der SIMD-optimierten Assemblerimplementierung und den Vergleichsalgorithmen dokumentiert. Hier ist zu erkennen, dass SIMD-Befehle bei den Graden eins bis drei zu deutlichen Zeitverbesserungen von bis zu \"uber 28\% f\"uhren, jedoch bei den Graden f\"unf bis sieben kleinere Zeiteinbu\ss en mit sich bringen. Bei den letzten zwei Graden acht und neun verbessert die Nutzung von SIMD-Befehlen den Algorithmus wieder, jedoch schafft er es nicht, die Zeiten des rekursiven Algorithmus zu unterbieten.
+Damit kann man leider nicht vorhersehen, welcher Algorithmus sich f\"ur die Grade $n > 9$ am besten eignen w\"urde oder ob die Verwendung von SIMD-Befehlen bei jedem Grad von Vorteil ist. Dar\"uber hinaus ist festzustellen, dass die iterativen Algorithmen in C, die In-Place sowie die Out-Of-Place Varianten, nicht die beste Wahl sind.
 
 \begin{figure}[ht]
 \centering
@@ -193,7 +193,7 @@ Damit kann man leider nicht vorhersehen welcher Algorithmus sich f\"ur die Grade
 \captionsetup[figure]{font=small,labelfont=small}
 \end{figure}
 
-Zudem zeigt die folgende Abbildung \ref{Abb: Diagramm Performanz} ein Balkendiagramm. Um das exponentielle Wachstum der Ergebnisse sinnvoll darzustellen werden zuerst die Grade 4, 5 und 6 und anschlie\ss end Grad 6 mit 7 und 8 verglichen.
+Zudem zeigt die folgende Abbildung \ref{Abb: Diagramm Performanz} ein Balkendiagramm. Um das exponentielle Wachstum der Ergebnisse sinnvoll darzustellen werden zuerst die Grade 4, 5 und 6 miteinander und anschlie\ss end Grad 6 mit 7 und 8 verglichen.
 
 \begin{figure}[ht]
 \centering
@@ -204,7 +204,7 @@ Zudem zeigt die folgende Abbildung \ref{Abb: Diagramm Performanz} ein Balkendiag
 
 \section{Zusammenfassung und Ausblick} \label{Zusammenfassung und Ausblick}
 %Zusammenfassung
-Es l\"asst sich also feststellen, dass eine rekursive Implementierung gegen\"uber einem iterativer Ansatz vorzuziehen ist, da in unserer Implementierung der rekursive Algorithmus in den Testf\"allen bis Grad 9 mit Ausnahme $n = 1$ immer besser abgeschnitten hat, vergleiche Abbildung \ref{Abb: Tabelle Performanz}. Zu erwarten war, dass eine manuelle Optimierung des Assemblercodes zu besseren Performanzergebnissen f\"uhrt. Jedoch sind die bisherig implementierten SIMD-Instruktionen bei h\"ohren Graden nicht so performanzsteigernd wie eingangs erhofft wenngleich verst\"andlich, da nicht alle m\"oglichen SIMD-Optimierungen durchgef\"uhrt wurden. Weitere M\"oglichkeiten die Performanz zu erh\"ohen w\"aren Speicheroptimierungen, Multithreading, ein 16-Bit Alignment der SIMD-Instruktionen oder die im Kapitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen.
+Es l\"asst sich also feststellen, dass eine rekursive Implementierung gegen\"uber einem iterativer Ansatz vorzuziehen ist, da in unserer Implementierung der rekursive Algorithmus in den Testf\"allen bis Grad 9 mit Ausnahme $n = 1$ immer besser abgeschnitten hat, vergleiche Abbildung \ref{Abb: Tabelle Performanz}. Zu erwarten war, dass eine manuelle Optimierung des Assemblercodes zu besseren Performanzergebnissen f\"uhrt. Jedoch sind die bisherig implementierten SIMD-Instruktionen bei h\"oheren Graden nicht so performanzsteigernd wie eingangs erhofft. Dies ist nachvollziehbar, da nicht alle m\"oglichen SIMD-Optimierungen durchgef\"uhrt wurden. Weitere M\"oglichkeiten, die Performanz zu erh\"ohen w\"aren Speicheroptimierungen, Multithreading, ein 16-Bit Alignment der SIMD-Instruktionen oder die in Kapitel \ref{Alternativer L\"osungsansatz} beschriebenen Alternativen.
 
 %Ausblick Mo
 %Ein verbesserter Ansatz des Algorithmus w\"are beispielsweise durch ein Verzicht auf das Richtungsarray zu erreichen. Einen solchen Algorithmus haben wir in C implementiert, dieser verfolgt das selbe Konzept aber arbeitet direkt mit den Koordinaten. Damit l\"asst sich die Speicherverwendung optimieren und die \"uberfl\"ussigen Schritte beim Iterieren \"uber das Array werden eingespart. Wie man auf der Abbildung \ref{Abb: Tabelle Performanz} sehen kann, hat die neue Variante den Vorteil im Vergleich zur alter Implementierung ..(Analysis of the Figure of the results of the performance of the new Algorithm).
@@ -212,7 +212,7 @@ Es l\"asst sich also feststellen, dass eine rekursive Implementierung gegen\"ube
 %R\"uckblickend ist zu bemerken, dass es wahrscheinlich sinnvoller gewesen w\"are, diesen Ansatz direkt zu verfolgen, da dadurch sehr viel unn\"otige Rechenzeit gespart werden w\"urde.
 
 %Hilbert vs Peano
-Betrachtet man die Historie der Raumf\"ullenden Kurven, so f\"allt schnell auf, dass noch weitere Kurven existieren, die vergleichbare Eigenschaften zu der Peano-Kurve aufweisen. Eine solche Kurve w\"are die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit beispielsweise der Hilbert-Kurve oder anderen Arten der Peano-Kurve ~\cite{raumKurven}, welche den Raum auf andere Weise durchl\"auft, zu vergleichen.
+Betrachtet man die Historie der raumf\"ullenden Kurven, so f\"allt auf, dass noch weitere Kurven existieren, die vergleichbare Eigenschaften zu denen der Peano-Kurve aufweisen. Eine solche Kurve w\"are beispielsweise die Hilbert-Kurve, welche den Raum in vier anstatt neun Teile unterteilt. Es bietet sich also an, die hier ausgef\"uhrte Kurve mit der Hilbert-Kurve oder anderen Arten der Peano-Kurve~\cite{raumKurven}, welche den Raum auf andere Weise durchl\"auft, zu vergleichen.
 
 
 \newpage
