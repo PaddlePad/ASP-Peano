@@ -69,7 +69,7 @@ Der Aufbau der Peano-Kurve erm\"oglicht es, die Kurve des aktuellen Grades mit e
 \end{itemize}
 
 Diese Observation war der Grundstein des hier beschriebenen iterativen Algorithmus. Anfangs wird die Startkurve hartcodiert in einem Integerarray mit Werten im Interval $[0;3]$ abgespeichert, wobei jede Zahl eine Richtungen repr\"asentiert: 0 f\"ur oben, 1 f\"ur rechts, 2 f\"ur unten und 3 f\"ur links. Die orignale Kurve des ersten Grades und deren Invertierung sehen wie folgt aus: $\{0, 0, 1, 2, 2, 1, 0, 0\}$ bzw. $\{2, 2, 3, 0, 0, 3, 2, 2\}$. 
-Falls $n > 1$ ist, wird ausgehend von Grad 2 aufsteigend \"uber alle Grade $m \leq n$ iteriert. Bei jeder Iteration wird abwechselnd ein Verbindungschritt entsprechend eines Schritts entlang der Kurve $n = 1$ hartcodiert in den Array geschrieben und danach die entsprechende Permutation der Kurve des vorherigen Grades $m - 1$ berechnet und eingef\"ugt. Dieser Vorgang wird f\"ur die acht fehlenden Teilkurven des aktuellen Grades $m$ ausgef\"uhrt, bis die vollst\"andige Kurve entsteht.
+Falls $n > 1$ ist, wird ausgehend von Grad 2 aufsteigend \"uber alle Grade $m \leq n$ iteriert. Bei jeder Iteration wird abwechselnd ein Verbindungschritt entsprechend eines Schritts entlang der Kurve $n = 1$ hartcodiert in den Array geschrieben und danach die entsprechende Permutation der Kurve des vorherigen Grades $m - 1$ berechnet und eingef\"ugt. Die Permutationen sind f\"ur alle $m$ gleich und deren Reihenfolge kann Abbildung \ref{Abb:Peano L\"osungsidee} entnommen werden. Dieser Vorgang wird f\"ur die acht fehlenden Teilkurven des aktuellen Grades $m$ ausgef\"uhrt, bis die vollst\"andige Kurve entsteht.
 
 \begin{figure}[ht]
 \centering
